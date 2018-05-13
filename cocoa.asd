@@ -21,6 +21,7 @@
    (:file "entity/image/dao")
    (:file "entity/tag/dao")
 
+   (:file "util/third_party/proton/proton")
    (:file "infra/dao/sqlite3/sqlite3")
    (:file "infra/dao/sqlite3/folder")
    (:file "infra/dao/sqlite3/image")
@@ -37,8 +38,11 @@
    (:file "controller/ningle/run")
    )
 
-  :depends-on (:proton
-
+  :depends-on (;; For proton
+               :cl-dbi
+               :cl-interpol
+               :sqlite
+               ;; For cocoa
                :alexandria
                :anaphora
                :cl-annot
