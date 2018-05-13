@@ -1,6 +1,6 @@
 # cocoa
 
-A simple image viwer written in Common Lisp and ClojureScript
+A simple image viewer written in Common Lisp and ClojureScript
 
 ![sample](https://github.com/mhkoji/cocoa/raw/master/imgs/top.png)
 
