@@ -1,4 +1,4 @@
-(ns cocoa.controller.header.reagent)
+(ns cocoa.components.header.reagent)
 
 (defn header [{:keys [brand pages]}]
   [:nav {:class "navbar navbar-expand-lg navbar-dark bg-dark"}

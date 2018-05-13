@@ -1,8 +1,8 @@
 (ns cocoa.presenter.browser.pages.folder
   (:require [goog.events :as gevents]
             [reagent.core :as r]
-            [cocoa.controller.header.reagent :as reagent-header]
-            [cocoa.controller.spread-viewer.reagent :as spread-viewer]))
+            [cocoa.components.header.reagent :as reagent-header]
+            [cocoa.components.spread-viewer.reagent :as spread-viewer]))
 
 (defn list-page [{:keys [header body load-folder]}]
   (r/create-class

@@ -1,4 +1,4 @@
-(ns cocoa.controller.tag_editing.reagent
+(ns cocoa.components.tag_editing.reagent
   (:require [reagent.core :as r]
             [cljsjs.react-modal]))
 

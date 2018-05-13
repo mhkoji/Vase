@@ -1,4 +1,4 @@
-(ns cocoa.controller.header.state
+(ns cocoa.components.header.state
   (:require [cocoa.presenter.browser.url :as url]))
 
 (defn get-state [in-page]

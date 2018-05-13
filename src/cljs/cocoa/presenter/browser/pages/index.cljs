@@ -6,8 +6,6 @@
             [goog.events :as gevents]
             [cljs.reader :refer [read-string]]
 
-            [cocoa.controller.header.state
-             :as header-state]
             [cocoa.controller.read-folder.by-list
              :as read-folder-by-list]
             [cocoa.controller.read-folder.by-spread
@@ -79,6 +77,5 @@
    {:create #(tagged-folder-list/create-store % tag-id)
     :render #(r/render
               [cocoa.presenter.browser.pages.tag-folders/page
-               {:header (header-state/get-state :tag)
-                :body (tagged-folder-list/store-state %)}]
+               (tagged-folder-list/store-state %)]
               elem)}))

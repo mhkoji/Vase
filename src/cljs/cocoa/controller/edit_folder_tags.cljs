@@ -4,7 +4,7 @@
             [cocoa.entity.tag-edit :as tag-edit]
             [cocoa.use-case.edit-folder-tags
              :as edit-folder-tags-use-case]
-            [cocoa.controller.tag_editing.state
+            [cocoa.components.tag_editing.state
              :as tag-editing-state]))
 
 (defn create-store [update-store!]

@@ -1,9 +1,9 @@
 (ns cocoa.presenter.browser.pages.folders
   (:require [reagent.core :as r]
-            [cocoa.controller.header.reagent :as reagent-header]
-            [cocoa.controller.nav.reagent :refer [pager]]
-            [cocoa.controller.folder.reagent :refer [cards]]
-            [cocoa.controller.tag_editing.reagent
+            [cocoa.components.header.reagent :as reagent-header]
+            [cocoa.components.nav.reagent :refer [pager]]
+            [cocoa.components.folder.reagent :refer [cards]]
+            [cocoa.components.tag_editing.reagent
              :refer [modal-editing-tag]]))
 
 (defn loading []

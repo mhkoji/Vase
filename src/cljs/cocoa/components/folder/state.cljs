@@ -1,4 +1,4 @@
-(ns cocoa.controller.folder.state)
+(ns cocoa.components.folder.state)
 
 (defn state [folder-id name thumbnail-url on-edit-tag]
   {:folder-id     folder-id

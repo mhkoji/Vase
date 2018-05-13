@@ -1,4 +1,4 @@
-(ns cocoa.controller.folder.reagent
+(ns cocoa.components.folder.reagent
   (:require [cocoa.presenter.browser.url :as url]))
 
 (defn card [{:keys [folder-id name thumbnail-url on-edit-tag]}]

@@ -1,4 +1,4 @@
-(ns cocoa.controller.nav.reagent)
+(ns cocoa.components.nav.reagent)
 
 (defn link [{:keys [link enabled]} & children]
   [:a {:href link

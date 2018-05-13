@@ -1,4 +1,4 @@
-(ns cocoa.controller.nav.state)
+(ns cocoa.components.nav.state)
 
 (defn make-nav [link]
   (if link

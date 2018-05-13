@@ -1,4 +1,4 @@
-(ns cocoa.controller.spread-viewer.reagent
+(ns cocoa.components.spread-viewer.reagent
   (:require  [goog.events :as gevents]
              [reagent.core :as r]))
 

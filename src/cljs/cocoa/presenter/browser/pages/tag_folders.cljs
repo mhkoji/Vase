@@ -1,7 +1,7 @@
 (ns cocoa.presenter.browser.pages.tag-folders
   (:require [reagent.core :as r]
-            [cocoa.controller.header.reagent :as reagent-header]
-            [cocoa.controller.folder.reagent :refer [cards]]))
+            [cocoa.components.header.reagent :as reagent-header]
+            [cocoa.components.folder.reagent :refer [cards]]))
 
 (defn page [{:keys [header body]}]
   (r/create-class

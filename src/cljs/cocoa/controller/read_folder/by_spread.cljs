@@ -2,8 +2,8 @@
   (:require [cljs.core.async :refer [go <!]]
             [cocoa.entity.folder :as folder]
             [cocoa.use-case.load-folder :as load-folder-use-case]
-            [cocoa.controller.header.state :as header-state]
-            [cocoa.controller.spread-viewer.state :as spread-viewer-state]
+            [cocoa.components.header.state :as header-state]
+            [cocoa.components.spread-viewer.state :as spread-viewer-state]
             [cocoa.presenter.browser.url :as url]))
 
 (defn create-store [update-store! folder-id images]

@@ -2,7 +2,7 @@
   (:require [cljs.core.async :refer [go <!]]
             [cocoa.entity.folder :as folder]
             [cocoa.use-case.load-folder :as load-folder]
-            [cocoa.controller.header.state :as header-state]
+            [cocoa.components.header.state :as header-state]
 
             [cocoa.presenter.browser.url :as url]))
 

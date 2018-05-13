@@ -1,4 +1,4 @@
-(ns cocoa.controller.tag_editing.state)
+(ns cocoa.components.tag_editing.state)
 
 (defn new-tag-state [& {:keys [name on-submit on-change]}]
   {:name name :on-add on-submit :on-change on-change})

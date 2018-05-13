@@ -1,15 +1,14 @@
 (ns cocoa.controller.read-folders
   (:require [cljs.core.async :refer [go <!]]
 
-            [cocoa.controller.edit-folder-tags :as edit-folder-tags]
-
             [cocoa.infra.api.folder :as folder-api]
             [cocoa.entity.folder :as folder]
             [cocoa.use-case.load-folders :as load-folders-use-case]
 
-            [cocoa.controller.header.state :as header-state]
-            [cocoa.controller.nav.state :as nav-state]
-            [cocoa.controller.folder.state :as folder-state]
+            [cocoa.controller.edit-folder-tags :as edit-folder-tags]
+            [cocoa.components.header.state :as header-state]
+            [cocoa.components.nav.state :as nav-state]
+            [cocoa.components.folder.state :as folder-state]
 
             [cocoa.presenter.browser.url :as url]))
 

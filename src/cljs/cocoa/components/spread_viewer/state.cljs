@@ -1,4 +1,4 @@
-(ns cocoa.controller.spread-viewer.state)
+(ns cocoa.components.spread-viewer.state)
 
 (defn spread-urls-state [left-url right-url]
   {:left left-url :right right-url})
