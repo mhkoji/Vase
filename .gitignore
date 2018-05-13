@@ -1,0 +1,16 @@
+resources/compiled
+resources/contents/thumbs
+*~
+node_modules
+
+pom.xml
+*jar
+/lib/
+/classes/
+/out/
+/release/
+/target/
+.lein-deps-sum
+.lein-repl-history
+.lein-plugins/
+.repl*
