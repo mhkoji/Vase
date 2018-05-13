@@ -22,7 +22,9 @@ $ mkdir /tmp/cooca
 $ mkdir /tmp/cocoa/thumbnails
 ```
 
-2. Create a context
+2. Load the lisp files with the cocoa.asd
+
+3. Create a context
 
 ```
 CL-USER> (defvar *context*
@@ -35,13 +37,13 @@ CL-USER> (defvar *context*
             :thumbnail-root "/tmp/cocoa/thumbnails/"))
 ```
 
-2. Run the server with the context
+4. Run the server with the context
 
 ```
 CL-USER> (cocoa.controller.ningle:run :context *context*)
 ```
 
-3. Install folder data
+5. Install folder data
 
 ```
 CL-USER> (cocoa.controller.cli.setup-folder:setup "./resources/contents/images/" :context *context*) 
