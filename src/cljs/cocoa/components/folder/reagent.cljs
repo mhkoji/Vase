@@ -1,5 +1,7 @@
 (ns cocoa.components.folder.reagent
-  (:require [cocoa.presenter.browser.url :as url]))
+  (:require [cocoa.presenter.browser.url :as url]
+            [cocoa.components.tag-edit-button.reagent
+             :refer [tag-edit-button]]))
 
 (defn card [{:keys [folder-id name thumbnail-url on-edit-tag]}]
   (let [link (url/folder folder-id)]
@@ -10,8 +12,7 @@
      [:div {:class "card-body"}
       [:div {:class "card-title"} name]
       (when on-edit-tag
-        [:p [:button {:type "button" :class "btn" :on-click on-edit-tag}
-             "Tags"]])]]))
+        [:p [tag-edit-button {:on-edit on-edit-tag}]])]]))
 
 (defn rows [num% items item-key item-render]
   (let [count (count items)]

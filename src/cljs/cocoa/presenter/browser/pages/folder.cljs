@@ -3,6 +3,8 @@
             [reagent.core :as r]
             [cocoa.components.header.reagent :as reagent-header]
             [cocoa.components.spread-viewer.reagent :as spread-viewer]
+            [cocoa.components.tag-edit-button.reagent
+             :refer [tag-edit-button]]
             [cocoa.components.tag_editing.reagent
              :refer [modal-editing-tag]]))
 
@@ -24,10 +26,7 @@
             [:div "Loading..."]
             [:container
              [:div
-              [:p [:button {:type "button"
-                            :class "btn"
-                            :on-click edit-folder-tags}
-                   "Tags"]]]
+              [:p [tag-edit-button {:on-edit edit-folder-tags}]]]
              [:div {:class "row"}
               (for [thumb thumbnails]
                 ^{:key (-> thumb :id)}
