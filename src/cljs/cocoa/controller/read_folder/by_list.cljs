@@ -3,6 +3,7 @@
             [cocoa.entity.folder :as folder]
             [cocoa.use-case.load-folder :as load-folder]
             [cocoa.components.header.state :as header-state]
+            [cocoa.controller.edit-folder-tags :as edit-folder-tags]
 
             [cocoa.presenter.browser.url :as url]))
 
@@ -13,6 +14,11 @@
    {:folder (folder/save-folder
              (folder/repository. [])
              {:folder-id folder-id :images images})}
+   :substore
+   {:edit-folder-tags
+    (edit-folder-tags/create-store
+     #(update-store!
+       (fn [s] (update-in s [:substore :edit-folder-tags] %))))}
    :update-db
    {:folder
     #(update-store! (fn [s] (update-in s [:db :folder] %)))}})
@@ -32,10 +38,17 @@
      :body
      {:title
       (or (-> folder :name) "Folder")
+      :tag
+      (edit-folder-tags/store-state
+       (-> store :substore :edit-folder-tags))
       :thumbnails
       (if-let [images (-> folder :images)]
         (map (partial image->thumbnail-state folder-id) images)
         nil)}
+     :edit-folder-tags
+     #(edit-folder-tags/store-start-edit
+       (-> store :substore :edit-folder-tags)
+       (-> store :const :folder-id))
      :load-folder
      #(load-folder/load-folder folder-repos
                                (-> store :update-db :folder)

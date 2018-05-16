@@ -2,9 +2,11 @@
   (:require [goog.events :as gevents]
             [reagent.core :as r]
             [cocoa.components.header.reagent :as reagent-header]
-            [cocoa.components.spread-viewer.reagent :as spread-viewer]))
+            [cocoa.components.spread-viewer.reagent :as spread-viewer]
+            [cocoa.components.tag_editing.reagent
+             :refer [modal-editing-tag]]))
 
-(defn list-page [{:keys [header body load-folder]}]
+(defn list-page [{:keys [header body load-folder edit-folder-tags]}]
   (r/create-class
    {:component-did-mount
     (fn [this]
@@ -14,12 +16,18 @@
     (fn [{:keys [body]}]
       [:div
        [reagent-header/header header]
-       (let [{:keys [title thumbnails]} body]
+       (let [{:keys [title tag thumbnails]} body]
          [:main {:class "pt-3 px-4"}
           [:h1 {:class "h2"} title]
+          (when tag [modal-editing-tag tag])
           (if (not thumbnails)
             [:div "Loading..."]
             [:container
+             [:div
+              [:p [:button {:type "button"
+                            :class "btn"
+                            :on-click edit-folder-tags}
+                   "Tags"]]]
              [:div {:class "row"}
               (for [thumb thumbnails]
                 ^{:key (-> thumb :id)}
