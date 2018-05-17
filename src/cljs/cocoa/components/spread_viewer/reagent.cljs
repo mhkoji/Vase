@@ -1,6 +1,7 @@
 (ns cocoa.components.spread-viewer.reagent
   (:require  [goog.events :as gevents]
-             [reagent.core :as r]))
+             [reagent.core :as r]
+             [cocoa.components.progress.reagent :as reagent-progress]))
 
 (defn set-max-size! [elem & {:keys [width height]}]
   (let [style (.-style elem)]
@@ -75,14 +76,5 @@
                 [:a {:href link-to}
                  [:img {:src src :class base-name}]]]))
 
-           (let [{:keys [now max]} progress
-                 width (* 100 (/ (+ 1 now) max))]
-             [:div {:class "progress"}
-              [:div {:class (str "progress-bar "
-                                 "progress-bar-info "
-                                 "progress-bar-striped")
-                     :role "progressbar"
-                     :aria-valuenow now
-                     :aria-valuemin "0"
-                     :aria-valuemax max
-                     :style {:width (str width "%")}}]])]]])})))
+           (reagent-progress/progress progress)]]])})))
+

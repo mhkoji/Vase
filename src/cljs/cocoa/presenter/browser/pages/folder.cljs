@@ -3,6 +3,8 @@
             [reagent.core :as r]
             [cocoa.components.header.reagent :as reagent-header]
             [cocoa.components.spread-viewer.reagent :as spread-viewer]
+            [cocoa.components.viewer.single-image.reagent
+             :refer [single-image-viewer]]
             [cocoa.components.tag-edit-button.reagent
              :refer [tag-edit-button]]
             [cocoa.components.tag_editing.reagent
@@ -37,6 +39,36 @@
                           :src (-> thumb :thumbnail-url)}]]]])]])])])}))
 
 
+(defn generic-viewer-page [{:keys [header render resize load-images]}]
+  (letfn [(resize-window []
+            (resize {:width  (.-innerWidth js/window)
+                     :height (.-innerHeight js/window)}))]
+    (r/create-class
+     {:component-did-mount
+      (fn [this]
+        (.addEventListener js/window
+                           gevents/EventType.RESIZE
+                           resize-window)
+        (resize-window)
+        (load-images))
+
+      :component-will-unmount
+      (fn [this]
+        (.removeEventListener js/window
+                              gevents/EventType.RESIZE
+                              resize-window))
+
+      :reagent-render
+      (fn [{:keys [header render]}]
+        (cond header
+              [:div
+               [reagent-header/header header]
+               [:main {:class "pt-3 px-4"}
+                [:h1 {:class "h2"} "Folder"]
+                [:div "Loading..."]]]
+              render
+              (render)))})))
+
 (defn spread-page [{:keys [header viewer resize load-images]}]
   (letfn [(resize-window []
             (resize {:width  (.-innerWidth js/window)
@@ -66,3 +98,12 @@
                 [:div "Loading..."]]]
               viewer
               [spread-viewer/spread-viewer viewer]))})))
+
+
+(defn single-image-viewer-page [{:keys [header resize viewer load-images]}]
+  [generic-viewer-page {:header header
+                        :resize resize
+                        :load-images load-images
+                        :render (when viewer
+                                  (fn [_]
+                                    [single-image-viewer viewer]))}])

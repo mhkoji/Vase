@@ -10,6 +10,8 @@
              :as read-folder-by-list]
             [cocoa.controller.read-folder.by-spread
              :as read-folder-by-spread]
+            [cocoa.controller.read-folder.by-single-image-viewer
+             :as read-folder-by-single-image-viewer]
             [cocoa.controller.read-folders
              :as read-folders]
             [cocoa.controller.tagged-folder-list
@@ -51,17 +53,24 @@
   (render-iter
    (let [uri (goog.Uri. (let [hash (.-hash js/location)]
                           (if (= hash "") "" (subs hash 1))))]
-     (if (= (.getPath uri) "spread")
-       {:create #(read-folder-by-spread/create-store % folder-id nil)
-        :render #(r/render
-                  [cocoa.presenter.browser.pages.folder/spread-page
-                   (read-folder-by-spread/store-state %)]
-                  elem)}
-       {:create #(read-folder-by-list/create-store % folder-id nil)
-        :render #(r/render
-                  [cocoa.presenter.browser.pages.folder/list-page
-                   (read-folder-by-list/store-state %)]
-                  elem)}))))
+     (cond (= (.getPath uri) "spread")
+           {:create #(read-folder-by-spread/create-store % folder-id nil)
+            :render #(r/render
+                      [cocoa.presenter.browser.pages.folder/spread-page
+                       (read-folder-by-spread/store-state %)]
+                      elem)}
+           (= (.getPath uri) "single")
+           {:create #(read-folder-by-single-image-viewer/create-store % folder-id nil)
+            :render #(r/render
+                      [cocoa.presenter.browser.pages.folder/single-image-viewer-page
+                       (read-folder-by-single-image-viewer/store-state %)]
+                      elem)}
+           :else
+           {:create #(read-folder-by-list/create-store % folder-id nil)
+            :render #(r/render
+                      [cocoa.presenter.browser.pages.folder/list-page
+                       (read-folder-by-list/store-state %)]
+                      elem)}))))
 
 (defn folder-render [{:keys [folder-id]} elem]
   (let [history (goog.History.)]
