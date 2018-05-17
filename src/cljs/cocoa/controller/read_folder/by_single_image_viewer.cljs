@@ -7,7 +7,7 @@
             [cocoa.components.viewer.single-image.state
              :as single-image-viewer-state]
             [cocoa.presenter.browser.url :as url]
-            [cocoa.controller.read-folder.by-spread
+            [cocoa.controller.read-folder.by-double-image-viewer
              :refer [thumbnail-range increment-index set-size]]))
 
 (defn create-store [update-store! folder-id images]

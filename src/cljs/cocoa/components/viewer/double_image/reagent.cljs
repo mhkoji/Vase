@@ -1,4 +1,4 @@
-(ns cocoa.components.spread-viewer.reagent
+(ns cocoa.components.viewer.double-image.reagent
   (:require  [goog.events :as gevents]
              [reagent.core :as r]
              [cocoa.components.progress.reagent :as reagent-progress]))
@@ -25,7 +25,7 @@
   (let [key-code (.-keyCode evt)]
     (or (= key-code 32) (= key-code 39) (= key-code 40))))
 
-(defn spread-viewer [{:keys [on-diff]}]
+(defn double-image-viewer [{:keys [on-diff]}]
   (let [left-elem      (atom nil)
         right-elem     (atom nil)
         thumbnail-elem (atom nil)
@@ -77,4 +77,3 @@
                  [:img {:src src :class base-name}]]]))
 
            (reagent-progress/progress progress)]]])})))
-

@@ -1,9 +1,10 @@
-(ns cocoa.controller.read-folder.by-spread
+(ns cocoa.controller.read-folder.by-double-image-viewer
   (:require [cljs.core.async :refer [go <!]]
             [cocoa.entity.folder :as folder]
             [cocoa.use-case.load-folder :as load-folder-use-case]
             [cocoa.components.header.state :as header-state]
-            [cocoa.components.spread-viewer.state :as spread-viewer-state]
+            [cocoa.components.viewer.double-image.state
+             :as double-image-viewer-state]
             [cocoa.presenter.browser.url :as url]))
 
 (defn create-store [update-store! folder-id images]
@@ -46,31 +47,31 @@
           (let [begin (- index half-width)]
             {:begin begin :end (+ begin width)}))))
 
-(defn store-spread-viewer-state [store]
+(defn store-double-image-viewer-state [store]
   (let [folder-id (-> store :const :folder-id)
         folder-repos (-> store :db :folder)
         folder (folder/find-folder-by-id folder-repos folder-id)]
     (when-let [images (-> folder :images)]
       (let [index  (-> store :db :index)
             length (count images)]
-        (spread-viewer-state/state
+        (double-image-viewer-state/state
          :size
          (-> store :db :viewer-size)
 
          :spread-urls
          (cond (= index 0)
-               (spread-viewer-state/spread-urls-state
+               (double-image-viewer-state/spread-urls-state
                 (-> (nth images 0) :url)
                 "")
                (= index (- length 1))
-               (spread-viewer-state/spread-urls-state
+               (double-image-viewer-state/spread-urls-state
                 (-> (nth images (- length 1)) :url)
                 "")
                :else
                (let [idx (if (= (rem index 2) 1)
                            index
                            (- index 1))]
-                 (spread-viewer-state/spread-urls-state
+                 (double-image-viewer-state/spread-urls-state
                   (-> (nth images (+ 1 idx)) :url)
                   (-> (nth images idx)       :url))))
 
@@ -80,14 +81,14 @@
                           (thumbnail-range index length 3)]
                       (take (- end begin) (drop begin images)))]
              (let [id (-> im :image-id)]
-               (spread-viewer-state/thumbnail-state
+               (double-image-viewer-state/thumbnail-state
                 id
                 (-> im :url)
                 (url/read-folder-by-spread folder-id id)
                 (= id highlighted-id)))))
 
          :progress
-         (spread-viewer-state/progress-state index length)
+         (double-image-viewer-state/progress-state index length)
 
          :on-diff
          #(increment-index (-> store :update-db :index) length %))))))
@@ -101,7 +102,7 @@
 
 (defn store-state [store]
   {:header (store-header-state store)
-   :viewer (store-spread-viewer-state store)
+   :viewer (store-double-image-viewer-state store)
    :resize #(set-size (-> store :update-db :viewer-size)
                       (-> % :width)
                       (-> % :height))

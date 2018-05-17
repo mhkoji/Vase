@@ -1,8 +1,9 @@
 (ns cocoa.components.viewer.single-image.reagent
   (:require  [goog.events :as gevents]
              [reagent.core :as r]
+             [cocoa.components.progress.reagent :as reagent-progress]
 
-             [cocoa.components.spread-viewer.reagent
+             [cocoa.components.viewer.double-image.reagent
               :refer [forward-keydown-p]]))
 
 (defn set-max-size! [elem & {:keys [width height]}]
@@ -70,12 +71,4 @@
                 [:a {:href link-to}
                  [:img {:src src :class base-name}]]]))
 
-           (let [{:keys [now max]} progress
-                 width (* 100 (/ (+ 1 now) max))]
-             [:div {:class "progress"}
-              [:div {:class "progress-bar"
-                     :style {:width (str width "%")}
-                     :role "progressbar"
-                     :aria-valuenow width
-                     :aria-valuemin "0"
-                     :aria-valuemax "100"}]])]]])})))
+           (reagent-progress/progress progress)]]])})))

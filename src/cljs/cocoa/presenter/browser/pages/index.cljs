@@ -8,10 +8,10 @@
 
             [cocoa.controller.read-folder.by-list
              :as read-folder-by-list]
-            [cocoa.controller.read-folder.by-spread
-             :as read-folder-by-spread]
+            [cocoa.controller.read-folder.by-double-image-viewer
+             :as read-folder-by-double]
             [cocoa.controller.read-folder.by-single-image-viewer
-             :as read-folder-by-single-image-viewer]
+             :as read-folder-by-single]
             [cocoa.controller.read-folders
              :as read-folders]
             [cocoa.controller.tagged-folder-list
@@ -54,16 +54,16 @@
    (let [uri (goog.Uri. (let [hash (.-hash js/location)]
                           (if (= hash "") "" (subs hash 1))))]
      (cond (= (.getPath uri) "spread")
-           {:create #(read-folder-by-spread/create-store % folder-id nil)
+           {:create #(read-folder-by-double/create-store % folder-id nil)
             :render #(r/render
-                      [cocoa.presenter.browser.pages.folder/spread-page
-                       (read-folder-by-spread/store-state %)]
+                      [cocoa.presenter.browser.pages.folder/double-page
+                       (read-folder-by-double/store-state %)]
                       elem)}
            (= (.getPath uri) "single")
-           {:create #(read-folder-by-single-image-viewer/create-store % folder-id nil)
+           {:create #(read-folder-by-single/create-store % folder-id nil)
             :render #(r/render
-                      [cocoa.presenter.browser.pages.folder/single-image-viewer-page
-                       (read-folder-by-single-image-viewer/store-state %)]
+                      [cocoa.presenter.browser.pages.folder/single-page
+                       (read-folder-by-single/store-state %)]
                       elem)}
            :else
            {:create #(read-folder-by-list/create-store % folder-id nil)

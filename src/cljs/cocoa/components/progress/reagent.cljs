@@ -3,11 +3,9 @@
 (defn progress [{:keys [now max]}]
   (let [width (* 100 (/ (+ 1 now) max))]
     [:div {:class "progress"}
-     [:div {:class (str "progress-bar "
-                        "progress-bar-info "
-                        "progress-bar-striped")
+     [:div {:class "progress-bar"
+            :style {:width (str width "%")}
             :role "progressbar"
-            :aria-valuenow now
+            :aria-valuenow width
             :aria-valuemin "0"
-            :aria-valuemax max
-            :style {:width (str width "%")}}]]))
+            :aria-valuemax "100"}]]))

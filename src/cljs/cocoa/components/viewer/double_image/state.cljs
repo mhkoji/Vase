@@ -1,4 +1,4 @@
-(ns cocoa.components.spread-viewer.state)
+(ns cocoa.components.viewer.double-image.state)
 
 (defn spread-urls-state [left-url right-url]
   {:left left-url :right right-url})
@@ -16,4 +16,5 @@
   {:size        size
    :spread-urls spread-urls
    :thumbnails  thumbnails
+   :progress    progress
    :on-diff     on-diff})
