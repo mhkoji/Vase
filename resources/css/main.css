@@ -2,24 +2,18 @@ body {
   font-family: "メイリオ", sans-serif;
 }
 
-// Double image viewer
+.cocoa-component-singleimageviewer-right
 .cocoa-component-doubleimageviewer-right {
   display: inline;
 }
 
-// standard viwer
-.cocoa-component-standardviewer-left {
-  display: inline-block;
-  float: left;
-}
-
-.cocoa-component-standardviewer-mainimage {
+.cocoa-component-singleimageviewer-image {
   box-sizing: border-box;
   overflow: hidden;
   position: absolute;
 }
 
-.cocoa-component-standardviewer-mainimage img {
+.cocoa-component-singleviewer-image img {
   width: 100%;
 }
 
