@@ -1,14 +1,9 @@
 (ns cocoa.components.viewer.double-image.reagent
   (:require  [goog.events :as gevents]
              [reagent.core :as r]
+             [cocoa.components.viewer.util
+              :refer [set-max-size! forward-keydown-p forward-wheel-p]]
              [cocoa.components.progress.reagent :as reagent-progress]))
-
-(defn set-max-size! [elem & {:keys [width height]}]
-  (let [style (.-style elem)]
-    (when width
-      (set! (.-maxWidth style) (str width "px")))
-    (when height
-      (set! (.-maxHeight style) (str height "px")))))
 
 (defn resize-viewer! [left-elem right-elem thumbnail-elem
                       {:keys [height width]}]
@@ -21,15 +16,12 @@
 (defn make-diff [forward-p]
   (if forward-p 2 -2))
 
-(defn forward-keydown-p [evt]
-  (let [key-code (.-keyCode evt)]
-    (or (= key-code 32) (= key-code 39) (= key-code 40))))
-
 (defn double-image-viewer [{:keys [on-diff]}]
   (let [left-elem      (atom nil)
         right-elem     (atom nil)
         thumbnail-elem (atom nil)
-        on-keydown     #(on-diff (make-diff (forward-keydown-p %)))]
+        on-keydown     (comp on-diff make-diff forward-keydown-p)
+        on-wheel       (comp on-diff make-diff forward-wheel-p)]
     (r/create-class
      {:component-did-mount
       (fn [comp]
@@ -54,8 +46,7 @@
 
          [:div {:class "cocoa-component-doubleimageviewer-left"
                 :style {:position "absolute" :float "left"}}
-          (let [{:keys [left right]} spread-urls
-                on-wheel #(on-diff (make-diff (< 0 (.-deltaY %))))]
+          (let [{:keys [left right]} spread-urls]
             [:div
              [:div {:on-wheel on-wheel :style {:display "inline-block"}}
               [:img {:src left :ref #(reset! left-elem %)}]]

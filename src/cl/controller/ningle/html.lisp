@@ -36,4 +36,4 @@
       :crossorigin "anonymous")
      (:script
       :type "text/javascript"
-      :src "/resources/third_party/bootstrap-4.0.0/dist/js/bootstrap.min.js")))))
+      :src "/resources/third_party/bootstrap-4.0.0/dist/js/bootstrap.bundle.min.js")))))

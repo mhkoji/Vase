@@ -9,9 +9,18 @@
 (defn progress-state [now max]
   {:now now :max max})
 
-(defn state [& {:keys [size image-url thumbnails progress on-diff]}]
-  {:size        size
-   :image-url   image-url
-   :thumbnails  thumbnails
-   :progress    progress
-   :on-diff     on-diff})
+(defn viewer-select [& {:keys [id name link]}]
+  {:id id :name name :link link})
+
+(defn state [& {:keys [size
+                       image-url
+                       thumbnails
+                       viewer-select-list
+                       progress
+                       on-diff]}]
+  {:size  size
+   :image-url image-url
+   :thumbnails thumbnails
+   :progress progress
+   :viewer-select-list viewer-select-list
+   :on-diff  on-diff})

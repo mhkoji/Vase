@@ -56,6 +56,17 @@
          :progress
          (single-image-viewer-state/progress-state index length)
 
+         :viewer-select-list
+         [(single-image-viewer-state/viewer-select
+           :id "single" :name "Single" :link "#")
+          (single-image-viewer-state/viewer-select
+           :id "double" :name "Double"
+           :link (url/read-folder-by-spread
+                  folder-id
+                  (-> images (nth index) :image-id)))
+          (single-image-viewer-state/viewer-select
+           :id "list" :name "List" :link (url/folder folder-id))]
+
          :on-diff
          #(increment-index (-> store :update-db :index) length %))))))
 
