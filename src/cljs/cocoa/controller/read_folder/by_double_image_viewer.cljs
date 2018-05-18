@@ -47,7 +47,7 @@
           (let [begin (- index half-width)]
             {:begin begin :end (+ begin width)}))))
 
-(defn store-double-image-viewer-state [store]
+(defn store-viewer-state [store]
   (let [folder-id (-> store :const :folder-id)
         folder-repos (-> store :db :folder)
         folder (folder/find-folder-by-id folder-repos folder-id)]
@@ -100,13 +100,10 @@
     (when (not (-> folder :images))
       (header-state/get-state :folder))))
 
-(defn store-state [store]
-  {:header (store-header-state store)
-   :viewer (store-double-image-viewer-state store)
-   :resize #(set-size (-> store :update-db :viewer-size)
-                      (-> % :width)
-                      (-> % :height))
-   :load-images #(load-folder-use-case/load-folder
-                  (-> store :db :folder)
-                  (-> store :update-db :folder)
-                  (-> store :const :folder-id))})
+(defn store-load-images! [store]
+  (load-folder-use-case/load-folder (-> store :db :folder)
+                                    (-> store :update-db :folder)
+                                    (-> store :const :folder-id)))
+
+(defn store-resize! [store width height]
+  (set-size (-> store :update-db :viewer-size) width height))

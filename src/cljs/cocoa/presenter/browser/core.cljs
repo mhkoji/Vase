@@ -2,7 +2,9 @@
   (:require [clojure.browser.repl :as repl]
             [goog.dom :as gdom]
             [bidi.bidi :refer [match-route]]
-            [cocoa.presenter.browser.pages.index :as index]))
+            [cocoa.presenter.browser.pages.folder]
+            [cocoa.presenter.browser.pages.folders]
+            [cocoa.presenter.browser.pages.tag-folders]))
 
 ;; (defonce conn
 ;;   (repl/connect "http://localhost:9000/repl"))
@@ -12,21 +14,17 @@
 (def *routes*
   ["/"
    {["folder/" :folder-id]
-    (fn [params elem]
-      (index/folder-render params elem))
+    cocoa.presenter.browser.pages.folder/show
 
     "folders"
-    (fn [params elem]
-      (index/folders-render params elem))
+    cocoa.presenter.browser.pages.folders/show
 
     ["tag/" :tag-id "/folders"]
-    (fn [params elem]
-      (index/tag-folders-render params elem))
+    cocoa.presenter.browser.pages.tag-folders/show
 
     "tags"
-    (fn [params elem]
-      (index/tag-folders-render {} elem))}])
+    cocoa.presenter.browser.pages.tag-folders/show}])
 
 (let [{:keys [handler route-params]}
       (match-route *routes* (.-pathname js/location))]
-  (handler route-params (gdom/getElement "app")))
+  (handler (gdom/getElement "app") route-params))

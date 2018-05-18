@@ -54,9 +54,9 @@
 (defn store-header-state [store]
   (header-state/get-state :folder))
 
-(defn store-load-folders [store]
-  (load-folders-use-case/load-all (-> store :update-db :folder)
-                                  (-> store :const :ranges :curr)))
-
 (defn store-tag-state [store]
   (edit-folder-tags/store-state (-> store :substore :edit-folder-tags)))
+
+(defn store-load-folders! [store]
+  (load-folders-use-case/load-all (-> store :update-db :folder)
+                                  (-> store :const :ranges :curr)))

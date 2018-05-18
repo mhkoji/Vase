@@ -29,27 +29,25 @@
      :link (url/read-folder-by-spread folder-id image-id)
      :thumbnail-url url}))
 
-(defn store-state [store]
+(defn store-header-state [store]
+  (header-state/get-state :folder))
+
+(defn store-body-state [store]
   (let [folder-repos (-> store :db :folder)
         folder-id    (-> store :const :folder-id)
         folder       (folder/find-folder-by-id folder-repos folder-id)]
-    {:header
-     (header-state/get-state :folder)
-     :body
-     {:title
-      (or (-> folder :name) "Folder")
-      :tag
-      (edit-folder-tags/store-state
-       (-> store :substore :edit-folder-tags))
-      :thumbnails
-      (if-let [images (-> folder :images)]
-        (map (partial image->thumbnail-state folder-id) images)
-        nil)}
-     :edit-folder-tags
-     #(edit-folder-tags/store-start-edit
-       (-> store :substore :edit-folder-tags)
-       (-> store :const :folder-id))
-     :load-folder
-     #(load-folder/load-folder folder-repos
-                               (-> store :update-db :folder)
-                               folder-id)}))
+    {:title (or (-> folder :name) "Folder")
+     :tag (edit-folder-tags/store-state
+           (-> store :substore :edit-folder-tags))
+     :thumbnails (if-let [images (-> folder :images)]
+                   (map (partial image->thumbnail-state folder-id) images)
+                   nil)}))
+
+(defn store-edit-folder-tags! [store]
+  (edit-folder-tags/store-start-edit (-> store :substore :edit-folder-tags)
+                                     (-> store :const :folder-id)))
+
+(defn store-load-folder! [store]
+  (load-folder/load-folder (-> store :db :folder)
+                           (-> store :update-db :folder)
+                           (-> store :const :folder-id)))
