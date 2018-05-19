@@ -41,7 +41,8 @@
          js/window gevents/EventType.KEYDOWN on-keydown))
 
       :reagent-render
-      (fn [{:keys [spread-urls thumbnails progress on-diff]}]
+      (fn [{:keys [spread-urls thumbnails viewer-select-list progress
+                   on-diff]}]
         [:div {:class "cocoa-component-doubleimageviewer"}
 
          [:div {:class "cocoa-component-doubleimageviewer-left"
@@ -56,6 +57,23 @@
          [:div {:class "cocoa-component-doubleimageviewer-right"}
           [:div {:ref #(reset! thumbnail-elem %)
                  :class "cocoa-component-standardviewer-thumbnails"}
+
+           [:div {:class "dropdown"}
+            [:a {:class "btn btn-secondary dropdown-toggle"
+                 :href "#"
+                 :role "button"
+                 :id "dropdownMenuLink"
+                 :data-toggle "dropdown"
+                 :aria-haspopup "true"
+                 :aria-expanded "false"}
+             (-> viewer-select-list first :name)]
+
+            [:div {:class "dropdown-menu"
+                   :aria-labelledby "dropdownMenuLink"}
+             (for [{:keys [id name link]} (rest viewer-select-list)]
+               ^{:key id}
+               [:a {:class "dropdown-item" :href link}
+                name])]]
 
            (let [base-name "cocoa-component-standardviewer-thumbnail"]
              (for [{:keys [id src link-to highlighted-p]} thumbnails]

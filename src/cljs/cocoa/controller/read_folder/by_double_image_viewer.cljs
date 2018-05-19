@@ -75,6 +75,17 @@
                   (-> (nth images (+ 1 idx)) :url)
                   (-> (nth images idx)       :url))))
 
+         :viewer-select-list
+         [(double-image-viewer-state/viewer-select
+           :id "double" :name "Double" :link "#")
+          (double-image-viewer-state/viewer-select
+           :id "single" :name "Single"
+           :link (url/read-folder-by-single
+                  folder-id
+                  (-> images (nth index) :image-id)))
+          (double-image-viewer-state/viewer-select
+           :id "list" :name "List" :link (url/folder folder-id))]
+
          :thumbnails
          (let [highlighted-id (:image-id (nth images index))]
            (for [im (let [{:keys [begin end]}

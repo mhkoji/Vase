@@ -12,9 +12,18 @@
    :link-to link-to
    :highlighted-p highlighted-p})
 
-(defn state [& {:keys [size spread-urls thumbnails progress on-diff]}]
-  {:size        size
+(defn viewer-select [& {:keys [id name link]}]
+  {:id id :name name :link link})
+
+(defn state [& {:keys [size
+                       spread-urls
+                       thumbnails
+                       viewer-select-list
+                       progress
+                       on-diff]}]
+  {:size size
    :spread-urls spread-urls
-   :thumbnails  thumbnails
-   :progress    progress
-   :on-diff     on-diff})
+   :thumbnails thumbnails
+   :viewer-select-list viewer-select-list
+   :progress progress
+   :on-diff on-diff})

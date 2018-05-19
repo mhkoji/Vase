@@ -12,6 +12,9 @@
 (defn read-folder-by-spread [folder-id image-id]
   (str "/folder/" folder-id "#spread?image=" image-id))
 
+(defn read-folder-by-single [folder-id image-id]
+  (str "/folder/" folder-id "#single?image=" image-id))
+
 (defn tags []
   "/tags")
 

@@ -21,6 +21,6 @@
   {:size  size
    :image-url image-url
    :thumbnails thumbnails
-   :progress progress
    :viewer-select-list viewer-select-list
+   :progress progress
    :on-diff  on-diff})
