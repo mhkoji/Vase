@@ -1,5 +1,5 @@
 (asdf:defsystem :cocoa
-  :pathname #P"src/cl/"
+  :pathname #P"src/"
   :serial t
   :components
   ((:file "entity/folder/folder")
@@ -29,14 +29,7 @@
 
    (:file "infra/file/thumbnail")
    (:file "infra/file/retrieve")
-
-   (:file "controller/context")
-   (:file "controller/cli/setup-folder")
-   (:file "controller/ningle/json")
-   (:file "controller/ningle/html")
-   (:file "controller/ningle/bind")
-   (:file "controller/ningle/run")
-   )
+   (:file "infra/context"))
 
   :depends-on (;; For proton
                :cl-dbi
@@ -46,13 +39,5 @@
                :alexandria
                :anaphora
                :cl-annot
-               :cl-arrows
-               :cl-who
-               :clack
-               :ironclad
-               :jsown
-               :log4cl
-               :ningle
-               :lack
-               :lack-middleware-static
-               :local-time))
+               :cl-fad
+               :ironclad))

@@ -9,7 +9,7 @@ release:
 core:
 	ros run -e "\
 	(progn\
-	  (ql:quickload :cocoa)\
+	  (ql:quickload :cocoa-web)\
 	  (require :swank)\
-	  (sb-ext:save-lisp-and-die \"cocoa-sbcl.core\"))\
+	  (sb-ext:save-lisp-and-die \"cocoa-web.sbcl.core\"))\
 	"\

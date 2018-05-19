@@ -1,5 +1,5 @@
-resources/compiled
-resources/contents/thumbs
+cocoa-web/resources/compiled
+cocoa-web/target
 *~
 node_modules
 

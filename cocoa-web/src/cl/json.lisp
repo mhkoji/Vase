@@ -1,6 +1,6 @@
-(defpackage :cocoa.controller.ningle.json
+(defpackage :cocoa.web.json
   (:use :cl))
-(in-package :cocoa.controller.ningle.json)
+(in-package :cocoa.web.json)
 (cl-annot:enable-annot-syntax)
 
 @export

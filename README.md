@@ -11,28 +11,32 @@ $ apt install imagemagic
 ```
 
 ```
-$ cd /path/to/cocoa
+$ cd /path/to/cocoa/cocoa-web
 $ make
 ```
 
-## Run
+## Run the web server
 
-1. Create a directory to store the data for the server
+1. Create directories to store the data for the server
 
 ```
 $ mkdir /tmp/cooca
 $ mkdir /tmp/cocoa/thumbnails
 ```
 
-2. Load the lisp files with the cocoa.asd
+2. Load lisp files with the cocoa.asd
+
+```
+CL-USER> (ql:quickload :cocoa-web)
+```
 
 3. Create a context
 
 ```
 CL-USER> (defvar *context*
-           (cocoa.controller.context:make-context
+           (cocoa.infra.context:make-context
             :digest-fn
-            #'cocoa.controller.context:sha256-3
+            #'cocoa.infra.context:sha256-3
             :connection-factory
             (make-instance 'proton:sqlite3-factory
                            :db-path "/tmp/cocoa/db.sqlite3")
@@ -42,13 +46,13 @@ CL-USER> (defvar *context*
 4. Run the server with the context
 
 ```
-CL-USER> (cocoa.controller.ningle:run :context *context*)
+CL-USER> (cocoa.web:run :context *context*)
 ```
 
-5. Install folder data
+5. Add sample folders
 
 ```
-CL-USER> (cocoa.controller.cli.setup-folder:setup "./resources/contents/images/" :context *context*) 
+CL-USER> (cocoa.web:add-folders "./resources/contents/images/" :context *context*) 
 ```
 
 Then, access http://localhost:18888/folders

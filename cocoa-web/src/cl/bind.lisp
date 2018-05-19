@@ -3,13 +3,11 @@
 ;;; 2. Prepare objects used for executing the controller task
 ;;; 3. Execute the task with the input and prepared objects
 ;;; 4. Send the output of the task in a formatted style
-(defpackage :cocoa.controller.ningle.bind
-  (:use :cl
-        :cocoa.controller.ningle.json
-        :cocoa.controller.ningle.html)
-  (:import-from :cocoa.controller.context
+(defpackage :cocoa.web.bind
+  (:use :cl :cocoa.web.json :cocoa.web.html)
+  (:import-from :cocoa.infra.context
                 :with-dao))
-(in-package :cocoa.controller.ningle.bind)
+(in-package :cocoa.web.bind)
 (cl-annot:enable-annot-syntax)
 
 (defun make-json-response (result &optional (success t))

@@ -1,6 +1,6 @@
-(defpackage :cocoa.controller.ningle.html
+(defpackage :cocoa.web.html
   (:use :cl))
-(in-package :cocoa.controller.ningle.html)
+(in-package :cocoa.web.html)
 (cl-annot:enable-annot-syntax)
 
 @export

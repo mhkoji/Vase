@@ -1,7 +1,26 @@
-(defpackage :cocoa.controller.cli.setup-folder
-  (:use :cl :cocoa.controller.context))
-(in-package :cocoa.controller.cli.setup-folder)
+(defpackage :cocoa.web
+  (:use :cl
+        :cocoa.infra.context
+        :cocoa.web.bind)
+  (:import-from :cl-arrows :->))
+(in-package :cocoa.web)
 (cl-annot:enable-annot-syntax)
+
+(defvar *handler* nil)
+
+@export
+(defun run (&key (port 18888)
+                 (context (load-context)))
+  (when *handler*
+    (clack:stop *handler*))
+  (setq *handler*
+        (clack:clackup
+         (-> (make-instance 'ningle:<app>)
+             (bind-resources! (namestring *default-pathname-defaults*))
+             (bind-api! :context context)
+             (bind-html!))
+         :port port)))
+
 
 (defun thumbnail-factory (thumbnail-root)
   (lambda (source-file)
@@ -16,10 +35,10 @@
       thumbnail-file)))
 
 @export
-(defun setup (root-dir
-              &key (context (load-context))
-                   (sort-files #'identity)
-                   (initialize-data-p t))
+(defun add-folders (root-dir
+                    &key (context (load-context))
+                         (sort-files #'identity)
+                         (initialize-data-p t))
   (with-dao (dao context)
     (when initialize-data-p
       (initialize dao))

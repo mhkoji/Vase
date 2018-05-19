@@ -1,6 +1,6 @@
-(defpackage :cocoa.controller.context
+(defpackage :cocoa.infra.context
   (:use :cl))
-(in-package :cocoa.controller.context)
+(in-package :cocoa.infra.context)
 (cl-annot:enable-annot-syntax)
 
 @export
