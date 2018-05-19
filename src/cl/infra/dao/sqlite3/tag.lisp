@@ -96,5 +96,5 @@
                 "WHERE"
                 "  tags.tag_id = ?"
                 "ORDER BY"
-                "  tag_contents.content_id ASC")
+                "  tag_contents.id DESC")
           (list tag-id))))

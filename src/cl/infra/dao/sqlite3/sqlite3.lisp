@@ -65,9 +65,9 @@
               );")
   (query dao "DROP TABLE IF EXISTS tag_contents;")
   (query dao "CREATE TABLE   tag_contents (
+               id           INTEGER      PRIMARY KEY AUTOINCREMENT,
                tag_id       varchar(256) NOT NULL,
                content_id   varchar(256) NOT NULL,
-               content_type varchar(256) NOT NULL,
-               added_at     datetime     CURRENT_TIMESTAMP
+               content_type varchar(256) NOT NULL
               );")
   )
