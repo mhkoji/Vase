@@ -19,10 +19,6 @@
       :href "/resources/third_party/bootstrap-4.0.0/dist/css/bootstrap.min.css")
      (:link
       :rel "stylesheet"
-      :type "text/css"
-      :href "/resources/third_party/bootstrap-4.0.0/dist/css/bootstrap-theme.min.css")
-     (:link
-      :rel "stylesheet"
       :href "/resources/third_party/open-iconic-1.1.0/font/css/open-iconic-bootstrap.css")
 
      (:body
