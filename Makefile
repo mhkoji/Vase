@@ -9,7 +9,7 @@ release:
 core:
 	ros run -e "\
 	(progn\
-	  (ql:quickload :carbonate)\
+	  (ql:quickload :cocoa)\
 	  (require :swank)\
-	  (sb-ext:save-lisp-and-die \"carbonate-sbcl.core\"))\
+	  (sb-ext:save-lisp-and-die \"cocoa-sbcl.core\"))\
 	"\
