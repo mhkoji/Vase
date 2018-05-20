@@ -5,42 +5,33 @@
 (in-package :cocoa.use-case.folder.inject)
 (cl-annot:enable-annot-syntax)
 
-(defun add-images (paths &key image-factory image-repository)
-  (let ((images (cocoa.entity.image:make-images/paths image-factory paths)))
-    (cocoa.entity.image:save-images image-repository images)
-    images))
+(defun image-id (image)
+  (getf image :id))
 
 
-(defclass simple-thumbnail ()
+(defclass image-thumbnail ()
   ((thumbnail-id
     :initarg :thumbnail-id
     :reader thumbnail-id)))
 
-(defun image->thumbnail (image)
-  (make-instance 'simple-thumbnail
-                 :thumbnail-id (cocoa.entity.image:image-id image)))
-
 @export
 (defun make-thumbnail (path &key image-factory image-repository)
-  (image->thumbnail
-   (car (add-images (list path)
-                    :image-factory image-factory
-                    :image-repository image-repository))))
+  (let ((image (car (cocoa.use-case.image:add-images (list path)
+                     :image-factory image-factory
+                     :image-repository image-repository))))
+    (make-instance 'image-thumbnail :thumbnail-id (image-id image))))
 
 @export
 (defun thumbnail->image-id (thumbnail)
   (thumbnail-id thumbnail))
 
 
-(defclass simple-content ()
-  ((content-id
-    :initarg :content-id
-    :reader content-id)))
+(defclass image-content ()
+  ((content-id :reader content-id)))
 
-(defun image->content (image)
-  (let ((content-id (format nil "image:~A"
-                            (cocoa.entity.image:image-id image))))
-    (make-instance 'simple-content :content-id content-id)))
+(defmethod initialize-instance :after ((content image-content)
+                                       &key image-id)
+  (setf (slot-value content 'content-id) (format nil "image:~A" image-id)))
 
 @export
 (defun content->image-id (content)
@@ -50,6 +41,8 @@
 
 @export
 (defun make-image-contents (paths &key image-factory image-repository)
-  (mapcar #'image->content (add-images paths
-                                       :image-factory image-factory
-                                       :image-repository image-repository)))
+  (mapcar (lambda (image) (make-instance 'image-content
+                                         :image-id (image-id image)))
+          (cocoa.use-case.image:add-images paths
+           :image-factory image-factory
+           :image-repository image-repository)))
