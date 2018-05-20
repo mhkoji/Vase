@@ -6,20 +6,8 @@
 (cl-annot:enable-annot-syntax)
 
 @export
-(defun add-by-source-stream (source-plist-stream
-                             &key name->folder-id folder-repository)
-  (let ((sources nil))
-    (do-stream (source-plist source-plist-stream)
-      (destructuring-bind (&key name modified-at thumbnail contents)
-          source-plist
-        (push (make-source :folder-id (funcall name->folder-id name)
-                           :name name
-                           :contents contents
-                           :thumbnail thumbnail
-                           :modified-at modified-at)
-              sources)))
-    (save-folders/sources folder-repository sources)))
-
+(defun add-by-source-stream (source-stream &key folder-repository)
+  (save-folders/sources folder-repository (stream-to-list source-stream)))
 
 (defun image-id (image)
   (getf image :id))
@@ -47,25 +35,26 @@
 (defun add-by-local-directories (dir-stream
                                  &key (sort-file-paths #'identity)
                                       make-thumbnail-file
+                                      path->folder-id
+                                      folder-repository
                                       image-factory
-                                      image-repository
-                                      name->folder-id
-                                      folder-repository)
-  (labels ((dir->source-plist (dir)
+                                      image-repository)
+  (labels ((dir->source (dir)
              (let ((path (dir-path dir))
                    (file-paths (funcall sort-file-paths
                                         (dir-file-paths dir))))
-               (list :name path
-                     :modified-at (file-write-date path)
-                     :contents (make-image-contents
-                                file-paths
-                                :image-factory image-factory
-                                :image-repository image-repository)
-                     :thumbnail (make-thumbnail
-                                 (funcall make-thumbnail-file
-                                          (car file-paths))
-                                 :image-factory image-factory
-                                 :image-repository image-repository)))))
-    (add-by-source-stream (stream-map #'dir->source-plist dir-stream)
-                          :name->folder-id name->folder-id
-                          :folder-repository folder-repository)))
+               (make-source
+                :folder-id (funcall path->folder-id path)
+                :name path
+                :modified-at (file-write-date path)
+                :contents (make-image-contents
+                           file-paths
+                           :image-factory image-factory
+                           :image-repository image-repository)
+                :thumbnail (make-thumbnail
+                            (funcall make-thumbnail-file (car file-paths))
+                            :image-factory image-factory
+                            :image-repository image-repository)))))
+    (add-by-source-stream
+     (stream-map #'dir->source dir-stream)
+     :folder-repository folder-repository)))

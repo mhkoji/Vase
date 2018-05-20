@@ -24,7 +24,7 @@
 
 (defun make-thumbnail-factory (thumbnail-root)
   (lambda (source-file)
-    (log:info "Creating thumbnail for: ~A" source-file)
+    (log:debug "Creating thumbnail for: ~A" source-file)
     (let ((thumbnail-file
            (format nil
                    "~Athumbnail$~A"
@@ -52,7 +52,7 @@
        :sort-file-paths sort-file-paths
        :make-thumbnail-file (make-thumbnail-factory
                              (context-thumbnail-root context))
+       :path->folder-id (context-digest-fn context)
+       :folder-repository dao
        :image-factory (context-digest-fn context)
-       :image-repository dao
-       :name->folder-id (context-digest-fn context)
-       :folder-repository dao))))
+       :image-repository dao))))
