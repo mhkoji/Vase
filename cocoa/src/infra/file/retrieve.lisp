@@ -3,27 +3,22 @@
 (in-package :cocoa.infra.file.retrieve)
 (cl-annot:enable-annot-syntax)
 
-(defun files-and-dirs (dir sort-files)
+(defun files-and-subdirectories (dir)
   (let ((files nil)
-        (sub-directories nil))
+        (subdirectories nil))
     (dolist (child-path (cl-fad:list-directory dir))
       (if (cl-fad:directory-pathname-p child-path)
-          (push child-path sub-directories)
+          (push child-path subdirectories)
           (push (namestring child-path) files)))
-    (list (funcall sort-files (nreverse files)) sub-directories)))
+    (list (nreverse files) subdirectories)))
 
 @export
-(defun retrieve (root &key (sort-files #'identity) make-thumbnail)
-  (destructuring-bind (files sub-dirs) (files-and-dirs root sort-files)
+(defun retrieve (root)
+  (destructuring-bind (files subdirs) (files-and-subdirectories root)
     (stream-concat
      (when files
-       (stream-from-list
-        (list (list :path (namestring root)
-                    :files (mapcar #'namestring files)
-                    :thumbnail-file
-                    (funcall make-thumbnail (car files))))))
-     (stream-flat-map (lambda (sub-dir)
-                        (retrieve sub-dir
-                         :sort-files sort-files
-                         :make-thumbnail make-thumbnail))
-                      (stream-from-list sub-dirs)))))
+       (stream-from-list (list (list :path
+                                     (namestring root)
+                                     :file-paths
+                                     (mapcar #'namestring files)))))
+     (stream-flat-map #'retrieve (stream-from-list subdirs)))))

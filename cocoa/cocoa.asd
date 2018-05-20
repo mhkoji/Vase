@@ -10,7 +10,7 @@
 
    (:file "use-case/image")
    (:file "util/stream")
-   (:file "use-case/folder/create")
+   (:file "use-case/folder/add")
    (:file "use-case/folder/delete")
    (:file "use-case/folder/list")
    (:file "use-case/folder/list-images")

@@ -3,7 +3,7 @@
 (in-package :cocoa.entity.image)
 (cl-annot:enable-annot-syntax)
 
-;;; Image
+;;; A image representation based on the local file system
 @export
 (defclass image () ())
 @export

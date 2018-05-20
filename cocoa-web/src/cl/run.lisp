@@ -22,7 +22,7 @@
          :port port)))
 
 
-(defun thumbnail-factory (thumbnail-root)
+(defun make-thumbnail-factory (thumbnail-root)
   (lambda (source-file)
     (log:info "Creating thumbnail for: ~A" source-file)
     (let ((thumbnail-file
@@ -37,18 +37,22 @@
 @export
 (defun add-folders (root-dir
                     &key (context (load-context))
-                         (sort-files #'identity)
+                         (sort-file-paths #'identity)
                          (initialize-data-p t))
   (with-dao (dao context)
     (when initialize-data-p
       (initialize dao))
-    (let ((stream
-           (cocoa.infra.file.retrieve:retrieve root-dir
-            :sort-files sort-files
-            :make-thumbnail (thumbnail-factory
-                             (context-thumbnail-root context))))
-          (digest-fn
-           (context-digest-fn context)))
-      (cocoa.use-case.folder.create:execute stream
-       :image-factory digest-fn :image-repository dao
-       :path->folder-id digest-fn :folder-repository dao))))
+    (let ((dir-stream
+           (cocoa.util.stream:stream-map
+            (lambda (dir-source)
+              (apply #'cocoa.use-case.folder.add:make-dir dir-source))
+            (cocoa.infra.file.retrieve:retrieve root-dir))))
+      (cocoa.use-case.folder.add:add-by-local-directories
+       dir-stream
+       :sort-file-paths sort-file-paths
+       :make-thumbnail-file (make-thumbnail-factory
+                             (context-thumbnail-root context))
+       :image-factory (context-digest-fn context)
+       :image-repository dao
+       :name->folder-id (context-digest-fn context)
+       :folder-repository dao))))
