@@ -24,6 +24,8 @@
 @export
 (defgeneric folder-select-ids (dao offset size))
 @export
+(defgeneric folder-search-ids (dao keyword))
+@export
 (defgeneric folder-delete (dao folder-id-list))
 
 @export
@@ -139,3 +141,6 @@
   (folder-content-delete dao ids)
   (folder-delete dao ids)
   dao)
+
+(defmethod search-folders/name ((dao dao) (spec list-spec) (keyword string))
+  (list-folders/ids dao spec (folder-search-ids dao keyword)))

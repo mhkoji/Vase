@@ -66,3 +66,6 @@
 @export
 (defgeneric delete-folders/ids (folder-repository folder-id-list))
 
+;; Search folders
+@export
+(defgeneric search-folders/name (folder-repository list-spec keyword))

@@ -13,6 +13,9 @@
         :name (folder-name folder)
         :thumbnail (thumbnail->dto (folder-thumbnail folder))))
 
+(defmacro with-output (&body body)
+  `(mapcar #'folder->dto (progn ,@body)))
+
 @export
 (defun list/range (from size &key folder-repository)
   (mapcar #'folder->dto
@@ -32,3 +35,10 @@
   (folder->dto (car (list-folders/ids folder-repository
                                       (make-list-spec)
                                       (list id)))))
+
+@export
+(defun search/name (name &key folder-repository)
+  (with-output
+    (search-folders/name folder-repository
+                         (make-list-spec :with-thumbnail-p t)
+                         name)))

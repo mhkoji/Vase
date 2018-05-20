@@ -39,6 +39,17 @@
                        "LIMIT ?,?")
                  (list offset size))))
 
+(defmethod folder-search-ids ((dao sqlite3-dao) (name string))
+  (mapcar #'second
+          (query dao
+                 (join "SELECT"
+                       "  folder_id"
+                       "FROM"
+                       "  folders"
+                       "WHERE name LIKE ?"
+                       "LIMIT 0,10")
+                 (list (format nil "%~A%" name)))))
+
 (defmethod folder-delete ((dao sqlite3-dao) folder-ids)
   (delete-bulk dao "folders" "folder_id" folder-ids)
   dao)
