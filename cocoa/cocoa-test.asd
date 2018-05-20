@@ -1,6 +1,6 @@
 (asdf:defsystem :cocoa-test
   :serial t
-  :pathname #P"src/cl/"
+  :pathname #P"src/"
   :components
   ((:file "entity/folder/dao-spec")
    (:file "testing/fiveam")
