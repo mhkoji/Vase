@@ -3,12 +3,13 @@
   :serial t
   :components
   ((:file "entity/folder/folder")
+   (:file "entity/folder/content")
+   (:file "entity/folder/thumbnail")
    (:file "entity/image/image")
    (:file "entity/tag/tag")
 
    (:file "use-case/image")
    (:file "util/stream")
-   (:file "use-case/folder/inject")
    (:file "use-case/folder/create")
    (:file "use-case/folder/delete")
    (:file "use-case/folder/list")

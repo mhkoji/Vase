@@ -1,7 +1,7 @@
 (defpackage :cocoa.use-case.folder.list
   (:use :cl
         :cocoa.entity.folder
-        :cocoa.use-case.folder.inject))
+        :cocoa.entity.folder.thumbnail))
 (in-package :cocoa.use-case.folder.list)
 (cl-annot:enable-annot-syntax)
 
