@@ -31,30 +31,24 @@
 (export 'dir)
 (export 'make-dir)
 
+
 @export
-(defun add-by-local-directories (dir-stream
-                                 &key (sort-file-paths #'identity)
-                                      make-thumbnail-file
-                                      path->folder-id
-                                      folder-repository
-                                      image-factory
-                                      image-repository)
-  (labels ((dir->source (dir)
-             (let ((path (dir-path dir))
-                   (file-paths (funcall sort-file-paths
-                                        (dir-file-paths dir))))
-               (make-source
-                :folder-id (funcall path->folder-id path)
-                :name path
-                :modified-at (file-write-date path)
-                :contents (make-image-contents
-                           file-paths
-                           :image-factory image-factory
-                           :image-repository image-repository)
-                :thumbnail (make-thumbnail
-                            (funcall make-thumbnail-file (car file-paths))
-                            :image-factory image-factory
-                            :image-repository image-repository)))))
-    (add-by-source-stream
-     (stream-map #'dir->source dir-stream)
-     :folder-repository folder-repository)))
+(defun dir->source-converter (&key (sort-file-paths #'identity)
+                                   make-thumbnail-file
+                                   path->folder-id
+                                   image-factory
+                                   image-repository)
+  (lambda (dir)
+    (let ((path (dir-path dir))
+          (file-paths (funcall sort-file-paths (dir-file-paths dir))))
+      (make-source
+       :folder-id (funcall path->folder-id path)
+       :name path
+       :modified-at (file-write-date path)
+       :contents (make-image-contents file-paths
+                                      :image-factory image-factory
+                                      :image-repository image-repository)
+       :thumbnail (make-thumbnail (funcall make-thumbnail-file
+                                           (car file-paths))
+                                  :image-factory image-factory
+                                  :image-repository image-repository)))))
