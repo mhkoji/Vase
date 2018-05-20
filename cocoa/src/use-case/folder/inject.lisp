@@ -5,6 +5,12 @@
 (in-package :cocoa.use-case.folder.inject)
 (cl-annot:enable-annot-syntax)
 
+(defun add-images (paths &key image-factory image-repository)
+  (let ((images (cocoa.entity.image:make-images/paths image-factory paths)))
+    (cocoa.entity.image:save-images image-repository images)
+    images))
+
+
 (defclass simple-thumbnail ()
   ((thumbnail-id
     :initarg :thumbnail-id
@@ -16,10 +22,10 @@
 
 @export
 (defun make-thumbnail (path &key image-factory image-repository)
-  (let ((images (cocoa.entity.image:make-images/paths image-factory
-                                                      (list path))))
-    (cocoa.entity.image:save-images image-repository images)
-    (image->thumbnail (car images))))
+  (image->thumbnail
+   (car (add-images (list path)
+                    :image-factory image-factory
+                    :image-repository image-repository))))
 
 @export
 (defun thumbnail->image-id (thumbnail)
@@ -44,6 +50,6 @@
 
 @export
 (defun make-image-contents (paths &key image-factory image-repository)
-  (let ((images (cocoa.entity.image:make-images/paths image-factory paths)))
-    (cocoa.entity.image:save-images image-repository images)
-    (mapcar #'image->content images)))
+  (mapcar #'image->content (add-images paths
+                                       :image-factory image-factory
+                                       :image-repository image-repository)))
