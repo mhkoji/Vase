@@ -18,6 +18,9 @@
      (when (null ,var)
        (setq ,var ,default))))
 
+(defun content->image-dto (content)
+  (list :id (content->image-id content)))
+
 ;;; folder images
 @export
 (defun execute (folder-id &key from size folder-repository)
@@ -27,9 +30,8 @@
   ;@type! folder-repository !folder-repository
   (ensure-integer! from 0)
   (ensure-integer! size 100)
-  (let ((folder (car (list-folders/ids folder-repository
+  (let* ((folder (car (list-folders/ids folder-repository
                                        (make-list-spec)
-                                       (list folder-id)))))
-    (mapcar (lambda (content)
-              (list :id (content->image-id content)))
-            (safe-subseq (folder-contents folder) from size))))
+                                       (list folder-id))))
+         (contents (safe-subseq (folder-contents folder) from size)))
+    (mapcar #'content->image-dto contents)))

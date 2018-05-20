@@ -8,22 +8,22 @@
 
 @export
 (defun execute (folder-files-stream
-                &key path->folder-id
-                     image-factory
+                &key image-factory
                      image-repository
+                     path->folder-id
                      folder-repository)
   (let ((sources nil))
     (do-stream (folder-files folder-files-stream)
       (destructuring-bind (&key path files thumbnail-file) folder-files
-        (let ((images (cocoa.entity.image:make-images/paths
-                       image-factory
-                       (cons thumbnail-file files))))
-          (cocoa.entity.image:save-images image-repository images)
-          (push (make-source
-                 :name path
-                 :folder-id (funcall path->folder-id path)
-                 :thumbnail (image->thumbnail (car images))
-                 :contents (mapcar #'image->content (cdr images))
-                 :modified-at (file-write-date path))
-                sources))))
+        (push (make-source
+               :name path
+               :folder-id (funcall path->folder-id path)
+               :modified-at (file-write-date path)
+               :thumbnail (make-thumbnail thumbnail-file
+                           :image-factory image-factory
+                           :image-repository image-repository)
+               :contents (make-image-contents files
+                          :image-factory image-factory
+                          :image-repository image-repository))
+              sources)))
     (save-folders/sources folder-repository sources)))
