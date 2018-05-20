@@ -28,6 +28,7 @@
   (ensure-integer! from 0)
   (ensure-integer! size 100)
   (let ((folder (car (list-folders/ids folder-repository
+                                       (make-list-spec)
                                        (list folder-id)))))
     (mapcar (lambda (content)
               (list :id (content->image-id content)))

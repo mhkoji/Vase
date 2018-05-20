@@ -51,6 +51,7 @@
    :folder-id (source-folder-id source)
    :thumbnail-id (thumbnail-id (source-thumbnail source))))
 
+
 (defmethod save-folders/sources ((dao dao) (sources list))
   ;; Delete existing folders
   (delete-folders/ids dao (mapcar #'source-folder-id sources))
@@ -59,68 +60,82 @@
   ;; Contents
   (dolist (source sources)
     (let ((folder-id (source-folder-id source))
-          (content-id-list (mapcar #'content-id
-                                   (source-contents source))))
-      (folder-content-insert dao folder-id content-id-list)))
+          (content-ids (mapcar #'content-id (source-contents source))))
+      (folder-content-insert dao folder-id content-ids)))
   ;; Thumbnail
   (let ((thumbnail-rows (mapcar #'source->thumbnail-row sources)))
     (folder-thumbnail-insert dao thumbnail-rows))
   dao)
 
+
+(defclass simple-thumbnail ()
+  ((thumbnail-id
+    :initarg :thumbnail-id
+    :reader thumbnail-id)))
+
+(defun id->thumbnail (id)
+  (make-instance 'simple-thumbnail :thumbnail-id id))
+
+
+(defclass simple-content ()
+  ((content-id
+    :initarg :content-id
+    :reader content-id)))
+
+(defun id->content (id)
+  (make-instance 'simple-content :content-id id))
+
+
 (defclass dao-folder ()
-  ((row :initarg :row :reader dao-folder-row)
+  ((id
+    :initarg :id
+    :reader folder-id)
+   (name
+    :initarg :name
+    :reader folder-name)
+   (thumbnail
+    :initarg :thumbnail
+    :reader %folder-thumbnail)
    (dao :initarg :dao :reader dao-folder-dao)))
 
-(defmethod list-folders/ids ((dao dao) (ids list))
-  (let ((id->row (make-hash-table :test #'equal)))
+(defmethod list-folders/ids ((dao dao) (spec list-spec) (ids list))
+  (let ((folder-id->row (make-hash-table :test #'equal))
+        (folder-id->thumbnail (make-hash-table :test #'equal)))
     (dolist (row (folder-select dao ids))
-      (setf (gethash (folder-row-id row) id->row) row))
+      (setf (gethash (folder-row-id row) folder-id->row) row))
+    (when (list-spec-with-thumbnail-p spec)
+      (dolist (row (folder-thumbnail-select dao ids))
+        (let ((folder-id (thumbnail-row-folder-id row))
+              (thumbnail (id->thumbnail (thumbnail-row-thumbnail-id row))))
+          (setf (gethash folder-id folder-id->thumbnail) thumbnail))))
     (mapcar (lambda (id)
-              (let ((row (gethash id id->row)))
-                (make-instance 'dao-folder :row row :dao dao)))
+              (let ((row (gethash id folder-id->row))
+                    (thumbnail (gethash id folder-id->thumbnail)))
+                (make-instance 'dao-folder
+                               :id id
+                               :name (folder-row-name row)
+                               :thumbnail thumbnail
+                               :dao dao)))
             ids)))
 
-(defmethod list-folders/range ((dao dao) offset size)
-  (list-folders/ids dao (folder-select-ids dao offset size)))
-
-(defmethod folder-id ((folder dao-folder))
-  (folder-row-id (dao-folder-row folder)))
-
-(defmethod folder-name ((folder dao-folder))
-  (folder-row-name (dao-folder-row folder)))
+(defmethod list-folders/range ((dao dao) (spec list-spec) offset size)
+  (list-folders/ids dao spec (folder-select-ids dao offset size)))
 
 (defmethod folder-thumbnail ((folder dao-folder))
-  (with-accessors ((dao dao-folder-dao)) folder
-    (make-simple-thumbnail
-     (thumbnail-row-thumbnail-id
-      (car (folder-thumbnail-select
-            dao
-            (list (folder-id folder))))))))
+  (or (%folder-thumbnail folder)
+      (with-accessors ((dao dao-folder-dao)
+                       (folder-id folder-id)) folder
+        (id->thumbnail
+         (thumbnail-row-thumbnail-id
+          (car (folder-thumbnail-select dao (list folder-id))))))))
 
 (defmethod folder-contents ((folder dao-folder))
   (with-accessors ((dao dao-folder-dao)) folder
-    (mapcar #'make-simple-content
-            (folder-content-select-ids dao (folder-id folder)))))
+    (let ((content-ids (folder-content-select-ids dao (folder-id folder))))
+      (mapcar #'id->content content-ids))))
 
 (defmethod delete-folders/ids ((dao dao) (ids list))
   (folder-thumbnail-delete dao ids)
   (folder-content-delete dao ids)
   (folder-delete dao ids)
   dao)
-
-(defmethod query-folder-thumbnails ((dao dao) (folders list))
-  (let ((thumbnail-rows
-         (folder-thumbnail-select dao (mapcar #'folder-id folders))))
-    (let ((folder-ids (mapcar #'thumbnail-row-folder-id
-                              thumbnail-rows))
-          (thumbnails (mapcar (alexandria:compose
-                               #'make-simple-thumbnail
-                               #'thumbnail-row-thumbnail-id)
-                              thumbnail-rows)))
-      (alexandria:alist-hash-table (mapcar #'cons
-                                           folder-ids
-                                           thumbnails)
-                                   :test #'equal))))
-
-(defmethod get-folder-thumbnail (query-ressult folder)
-  (gethash (folder-id folder) query-ressult))

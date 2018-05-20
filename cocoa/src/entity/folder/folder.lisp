@@ -8,31 +8,11 @@
 @export
 (defgeneric thumbnail-id (thumbnail))
 
-;; A simple implementaion of thumbnail
-(defclass simple-thumbnail ()
-  ((thumbnail-id
-    :initarg :thumbnail-id
-    :reader thumbnail-id)))
 
-@export
-(defun make-simple-thumbnail (id)
-  (make-instance 'simple-thumbnail :thumbnail-id id))
-
-
-;;; Content in a folder
+;;; The representation of each content in a folder
 ;; Get the unique id of a content
 @export
 (defgeneric content-id (content))
-
-;; A simple simplementation of content
-(defclass simple-content ()
-  ((content-id
-    :initarg :content-id
-    :reader content-id)))
-
-@export
-(defun make-simple-content (id)
-  (make-instance 'simple-content :content-id id))
 
 
 ;;; Folder
@@ -67,27 +47,22 @@
 @export
 (defgeneric save-folders/sources (folder-repository sources))
 
+
+;; The specification of listing folders
+(defstruct list-spec with-thumbnail-p)
+(export 'list-spec)
+(export 'make-list-spec)
+(export 'list-spec-with-thumbnail-p)
+
 ;; List folders with the ids by the arguments
 @export
-(defgeneric list-folders/ids (folder-repository folder-id-list))
+(defgeneric list-folders/ids (folder-repository list-spec folder-id-list))
 
 ;; List folders in the range by the arguments
 @export
-(defgeneric list-folders/range (folder-repository offset size))
+(defgeneric list-folders/range (folder-repository list-spec offset size))
 
 ;; Delete folders
 @export
 (defgeneric delete-folders/ids (folder-repository folder-id-list))
 
-
-@export
-(defgeneric query-folder-thumbnails (folder-repository folders))
-@export
-(defgeneric get-folder-thumbnail (thumbnail-result folder))
-
-
-@export
-(defstruct list-spec with-thumbnail-p)
-
-@export
-(defgeneric list-folders/spec-range (dao list-spec ids))
