@@ -4,33 +4,33 @@
 (cl-annot:enable-annot-syntax)
 
 ;;; The thumbnail of a folder
-;; Get the unique id of the thumbnail
 @export
-(defgeneric thumbnail-id (thumbnail))
+(defgeneric thumbnail-id (thumbnail)
+  (:documentation "Returns the unique id of the thumbnail"))
 
 
 ;;; The representation of each content in a folder
-;; Get the unique id of a content
 @export
-(defgeneric content-id (content))
+(defgeneric content-id (content)
+  (:documentation "Returns the unique id of a content"))
 
 
 ;;; Folder
-;; Get the unique id of a content
 @export
-(defgeneric folder-id (folder))
+(defgeneric folder-id (folder)
+  (:documentation "Returns the unique id of a content"))
 
-;; Get the name of a folder
 @export
-(defgeneric folder-name (folder))
+(defgeneric folder-name (folder)
+  (:documentation "Returns the name of a folder"))
 
-;; Get the thumbnail of a folder
 @export
-(defgeneric folder-thumbnail (folder))
+(defgeneric folder-thumbnail (folder)
+  (:documentation "Returns the thumbanil of a folder"))
 
-;; Get the contents in a folder
 @export
-(defgeneric folder-contents (folder))
+(defgeneric folder-contents (folder)
+  (:documentation "Returns the contents in a folder"))
 
 
 ;; What a folder is made from
@@ -43,9 +43,9 @@
 (export 'source-contents)
 (export 'source-modified-at)
 
-;; Save folders with sources
 @export
-(defgeneric save-folders/sources (folder-repository sources))
+(defgeneric save-folders/sources (folder-repository sources)
+  (:documentation "Save folders"))
 
 
 ;; The specification of listing folders
@@ -54,18 +54,18 @@
 (export 'make-list-spec)
 (export 'list-spec-with-thumbnail-p)
 
-;; List folders with the ids by the arguments
 @export
-(defgeneric list-folders/ids (folder-repository list-spec folder-id-list))
+(defgeneric list-folders/ids (folder-repository list-spec folder-id-list)
+  (:documentation "Returns the folders with the given ids"))
 
-;; List folders in the range by the arguments
 @export
-(defgeneric list-folders/range (folder-repository list-spec offset size))
+(defgeneric list-folders/range (folder-repository list-spec offset size)
+  (:documentation "Returns the folders within the range"))
 
-;; Delete folders
 @export
-(defgeneric delete-folders/ids (folder-repository folder-id-list))
+(defgeneric delete-folders/ids (folder-repository folder-id-list)
+  (:documentation "Delete the folders"))
 
-;; Search folders
 @export
-(defgeneric search-folders/name (folder-repository list-spec keyword))
+(defgeneric search-folders/name (folder-repository list-spec keyword)
+  (:documentation "Returns the folders whose names contain the keyword"))
