@@ -1,6 +1,6 @@
-(defpackage :cocoa.entity.folder.dao
+(defpackage :cocoa.infra.db.folder.dao
   (:use :cl :cocoa.entity.folder))
-(in-package :cocoa.entity.folder.dao)
+(in-package :cocoa.infra.db.folder.dao)
 (cl-annot:enable-annot-syntax)
 
 (defstruct folder-row id name modified-at)

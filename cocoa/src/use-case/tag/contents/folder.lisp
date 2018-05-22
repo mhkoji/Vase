@@ -5,6 +5,19 @@
 (in-package :cocoa.use-case.tag.contents.folder)
 (cl-annot:enable-annot-syntax)
 
+(defclass simple-content ()
+  ((id
+    :initarg :id
+    :reader content-id)
+   (type
+    :initarg :type
+    :type :keyword
+    :reader content-type)))
+
+@export
+(defun make-simple-content (id type)
+  (make-instance 'simple-content :id id :type type))
+
 (defun as-content (folder-id)
   (make-simple-content folder-id :folder))
 

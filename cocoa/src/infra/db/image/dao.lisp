@@ -1,6 +1,6 @@
-(defpackage :cocoa.entity.image.dao
-  (:use :cl :cocoa.entity.image))
-(in-package :cocoa.entity.image.dao)
+(defpackage :cocoa.infra.db.fs.image.dao
+  (:use :cl :cocoa.entity.fs.image))
+(in-package :cocoa.infra.db.fs.image.dao)
 (cl-annot:enable-annot-syntax)
 
 (defstruct image-row image-id path)

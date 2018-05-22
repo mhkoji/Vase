@@ -1,6 +1,6 @@
-(defpackage :cocoa.entity.tag.dao
+(defpackage :cocoa.infra.db.tag.dao
   (:use :cl :cocoa.entity.tag))
-(in-package :cocoa.entity.tag.dao)
+(in-package :cocoa.infra.db.tag.dao)
 (cl-annot:enable-annot-syntax)
 
 (defstruct tag-row tag-id name)
@@ -39,15 +39,19 @@
 (defgeneric tag-content-select-contents (dao tag-id))
 
 
-(defclass dao-tag ()
-  ((tag-row
-    :initarg :tag-row
-    :reader dao-tag-tag-row)
-   (dao
-    :initarg :dao
-    :reader dao-tag-dao)))
+(defclass simple-content ()
+  ((id
+    :initarg :id
+    :reader content-id)
+   (type
+    :initarg :type
+    :type :keyword
+    :reader content-type)))
 
-(defun content-row->simple-content (row)
+(defun make-simple-content (id type)
+  (make-instance 'simple-content :id id :type type))
+
+(defun content-row->content (row)
   (make-simple-content (content-row-id row)
                        (alexandria:make-keyword
                         (content-row-type row))))
@@ -56,6 +60,14 @@
   (make-content-row :id (content-id content)
                     :type (symbol-name
                            (content-type content))))
+
+(defclass dao-tag ()
+  ((tag-row
+    :initarg :tag-row
+    :reader dao-tag-tag-row)
+   (dao
+    :initarg :dao
+    :reader dao-tag-dao)))
 
 (defmethod make-tag/name ((factory dao) (name string))
   (the tag-row (tag-insert factory name)))
@@ -82,7 +94,7 @@
 
 (defmethod tag-contents ((tag dao-tag))
   (with-accessors ((dao dao-tag-dao)) tag
-    (mapcar #'content-row->simple-content
+    (mapcar #'content-row->content
             (tag-content-select-contents dao (tag-id tag)))))
 
 (defmethod list-tags/range ((dao dao) offset size)

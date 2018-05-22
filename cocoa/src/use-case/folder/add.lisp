@@ -9,6 +9,7 @@
 (defun add-by-source-stream (source-stream &key folder-repository)
   (save-folders/sources folder-repository (stream-to-list source-stream)))
 
+
 (defun image-id (image)
   (getf image :id))
 
@@ -16,21 +17,22 @@
   (let ((image (car (cocoa.use-case.image:add-images (list path)
                      :image-factory image-factory
                      :image-repository image-repository))))
-    (cocoa.entity.folder.thumbnail:make-image-thumbnail (image-id image))))
+    (cocoa.use-case.folder.thumbnail:make-of-image (image-id image))))
+
+
+(defun image->content (image)
+  (cocoa.use-case.folder.content:make-of-image (image-id image)))
 
 (defun make-image-contents (paths &key image-factory image-repository)
-  (mapcar (lambda (image)
-            (cocoa.entity.folder.content:make-image-content
-             (image-id image)))
-          (cocoa.use-case.image:add-images paths
-           :image-factory image-factory
-           :image-repository image-repository)))
+  (mapcar #'image->content (cocoa.use-case.image:add-images paths
+                            :image-factory image-factory
+                            :image-repository image-repository)))
+
 
 ;;; A representation of a directory in the local file system
 (defstruct dir path file-paths)
 (export 'dir)
 (export 'make-dir)
-
 
 @export
 (defun dir->source-converter (&key (sort-file-paths #'identity)

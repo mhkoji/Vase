@@ -1,12 +1,11 @@
 (defpackage :cocoa.use-case.folder.list
-  (:use :cl
-        :cocoa.entity.folder
-        :cocoa.entity.folder.thumbnail))
+  (:use :cl :cocoa.entity.folder))
 (in-package :cocoa.use-case.folder.list)
 (cl-annot:enable-annot-syntax)
 
 (defun thumbnail->dto (thumbnail)
-  (list :id (thumbnail->image-id thumbnail)))
+  (list :id (cocoa.use-case.folder.thumbnail:thumbnail->image-id
+             thumbnail)))
 
 (defun folder->dto (folder)
   (list :id (folder-id folder)

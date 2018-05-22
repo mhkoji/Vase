@@ -1,5 +1,5 @@
 (defpackage :cocoa.use-case.image
-  (:use :cl :cocoa.entity.image))
+  (:use :cl :cocoa.entity.fs.image))
 (in-package :cocoa.use-case.image)
 (cl-annot:enable-annot-syntax)
 

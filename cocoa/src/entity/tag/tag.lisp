@@ -1,32 +1,13 @@
-(defpackage :cocoa.entity.tag
-  (:use :cl))
+;;; Tag
 (in-package :cocoa.entity.tag)
 (cl-annot:enable-annot-syntax)
 
-;;; Content, to which tags are attached
-@export
-(defgeneric content-id (content))
-@export
-(defgeneric content-type (content))
-
-(defclass simple-content ()
-  ((id
-    :initarg :id
-    :reader content-id)
-   (type
-    :initarg :type
-    :type :keyword
-    :reader content-type)))
-
-@export
-(defun make-simple-content (id type)
-  (make-instance 'simple-content :id id :type type))
-
-;;; Tag
 @export
 (defgeneric tag-id (tag))
 @export
 (defgeneric tag-name (tag))
+@export
+(defgeneric (setf tag-name) (name tag))
 @export
 (defgeneric tag-contents (tag))
 

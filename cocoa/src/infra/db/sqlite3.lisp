@@ -1,12 +1,48 @@
-(defpackage :cocoa.infra.dao.sqlite3
+(defpackage :cocoa.infra.db.sqlite3
   (:use :cl))
-(in-package :cocoa.infra.dao.sqlite3)
+(in-package :cocoa.infra.db.sqlite3)
 (cl-annot:enable-annot-syntax)
 
 @export
-(defclass sqlite3-dao (cocoa.entity.folder.dao:dao
-                       cocoa.entity.image.dao:dao
-                       cocoa.entity.tag.dao:dao)
+(defparameter +folders+
+  "folders")
+@export
+(defparameter +folder-id+
+  "folder_id")
+@export
+(defparameter +folders/name+
+  "name")
+@export
+(defparameter +folders/modified-at+
+  "modified_at")
+@export
+(defparameter +folder-thumbnails+
+  "folder_thumbnails")
+@export
+(defparameter +thumbnail-id+
+  "thumbnail_id")
+@export
+(defparameter +folder-contents+
+  "folder_contents")
+@export
+(defparameter +content-id+
+  "content_id")
+
+@export
+(defparameter +images+
+  "images")
+@export
+(defparameter +image-id+
+  "image_id")
+@export
+(defparameter +images/path+
+  "path")
+
+
+@export
+(defclass sqlite3-dao (cocoa.infra.db.folder.dao:dao
+                       cocoa.infra.db.fs.image.dao:dao
+                       cocoa.infra.db.tag.dao:dao)
   ((connection
     :initarg :connection
     :type proton:sqlite3

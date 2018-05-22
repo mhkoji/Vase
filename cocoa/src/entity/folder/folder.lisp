@@ -1,21 +1,7 @@
-(defpackage :cocoa.entity.folder
-  (:use :cl))
+;;; The representation of Folder
 (in-package :cocoa.entity.folder)
 (cl-annot:enable-annot-syntax)
 
-;;; The thumbnail of a folder
-@export
-(defgeneric thumbnail-id (thumbnail)
-  (:documentation "Returns the unique id of the thumbnail"))
-
-
-;;; The representation of each content in a folder
-@export
-(defgeneric content-id (content)
-  (:documentation "Returns the unique id of a content"))
-
-
-;;; Folder
 @export
 (defgeneric folder-id (folder)
   (:documentation "Returns the unique id of a content"))

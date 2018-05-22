@@ -1,8 +1,6 @@
-(defpackage :cocoa.use-case.folder.list-images
-  (:use :cl
-        :cocoa.entity.folder
-        :cocoa.entity.folder.content))
-(in-package :cocoa.use-case.folder.list-images)
+(defpackage :cocoa.use-case.folder.images
+  (:use :cl :cocoa.entity.folder))
+(in-package :cocoa.use-case.folder.images)
 (cl-annot:enable-annot-syntax)
 
 (defun safe-subseq (seq from size)
@@ -19,11 +17,11 @@
        (setq ,var ,default))))
 
 (defun content->image-dto (content)
-  (list :id (content->image-id content)))
+  (list :id (cocoa.use-case.folder.content:content->image-id content)))
 
 ;;; folder images
 @export
-(defun execute (folder-id &key from size folder-repository)
+(defun list-images (folder-id &key from size folder-repository)
   ;@type! folder-id !integer
   ;@type! from integer 0
   ;@type! size integer 100

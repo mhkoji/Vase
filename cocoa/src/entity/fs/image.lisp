@@ -1,9 +1,9 @@
-(defpackage :cocoa.entity.image
+(defpackage :cocoa.entity.fs.image
   (:use :cl))
-(in-package :cocoa.entity.image)
+(in-package :cocoa.entity.fs.image)
 (cl-annot:enable-annot-syntax)
 
-;;; A image representation based on the local file system
+;;; A file representation based on the local file system
 @export
 (defclass image () ())
 @export

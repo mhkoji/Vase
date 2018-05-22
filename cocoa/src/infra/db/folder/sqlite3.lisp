@@ -1,12 +1,14 @@
-(defpackage :cocoa.infra.dao.sqlite3.folder
+(defpackage :cocoa.infra.db.folder.sqlite3
   (:use :cl
-        :cocoa.infra.dao.sqlite3
-        :cocoa.entity.folder.dao))
-(in-package :cocoa.infra.dao.sqlite3.folder)
+        :cocoa.infra.db.sqlite3
+        :cocoa.infra.db.folder.dao))
+(in-package :cocoa.infra.db.folder.sqlite3)
 
 ;; insert
 (defmethod folder-insert ((dao sqlite3-dao) (rows list))
-  (insert-bulk dao "folders" '("folder_id" "name" "modified_at")
+  (insert-bulk dao +folders+ (list +folder-id+
+                                   +folders/name+
+                                   +folders/modified-at+)
    (mapcar #'list
            (mapcar #'folder-row-id rows)
            (mapcar #'folder-row-name rows)
@@ -20,60 +22,69 @@
                                :name (getf plist :|name|)
                                :modified-at (getf plist :|modified_at|)))
             (query dao
-                   (join "SELECT"
+                   (join " SELECT"
                          "  *"
-                         "FROM"
-                         "  folders"
-                         "WHERE"
-                         "  folder_id in (" (placeholder ids) ")")
+                         " FROM"
+                         " " +folders+
+                         " WHERE"
+                         " " +folder-id+ " in (" (placeholder ids) ")")
                    ids))))
 
 (defmethod folder-select-ids ((dao sqlite3-dao) offset size)
   (mapcar #'second
           (query dao
-                 (join "SELECT"
-                       "  folder_id"
-                       "FROM"
-                       "  folders"
-                       "ORDER BY modified_at DESC"
-                       "LIMIT ?,?")
+                 (join " SELECT"
+                       " " +folder-id+
+                       " FROM"
+                       " " +folders+
+                       " ORDER BY"
+                       " " +folders/modified-at+
+                       " DESC"
+                       " LIMIT ?,?")
                  (list offset size))))
 
 (defmethod folder-search-ids ((dao sqlite3-dao) (name string))
   (mapcar #'second
           (query dao
-                 (join "SELECT"
-                       "  folder_id"
-                       "FROM"
-                       "  folders"
-                       "WHERE name LIKE ?"
-                       "LIMIT 0,10")
+                 (join " SELECT"
+                       " " +folder-id+
+                       " FROM"
+                       " " +folders+
+                       " WHERE"
+                       " " +folders/name+
+                       " LIKE ?"
+                       " LIMIT 0,10")
                  (list (format nil "%~A%" name)))))
 
 (defmethod folder-delete ((dao sqlite3-dao) folder-ids)
-  (delete-bulk dao "folders" "folder_id" folder-ids)
+  (delete-bulk dao +folders+ +folder-id+ folder-ids)
   dao)
 
 
 (defmethod folder-content-insert ((dao sqlite3-dao)
                                   (folder-id string)
                                   (content-id-list list))
-  (insert-bulk dao "folder_contents" '("folder_id" "content_id")
+  (insert-bulk dao +folder-contents+ (list +folder-id+ +content-id+)
    (mapcar (lambda (content-id) (list folder-id content-id))
            content-id-list))
   dao)
 
 (defmethod folder-content-select-ids ((dao sqlite3-dao) folder-id)
-  (let ((q "SELECT content_id FROM folder_contents WHERE folder_id = ?"))
+  (let ((q (join " SELECT"
+                 " " +content-id+
+                 " FROM"
+                 " " +folder-contents+
+                 " WHERE"
+                 " " +folder-id+ " = ?")))
     (mapcar #'second (query dao q (list folder-id)))))
 
 (defmethod folder-content-delete ((dao sqlite3-dao) folder-ids)
-  (delete-bulk dao "folder_contents" "folder_id" folder-ids)
+  (delete-bulk dao +folder-contents+ +folder-id+ folder-ids)
   dao)
 
 
 (defmethod folder-thumbnail-insert ((dao sqlite3-dao) (rows list))
-  (insert-bulk dao "folder_thumbnails" '("folder_id" "thumbnail_id")
+  (insert-bulk dao +folder-thumbnails+ (list +folder-id+ +thumbnail-id+)
    (mapcar #'list
            (mapcar #'thumbnail-row-folder-id rows)
            (mapcar #'thumbnail-row-thumbnail-id rows)))
@@ -86,14 +97,14 @@
                :folder-id (getf plist :|folder_id|)
                :thumbnail-id (getf plist :|thumbnail_id|)))
      (query dao
-            (join "SELECT"
-                  "  folder_id, thumbnail_id"
-                  "FROM"
-                  "  folder_thumbnails"
-                  "WHERE"
-                  "  folder_id in (" (placeholder ids) ")")
+            (join " SELECT"
+                  " " +folder-id+ ", " +thumbnail-id+
+                  " FROM"
+                  " "  +folder-thumbnails+
+                  " WHERE"
+                  " " +folder-id+ " in (" (placeholder ids) ")")
             ids))))
 
 (defmethod folder-thumbnail-delete ((dao sqlite3-dao) folder-ids)
-  (delete-bulk dao "folder_thumbnails" "folder_id" folder-ids)
+  (delete-bulk dao +folder-thumbnails+ +folder-id+ folder-ids)
   dao)

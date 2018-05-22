@@ -79,7 +79,7 @@
               :out (lambda (xs) (make-json-response
                                  (array-of #'image xs)))) app
     (with-dao (dao context)
-      (cocoa.use-case.folder.list-images:execute
+      (cocoa.use-case.folder.images:list-images
        folder-id :from from :size size :folder-repository dao)))
   (do-route! ("/api/folder/:id/tags"
               :method :get

@@ -30,8 +30,8 @@
                    "~Athumbnail$~A"
                    thumbnail-root
                    (cl-ppcre:regex-replace-all "/" source-file "$"))))
-      (cocoa.infra.file.thumbnail:ensure-thumbnail-exists thumbnail-file
-                                                         source-file)
+      (cocoa.infra.fs.thumbnail:ensure-thumbnail-exists thumbnail-file
+                                                        source-file)
       thumbnail-file)))
 
 @export
@@ -46,7 +46,7 @@
            (cocoa.util.stream:stream-map
             (lambda (dir-source)
               (apply #'cocoa.use-case.folder.add:make-dir dir-source))
-            (cocoa.infra.file.retrieve:retrieve root-dir)))
+            (cocoa.infra.fs.retrieve:retrieve root-dir)))
           (dir->source-converter
            (cocoa.use-case.folder.add:dir->source-converter
             :sort-file-paths sort-file-paths
