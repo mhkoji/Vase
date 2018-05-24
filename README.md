@@ -24,7 +24,7 @@ $ mkdir /tmp/cooca
 $ mkdir /tmp/cocoa/thumbnails
 ```
 
-2. Load the lisp files using the cocoa.asd
+2. Load the lisp files using cocoa.asd
 
 ```
 CL-USER> (ql:quickload :cocoa-web)
