@@ -24,7 +24,7 @@ $ mkdir /tmp/cooca
 $ mkdir /tmp/cocoa/thumbnails
 ```
 
-2. Load lisp files with the cocoa.asd
+2. Load the lisp files using the cocoa.asd
 
 ```
 CL-USER> (ql:quickload :cocoa-web)
@@ -49,7 +49,7 @@ CL-USER> (defvar *context*
 CL-USER> (cocoa.web:run :context *context*)
 ```
 
-5. Add sample folders
+5. Add the sample folders
 
 ```
 CL-USER> (cocoa.web:add-folders "./resources/contents/images/" :context *context*) 
