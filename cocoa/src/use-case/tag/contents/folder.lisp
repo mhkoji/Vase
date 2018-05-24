@@ -24,9 +24,9 @@
 (defmethod list-typed-contents ((container list)
                                 (type (eql :folder))
                                 (content-ids list))
-  (cocoa.use-case.folder.list:list/ids
-   content-ids
-   :folder-repository (getf container :folder)))
+  (cocoa.use-case.folder:list/ids content-ids
+                                  :folder-repository
+                                  (getf container :folder)))
 
 @export
 (defun set-tags! (folder-id tag-ids &key tag-repository)

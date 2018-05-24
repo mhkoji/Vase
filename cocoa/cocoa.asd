@@ -17,6 +17,7 @@
    (:file "util/stream")
    (:file "use-case/folder/thumbnail")
    (:file "use-case/folder/content")
+   (:file "use-case/folder/package")
    (:file "use-case/folder/add")
    (:file "use-case/folder/delete")
    (:file "use-case/folder/list")

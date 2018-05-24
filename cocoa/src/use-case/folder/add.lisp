@@ -1,13 +1,10 @@
-(defpackage :cocoa.use-case.folder.add
-  (:use :cl
-        :cocoa.entity.folder
-        :cocoa.util.stream))
-(in-package :cocoa.use-case.folder.add)
+(in-package :cocoa.use-case.folder)
 (cl-annot:enable-annot-syntax)
 
 @export
 (defun add-by-source-stream (source-stream &key folder-repository)
-  (save-folders/sources folder-repository (stream-to-list source-stream)))
+  (save-folders/sources folder-repository (stream-to-list source-stream))
+  (values))
 
 
 (defun image-id (image)

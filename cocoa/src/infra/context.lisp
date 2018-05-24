@@ -32,7 +32,6 @@
   (when (cl-fad:file-exists-p path)
     (with-open-file (in path) (read in))))
 
-
 @export
 (defun sha256 (string)
   (ironclad:byte-array-to-hex-string

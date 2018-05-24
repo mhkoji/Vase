@@ -1,6 +1,4 @@
-(defpackage :cocoa.use-case.folder.images
-  (:use :cl :cocoa.entity.folder))
-(in-package :cocoa.use-case.folder.images)
+(in-package :cocoa.use-case.folder)
 (cl-annot:enable-annot-syntax)
 
 (defun safe-subseq (seq from size)
