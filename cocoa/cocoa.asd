@@ -2,8 +2,8 @@
   :pathname #P"src/"
   :serial t
   :components
-  ((:file "entity/folder/package")
-   (:file "entity/folder/content")
+  ((:file "entity/folder/content")
+   (:file "entity/folder/package")
    (:file "entity/folder/thumbnail")
    (:file "entity/folder/folder")
 

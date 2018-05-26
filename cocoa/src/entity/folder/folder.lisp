@@ -14,6 +14,13 @@
 (defgeneric folder-thumbnail (folder)
   (:documentation "Returns the thumbanil of a folder"))
 
+@export
+(defun folder-content-query (folder &key from size)
+  (cocoa.entity.folder.content:make-content-query
+   :folder-id (folder-id folder)
+   :from from
+   :size size))
+
 ;; What a folder is made from
 (defstruct source folder-id name thumbnail modified-at)
 (export 'make-source)

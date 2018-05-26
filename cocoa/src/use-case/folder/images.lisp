@@ -1,12 +1,6 @@
 (in-package :cocoa.use-case.folder)
 (cl-annot:enable-annot-syntax)
 
-(defun safe-subseq (seq from size)
-  (let* ((start (or from 0))
-         (end (when (numberp size)
-                (min (length seq) (+ size start)))))
-    (subseq seq start end)))
-
 (defmacro ensure-integer! (var default)
   `(progn
      (when (stringp ,var)
@@ -26,7 +20,11 @@
   ;@type! folder-repository !folder-repository
   (ensure-integer! from 0)
   (ensure-integer! size 100)
-  (let ((contents (cocoa.entity.folder.content:list-by-folder-id
-                   folder-repository
-                   folder-id)))
-    (mapcar #'content->image-dto (safe-subseq contents from size))))
+  (let* ((folder (car (list-folders/ids folder-repository
+                                        (make-list-spec)
+                                        (list folder-id))))
+         (query (folder-content-query folder :from from :size size))
+         (contents (cocoa.entity.folder.content:list-by-query
+                    folder-repository
+                    query)))
+    (mapcar #'content->image-dto contents)))
