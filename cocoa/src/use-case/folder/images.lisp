@@ -26,8 +26,7 @@
   ;@type! folder-repository !folder-repository
   (ensure-integer! from 0)
   (ensure-integer! size 100)
-  (let* ((folder (car (list-folders/ids folder-repository
-                                        (make-list-spec)
-                                        (list folder-id))))
-         (contents (safe-subseq (folder-contents folder) from size)))
-    (mapcar #'content->image-dto contents)))
+  (let ((contents (cocoa.entity.folder.content:list-by-folder-id
+                   folder-repository
+                   folder-id)))
+    (mapcar #'content->image-dto (safe-subseq contents from size))))

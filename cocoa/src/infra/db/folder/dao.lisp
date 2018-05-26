@@ -54,19 +54,16 @@
    :thumbnail-id (thumbnail-id (source-thumbnail source))))
 
 
-(defmethod save-folders/sources ((dao dao) (sources list))
+(defmethod add-folders/sources ((dao dao) (sources list))
   ;; Delete existing folders
-  (delete-folders/ids dao (mapcar #'source-folder-id sources))
+  (setq dao (delete-folders/ids
+             dao (mapcar #'source-folder-id sources)))
   ;; Create folders
-  (folder-insert dao (mapcar #'source->folder-row sources))
-  ;; Contents
-  (dolist (source sources)
-    (let ((folder-id (source-folder-id source))
-          (content-ids (mapcar #'content-id (source-contents source))))
-      (folder-content-insert dao folder-id content-ids)))
+  (setq dao (folder-insert
+             dao (mapcar #'source->folder-row sources)))
   ;; Thumbnail
-  (let ((thumbnail-rows (mapcar #'source->thumbnail-row sources)))
-    (folder-thumbnail-insert dao thumbnail-rows))
+  (setq dao (folder-thumbnail-insert
+             dao (mapcar #'source->thumbnail-row sources)))
   dao)
 
 
@@ -77,16 +74,6 @@
 
 (defun id->thumbnail (id)
   (make-instance 'simple-thumbnail :thumbnail-id id))
-
-
-(defclass simple-content ()
-  ((content-id
-    :initarg :content-id
-    :reader content-id)))
-
-(defun id->content (id)
-  (make-instance 'simple-content :content-id id))
-
 
 (defclass dao-folder ()
   ((id
@@ -130,11 +117,6 @@
         (id->thumbnail
          (thumbnail-row-thumbnail-id
           (car (folder-thumbnail-select dao (list folder-id))))))))
-
-(defmethod folder-contents ((folder dao-folder))
-  (with-accessors ((dao dao-folder-dao)) folder
-    (let ((content-ids (folder-content-select-ids dao (folder-id folder))))
-      (mapcar #'id->content content-ids))))
 
 (defmethod delete-folders/ids ((dao dao) (ids list))
   (folder-thumbnail-delete dao ids)

@@ -47,14 +47,14 @@
             (lambda (dir-source)
               (apply #'cocoa.use-case.folder:make-dir dir-source))
             (cocoa.infra.fs.retrieve:retrieve root-dir)))
-          (dir->source-converter
-           (cocoa.use-case.folder:dir->source-converter
+          (dir->props-converter
+           (cocoa.use-case.folder:dir->props-converter
             :sort-file-paths sort-file-paths
             :make-thumbnail-file (make-thumbnail-factory
                                   (context-thumbnail-root context))
-            :path->folder-id (context-digest-fn context)
             :image-factory (context-digest-fn context)
             :image-repository dao)))
-      (cocoa.use-case.folder:add-by-source-stream
-       (cocoa.util.stream:stream-map dir->source-converter dir-stream)
+      (cocoa.use-case.folder:add-by-props-stream
+       (cocoa.util.stream:stream-map dir->props-converter dir-stream)
+       :name->folder-id (context-digest-fn context)
        :folder-repository dao))))

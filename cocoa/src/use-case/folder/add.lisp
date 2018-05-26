@@ -2,8 +2,21 @@
 (cl-annot:enable-annot-syntax)
 
 @export
-(defun add-by-source-stream (source-stream &key folder-repository)
-  (save-folders/sources folder-repository (stream-to-list source-stream))
+(defun add-by-props-stream (props-stream &key name->folder-id
+                                              folder-repository)
+  (let ((props-list (cocoa.util.stream:stream-to-list props-stream)))
+    (cocoa.entity.folder:add-folders/sources folder-repository
+     (mapcar (lambda (props)
+               (let ((name (getf props :name)))
+                 (make-source :folder-id   (funcall name->folder-id name)
+                              :name        name
+                              :thumbnail   (getf props :thumbnail)
+                              :modified-at (getf props :modified-at))))
+             props-list))
+    (dolist (props props-list)
+      (cocoa.entity.folder.content:add-by-folder-id folder-repository
+       (funcall name->folder-id (getf props :name))
+       (getf props :contents))))
   (values))
 
 
@@ -32,22 +45,20 @@
 (export 'make-dir)
 
 @export
-(defun dir->source-converter (&key (sort-file-paths #'identity)
-                                   make-thumbnail-file
-                                   path->folder-id
-                                   image-factory
-                                   image-repository)
+(defun dir->props-converter (&key (sort-file-paths #'identity)
+                                  make-thumbnail-file
+                                  image-factory
+                                  image-repository)
   (lambda (dir)
     (let ((path (dir-path dir))
           (file-paths (funcall sort-file-paths (dir-file-paths dir))))
-      (make-source
-       :folder-id (funcall path->folder-id path)
+      (list
        :name path
        :modified-at (file-write-date path)
-       :contents (make-image-contents file-paths
-                                      :image-factory image-factory
-                                      :image-repository image-repository)
        :thumbnail (make-thumbnail (funcall make-thumbnail-file
                                            (car file-paths))
-                                  :image-factory image-factory
-                                  :image-repository image-repository)))))
+                   :image-factory image-factory
+                   :image-repository image-repository)
+       :contents (make-image-contents file-paths
+                  :image-factory image-factory
+                  :image-repository image-repository)))))

@@ -14,23 +14,16 @@
 (defgeneric folder-thumbnail (folder)
   (:documentation "Returns the thumbanil of a folder"))
 
-@export
-(defgeneric folder-contents (folder)
-  (:documentation "Returns the contents in a folder"))
-
-
 ;; What a folder is made from
-(defstruct source folder-id name thumbnail contents modified-at)
+(defstruct source folder-id name thumbnail modified-at)
 (export 'make-source)
 (export 'source-folder-id)
 (export 'source-name)
-(export 'source-path)
 (export 'source-thumbnail)
-(export 'source-contents)
 (export 'source-modified-at)
 
 @export
-(defgeneric save-folders/sources (folder-repository sources)
+(defgeneric add-folders/sources (folder-repository sources)
   (:documentation "Save folders"))
 
 
