@@ -24,7 +24,7 @@
                                         (make-list-spec)
                                         (list folder-id))))
          (query (folder-content-query folder :from from :size size))
-         (contents (cocoa.entity.folder.content:list-by-query
+         (contents (cocoa.entity.folder:list-contents-by-query
                     folder-repository
                     query)))
     (mapcar #'content->image-dto contents)))

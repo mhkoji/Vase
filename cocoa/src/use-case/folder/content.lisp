@@ -1,6 +1,6 @@
 (defpackage :cocoa.use-case.folder.content
   (:use :cl)
-  (:import-from :cocoa.entity.folder.content
+  (:import-from :cocoa.entity.folder
                 :content-id))
 (in-package :cocoa.use-case.folder.content)
 (cl-annot:enable-annot-syntax)

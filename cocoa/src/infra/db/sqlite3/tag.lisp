@@ -1,7 +1,7 @@
 (defpackage :cocoa.infra.db.tag.sqlite3
   (:use :cl
-        :cocoa.infra.db.sqlite3
-        :cocoa.infra.db.tag.dao))
+        :cocoa.entity.tag
+        :cocoa.infra.db.sqlite3))
 (in-package :cocoa.infra.db.tag.sqlite3)
 
 (defun plist->tag-row (plist)

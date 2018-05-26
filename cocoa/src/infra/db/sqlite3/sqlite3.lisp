@@ -40,9 +40,7 @@
 
 
 @export
-(defclass sqlite3-dao (cocoa.infra.db.folder.dao:dao
-                       cocoa.infra.db.fs.image.dao:dao
-                       cocoa.infra.db.tag.dao:dao)
+(defclass sqlite3-dao ()
   ((connection
     :initarg :connection
     :type proton:sqlite3

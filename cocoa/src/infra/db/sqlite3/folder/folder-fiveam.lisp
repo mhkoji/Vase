@@ -1,8 +1,8 @@
-(defpackage :cocoa.infra.db.folder.sqlite3-fiveam
+(defpackage :cocoa.infra.db.sqlite3.folder.folder-fiveam
   (:use :cl :fiveam
-        :cocoa.infra.db.folder.dao
-        :cocoa.infra.db.folder.dao-spec))
-(in-package :cocoa.infra.db.folder.sqlite3-fiveam)
+        :cocoa.entity.folder
+        :cocoa.entity.folder.folder-spec))
+(in-package :cocoa.infra.db.sqlite3.folder.folder-fiveam)
 (in-suite* :cocoa)
 
 (defmacro with-sqlite3-dao ((dao) &rest body)

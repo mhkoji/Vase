@@ -1,9 +1,4 @@
-(defpackage :cocoa.infra.db.folder.content.sqlite3
-  (:use :cl
-        :cocoa.entity.folder.content
-        :cocoa.infra.db.folder.dao
-        :cocoa.infra.db.sqlite3))
-(in-package :cocoa.infra.db.folder.content.sqlite3)
+(in-package :cocoa.infra.db.sqlite3.folder)
 
 (defmethod folder-content-insert ((dao sqlite3-dao)
                                   (folder-id string)

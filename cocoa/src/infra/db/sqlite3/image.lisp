@@ -1,8 +1,8 @@
-(defpackage :cocoa.infra.db.fs.image.sqlite3
+(defpackage :cocoa.infra.db.sqlite3.fs.image
   (:use :cl
-        :cocoa.infra.db.sqlite3
-        :cocoa.infra.db.fs.image.dao))
-(in-package :cocoa.infra.db.fs.image.sqlite3)
+        :cocoa.entity.fs.image
+        :cocoa.infra.db.sqlite3))
+(in-package :cocoa.infra.db.sqlite3.fs.image)
 
 (defmethod image-insert ((dao sqlite3-dao) (rows list))
   (insert-bulk dao +images+ (list +image-id+ +images/path+)

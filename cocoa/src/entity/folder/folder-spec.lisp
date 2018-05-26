@@ -1,6 +1,6 @@
-(defpackage :cocoa.infra.db.folder.dao-spec
-  (:use :cl :cocoa.infra.db.folder.dao))
-(in-package :cocoa.infra.db.folder.dao-spec)
+(defpackage :cocoa.entity.folder.folder-spec
+  (:use :cl :cocoa.entity.folder))
+(in-package :cocoa.entity.folder.folder-spec)
 (cl-annot:enable-annot-syntax)
 
 (defun create-rows (from to)

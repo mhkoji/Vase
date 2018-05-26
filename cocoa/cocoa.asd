@@ -2,10 +2,10 @@
   :pathname #P"src/"
   :serial t
   :components
-  ((:file "entity/folder/content")
-   (:file "entity/folder/package")
+  ((:file "entity/folder/package")
    (:file "entity/folder/thumbnail")
    (:file "entity/folder/folder")
+   (:file "entity/folder/content")
 
    (:file "entity/fs/image")
 
@@ -26,17 +26,12 @@
    (:file "use-case/tag/contents/list")
    (:file "use-case/tag/contents/folder")
 
-   (:file "infra/db/folder/dao")
-   (:file "infra/db/folder/content/dao")
-   (:file "infra/db/image/dao")
-   (:file "infra/db/tag/dao")
-
    (:file "util/third_party/proton/proton")
-   (:file "infra/db/sqlite3")
-   (:file "infra/db/folder/sqlite3")
-   (:file "infra/db/folder/content/sqlite3")
-   (:file "infra/db/image/sqlite3")
-   (:file "infra/db/tag/sqlite3")
+   (:file "infra/db/sqlite3/sqlite3")
+   (:file "infra/db/sqlite3/folder/folder")
+   (:file "infra/db/sqlite3/folder/content")
+   (:file "infra/db/sqlite3/image")
+   (:file "infra/db/sqlite3/tag")
 
    (:file "infra/fs/thumbnail")
    (:file "infra/fs/retrieve")

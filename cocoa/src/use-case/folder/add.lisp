@@ -14,7 +14,7 @@
                               :modified-at (getf props :modified-at))))
              props-list))
     (dolist (props props-list)
-      (cocoa.entity.folder.content:add-by-folder-id folder-repository
+      (cocoa.entity.folder:add-contents folder-repository
        (funcall name->folder-id (getf props :name))
        (getf props :contents))))
   (values))

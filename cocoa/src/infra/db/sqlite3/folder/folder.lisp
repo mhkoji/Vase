@@ -1,8 +1,8 @@
-(defpackage :cocoa.infra.db.folder.sqlite3
+(defpackage :cocoa.infra.db.sqlite3.folder
   (:use :cl
-        :cocoa.infra.db.sqlite3
-        :cocoa.infra.db.folder.dao))
-(in-package :cocoa.infra.db.folder.sqlite3)
+        :cocoa.entity.folder
+        :cocoa.infra.db.sqlite3))
+(in-package :cocoa.infra.db.sqlite3.folder)
 
 ;; insert
 (defmethod folder-insert ((dao sqlite3-dao) (rows list))

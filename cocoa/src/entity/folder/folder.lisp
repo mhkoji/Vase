@@ -2,24 +2,42 @@
 (in-package :cocoa.entity.folder)
 (cl-annot:enable-annot-syntax)
 
-@export
-(defgeneric folder-id (folder)
-  (:documentation "Returns the unique id of a content"))
+(defstruct folder-row id name modified-at)
+(export 'make-folder-row)
+(export 'folder-row-id)
+(export 'folder-row-name)
+(export 'folder-row-modified-at)
+
+(defstruct thumbnail-row folder-id thumbnail-id)
+(export 'make-thumbnail-row)
+(export 'thumbnail-row-folder-id)
+(export 'thumbnail-row-thumbnail-id)
 
 @export
-(defgeneric folder-name (folder)
-  (:documentation "Returns the name of a folder"))
+(defgeneric folder-insert (dao folder-row-list))
+@export
+(defgeneric folder-select (dao ids))
+@export
+(defgeneric folder-select-ids (dao offset size))
+@export
+(defgeneric folder-search-ids (dao keyword))
+@export
+(defgeneric folder-delete (dao folder-id-list))
 
 @export
-(defgeneric folder-thumbnail (folder)
-  (:documentation "Returns the thumbanil of a folder"))
+(defgeneric folder-thumbnail-insert (dao thumbnail-row-list))
+@export
+(defgeneric folder-thumbnail-select (dao folder-id-list))
+@export
+(defgeneric folder-thumbnail-delete (dao folder-id-list))
 
 @export
-(defun folder-content-query (folder &key from size)
-  (cocoa.entity.folder.content:make-content-query
-   :folder-id (folder-id folder)
-   :from from
-   :size size))
+(defun delete-folders/ids (dao ids)
+  "Delete the folders"
+  (folder-thumbnail-delete dao ids)
+  (folder-content-delete dao ids)
+  (folder-delete dao ids)
+  dao)
 
 ;; What a folder is made from
 (defstruct source folder-id name thumbnail modified-at)
@@ -29,29 +47,96 @@
 (export 'source-thumbnail)
 (export 'source-modified-at)
 
-@export
-(defgeneric add-folders/sources (folder-repository sources)
-  (:documentation "Save folders"))
+(defun source->folder-row (source)
+  (make-folder-row :id (source-folder-id source)
+                   :name (source-name source)
+                   :modified-at (source-modified-at source)))
 
+(defun source->thumbnail-row (source)
+  (make-thumbnail-row
+   :folder-id (source-folder-id source)
+   :thumbnail-id (thumbnail-id (source-thumbnail source))))
+
+@export
+(defun add-folders/sources (dao sources)
+  "Save folders"
+  ;; Delete existing folders
+  (setq dao (delete-folders/ids
+             dao (mapcar #'source-folder-id sources)))
+  ;; Create folders
+  (setq dao (folder-insert
+             dao (mapcar #'source->folder-row sources)))
+  ;; Thumbnail
+  (setq dao (folder-thumbnail-insert
+             dao (mapcar #'source->thumbnail-row sources)))
+  dao)
+
+(defclass folder ()
+  ((id        :initarg :id)
+   (name      :initarg :name)
+   (thumbnail :initarg :thumbnail)
+   (dao       :initarg :dao)))
+
+(defclass simple-thumbnail ()
+  ((thumbnail-id
+    :initarg :thumbnail-id
+    :reader thumbnail-id)))
+
+(defun id->thumbnail (id)
+  (make-instance 'simple-thumbnail :thumbnail-id id))
+
+
+@export
+(defun folder-id (folder)
+  "Returns the unique id of a content"
+  (slot-value folder 'id))
+
+@export
+(defun folder-name (folder)
+  "Returns the name of a folder"
+  (slot-value folder 'name))
+
+@export
+(defun folder-thumbnail (folder)
+  "Returns the thumbanil of a folder"
+  (or (slot-value folder 'thumbnail)
+      (with-slots ((dao dao) (folder-id id)) folder
+        (id->thumbnail
+         (thumbnail-row-thumbnail-id
+          (car (folder-thumbnail-select dao (list folder-id))))))))
 
 ;; The specification of listing folders
 (defstruct list-spec with-thumbnail-p)
-(export 'list-spec)
 (export 'make-list-spec)
-(export 'list-spec-with-thumbnail-p)
 
 @export
-(defgeneric list-folders/ids (folder-repository list-spec folder-id-list)
-  (:documentation "Returns the folders with the given ids"))
+(defun list-folders/ids (dao list-spec ids)
+  "Returns the folders with the given ids"
+  (let ((folder-id->row (make-hash-table :test #'equal))
+        (folder-id->thumbnail (make-hash-table :test #'equal)))
+    (dolist (row (folder-select dao ids))
+      (setf (gethash (folder-row-id row) folder-id->row) row))
+    (when (list-spec-with-thumbnail-p list-spec)
+      (dolist (row (folder-thumbnail-select dao ids))
+        (let ((folder-id (thumbnail-row-folder-id row))
+              (thumbnail (id->thumbnail (thumbnail-row-thumbnail-id row))))
+          (setf (gethash folder-id folder-id->thumbnail) thumbnail))))
+    (mapcar (lambda (id)
+              (let ((row (gethash id folder-id->row))
+                    (thumbnail (gethash id folder-id->thumbnail)))
+                (make-instance 'folder
+                               :id id
+                               :name (folder-row-name row)
+                               :thumbnail thumbnail
+                               :dao dao)))
+            ids)))
 
 @export
-(defgeneric list-folders/range (folder-repository list-spec offset size)
-  (:documentation "Returns the folders within the range"))
+(defun list-folders/range (dao spec offset size)
+  "Returns the folders within the range"
+  (list-folders/ids dao spec (folder-select-ids dao offset size)))
 
 @export
-(defgeneric delete-folders/ids (folder-repository folder-id-list)
-  (:documentation "Delete the folders"))
-
-@export
-(defgeneric search-folders/name (folder-repository list-spec keyword)
-  (:documentation "Returns the folders whose names contain the keyword"))
+(defun search-folders/name (dao spec keyword)
+  "Returns the folders whose names contain the keyword"
+  (list-folders/ids dao spec (folder-search-ids dao keyword)))
