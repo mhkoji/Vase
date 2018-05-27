@@ -7,14 +7,6 @@
   (:documentation "Returns the unique id of a content"))
 
 
-@export
-(defgeneric folder-content-insert (dao folder-id content-id-list))
-@export
-(defgeneric folder-content-select-ids (dao folder-id))
-@export
-(defgeneric folder-content-delete (dao folder-id-list))
-
-
 (defclass folder-content ()
   ((content-id :initarg :content-id
                :reader content-id)))

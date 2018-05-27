@@ -62,13 +62,13 @@
               :out (lambda (xs) (make-json-response
                                  (array-of #'folder xs)))) app
     (with-dao (dao context)
-      (cocoa.use-case.folder:list/range from size :folder-repository dao)))
+      (cocoa.use-case.folder:list/range from size :folder-dao dao)))
   (do-route! ("/api/folder/:id"
               :method :get
               :in ((folder-id :param :id))
               :out (lambda (f) (make-json-response (folder f)))) app
     (with-dao (dao context)
-      (cocoa.use-case.folder:get/id folder-id :folder-repository dao)))
+      (cocoa.use-case.folder:get/id folder-id :folder-dao dao)))
   (do-route! ("/api/folder/:id/images"
               :method :get
               :in ((folder-id :param :id)
@@ -78,15 +78,14 @@
                                  (array-of #'image xs)))) app
     (with-dao (dao context)
       (cocoa.use-case.folder:list-images folder-id :from from :size size
-                                         :folder-repository dao)))
+                                         :folder-dao dao)))
   (do-route! ("/api/folder/:id/tags"
               :method :get
               :in ((folder-id :param :id))
               :out (lambda (xs) (make-json-response
                                  (array-of #'tag xs)))) app
     (with-dao (dao context)
-      (cocoa.use-case.tag.contents.folder:tags folder-id
-                                               :tag-repository dao)))
+      (cocoa.use-case.tag.contents.folder:tags folder-id :tag-dao dao)))
   (do-route! ("/api/folder/:id/tags"
               :method :post
               :in ((folder-id :param :id)
@@ -94,28 +93,26 @@
               :out #'make-json-response) app
     (with-dao (dao context)
       (cocoa.use-case.tag.contents.folder:set-tags! folder-id tag-ids
-                                                    :tag-repository dao)))
+                                                    :tag-dao dao)))
 
   (do-route! ("/api/tags"
               :method :get
               :out (lambda (xs) (make-json-response
                                  (array-of #'tag xs)))) app
     (with-dao (dao context)
-      (cocoa.use-case.tag:list/range 0 50 :tag-repository dao)))
+      (cocoa.use-case.tag:list/range 0 50 :tag-dao dao)))
   (do-route! ("/api/tags"
               :method :post
               :in ((name :query "name"))
               :out #'make-json-response) app
     (with-dao (dao context)
-      (cocoa.use-case.tag:create/name name
-                                      :tag-factory dao
-                                      :tag-repository dao)))
+      (cocoa.use-case.tag:create/name name :tag-dao dao)))
   (do-route! ("/api/tag/:id"
               :method :delete
               :in ((tag-id :param :id))
               :out #'make-json-response) app
     (with-dao (dao context)
-      (cocoa.use-case.tag:delete/id tag-id :tag-repository dao)))
+      (cocoa.use-case.tag:delete/id tag-id :tag-dao dao)))
   (do-route! ("/api/tag/:id/folders"
               :method :get
               :in ((tag-id :param :id))
@@ -123,7 +120,7 @@
                                  (array-of #'folder xs)))) app
     (with-dao (dao context)
       (cocoa.use-case.tag.contents:list/id tag-id
-                                           :tag-repository dao
+                                           :tag-dao dao
                                            :container (list :folder dao))))
   (do-route! ("/api/tag/:id"
               :method :put
@@ -131,14 +128,14 @@
                    (name :query "name"))
               :out #'make-json-response) app
     (with-dao (dao context)
-      (cocoa.use-case.tag:change-name tag-id name :tag-repository dao)))
+      (cocoa.use-case.tag:change-name tag-id name :tag-dao dao)))
 
   (do-route! ("/_i/:id"
               :method :get
               :in ((image-id :param :id))
               :out #'make-file-response) app
     (with-dao (dao context)
-      (cocoa.use-case.image:path/id image-id :image-repository dao)))
+      (cocoa.use-case.image:path/id image-id :image-dao dao)))
   app)
 
 @export

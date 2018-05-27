@@ -53,8 +53,8 @@
             :make-thumbnail-file (make-thumbnail-factory
                                   (context-thumbnail-root context))
             :image-factory (context-digest-fn context)
-            :image-repository dao)))
+            :image-dao dao)))
       (cocoa.use-case.folder:add-by-props-stream
        (cocoa.util.stream:stream-map dir->props-converter dir-stream)
        :name->folder-id (context-digest-fn context)
-       :folder-repository dao))))
+       :folder-dao dao))))

@@ -6,36 +6,32 @@
              thumbnail)))
 
 (defun folder->dto (folder)
-  (list :id (folder-id folder)
-        :name (folder-name folder)
-        :thumbnail (thumbnail->dto (folder-thumbnail folder))))
+  (list :id (cocoa.entity.folder:folder-id folder)
+        :name (cocoa.entity.folder:folder-name folder)
+        :thumbnail (thumbnail->dto
+                    (cocoa.entity.folder:folder-thumbnail folder))))
 
-(defmacro with-output (&body body)
-  `(mapcar #'folder->dto (progn ,@body)))
-
-@export
-(defun list/range (from size &key folder-repository)
-  (mapcar #'folder->dto
-          (list-folders/range folder-repository
-                              (make-list-spec :with-thumbnail-p t)
-                              from size)))
+(defparameter *bulk-fetching-spec*
+  (cocoa.entity.folder:make-list-spec :with-thumbnail-p t))
 
 @export
-(defun list/ids (ids &key folder-repository)
-  (mapcar #'folder->dto
-          (list-folders/ids folder-repository
-                            (make-list-spec :with-thumbnail-p t)
-                            ids)))
+(defun list/range (from size &key folder-dao)
+  (mapcar #'folder->dto (cocoa.entity.folder:list-by-range
+                         folder-dao *bulk-fetching-spec* from size)))
 
 @export
-(defun get/id (id &key folder-repository)
-  (folder->dto (car (list-folders/ids folder-repository
-                                      (make-list-spec)
-                                      (list id)))))
+(defun list/ids (ids &key folder-dao)
+  (mapcar #'folder->dto (cocoa.entity.folder:list-by-ids
+                         folder-dao *bulk-fetching-spec* ids)))
 
 @export
-(defun search/name (name &key folder-repository)
-  (with-output
-    (search-folders/name folder-repository
-                         (make-list-spec :with-thumbnail-p t)
-                         name)))
+(defun get/id (id &key folder-dao)
+  (folder->dto (car (cocoa.entity.folder:list-by-ids
+                     folder-dao
+                     (cocoa.entity.folder:make-list-spec)
+                     (list id)))))
+
+@export
+(defun search/name (name &key folder-dao)
+  (mapcar #'folder->dto (cocoa.entity.folder:search-by-name
+                         folder-dao *bulk-fetching-spec* name)))

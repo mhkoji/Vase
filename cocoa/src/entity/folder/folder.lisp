@@ -24,6 +24,15 @@
 @export
 (defgeneric folder-delete (dao folder-id-list))
 
+
+@export
+(defgeneric folder-content-insert (dao folder-id content-id-list))
+@export
+(defgeneric folder-content-select-ids (dao folder-id))
+@export
+(defgeneric folder-content-delete (dao folder-id-list))
+
+
 @export
 (defgeneric folder-thumbnail-insert (dao thumbnail-row-list))
 @export
@@ -33,7 +42,7 @@
 
 
 @export
-(defun delete-folders/ids (dao ids)
+(defun delete-by-ids (dao ids)
   "Delete the folders"
   (folder-thumbnail-delete dao ids)
   (folder-content-delete dao ids)
@@ -61,10 +70,10 @@
    :thumbnail-id (thumbnail-id (source-thumbnail source))))
 
 @export
-(defun save-folders (dao sources)
+(defun save (dao sources)
   "Save folders"
   ;; Delete the existing folders
-  (setq dao (delete-folders/ids dao
+  (setq dao (delete-by-ids dao
              (mapcar #'source-folder-id sources)))
   ;; Insert folders
   (setq dao (folder-insert dao
@@ -114,7 +123,7 @@
 (export 'make-list-spec)
 
 @export
-(defun list-folders/ids (dao list-spec ids)
+(defun list-by-ids (dao list-spec ids)
   "Returns the folders with the given ids"
   (let ((folder-id->row (make-hash-table :test #'equal))
         (folder-id->thumbnail (make-hash-table :test #'equal)))
@@ -136,11 +145,11 @@
             ids)))
 
 @export
-(defun list-folders/range (dao spec offset size)
+(defun list-by-range (dao spec offset size)
   "Returns the folders within the range"
-  (list-folders/ids dao spec (folder-select-ids dao offset size)))
+  (list-by-ids dao spec (folder-select-ids dao offset size)))
 
 @export
-(defun search-folders (dao spec keyword)
+(defun search-by-name (dao spec keyword)
   "Returns the folders whose names contain the keyword"
-  (list-folders/ids dao spec (folder-search-ids dao keyword)))
+  (list-by-ids dao spec (folder-search-ids dao keyword)))

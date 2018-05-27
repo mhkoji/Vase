@@ -33,7 +33,7 @@
   (make-instance 'image :row row))
 
 @export
-(defun make-images/paths (digest-fn paths)
+(defun make-by-paths (digest-fn paths)
   (let ((ids (mapcar digest-fn paths)))
     (loop for id in ids
           for path in paths
@@ -41,15 +41,15 @@
                    (make-image-row :image-id id :path path)))))
 
 @export
-(defun save-images (dao images)
+(defun save (dao images)
   (image-insert dao (mapcar #'image-row images))
   (values))
 
 @export
-(defun list-images/ids (dao ids)
+(defun list-by-ids (dao ids)
   (mapcar #'row->image (image-select dao ids)))
 
 @export
-(defun delete-images/ids (dao ids)
+(defun delete-by-ids (dao ids)
   (image-delete dao ids)
   (values))

@@ -13,15 +13,18 @@
 
 ;;; folder images
 @export
-(defun list-images (folder-id &key from size folder-repository)
+(defun list-images (folder-id &key from size folder-dao)
   ;@type! folder-id !integer
   ;@type! from integer 0
   ;@type! size integer 100
-  ;@type! folder-repository !folder-repository
+  ;@type! folder-dao !folder-dao
   (ensure-integer! from 0)
   (ensure-integer! size 100)
-  (let ((folder (car (list-folders/ids folder-repository
-                                       (make-list-spec)
-                                       (list folder-id)))))
+  (let ((folder (car (cocoa.entity.folder:list-by-ids
+                      folder-dao
+                      (cocoa.entity.folder:make-list-spec)
+                      (list folder-id)))))
     (mapcar #'content->image-dto
-            (folder-contents folder :from from :size size))))
+            (cocoa.entity.folder:folder-contents
+             folder
+             :from from :size size))))

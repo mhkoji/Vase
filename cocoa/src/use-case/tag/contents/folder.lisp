@@ -25,19 +25,16 @@
                                 (type (eql :folder))
                                 (content-ids list))
   (cocoa.use-case.folder:list/ids content-ids
-                                  :folder-repository
-                                  (getf container :folder)))
+                                  :folder-dao (getf container :folder)))
 
 @export
-(defun set-tags! (folder-id tag-ids &key tag-repository)
+(defun set-tags! (folder-id tag-ids &key tag-dao)
   (let ((content (as-content folder-id)))
-    (dolist (tag (list-tags/content tag-repository content))
+    (dolist (tag (list-tags/content tag-dao content))
       (detach-tag tag content))
-    (dolist (tag (list-tags/ids tag-repository tag-ids))
+    (dolist (tag (list-tags/ids tag-dao tag-ids))
       (attach-tag tag content))))
 
 @export
-(defun tags (folder-id &key tag-repository)
-  (cocoa.use-case.tag:list/content
-   (as-content folder-id)
-   :tag-repository tag-repository))
+(defun tags (folder-id &key tag-dao)
+  (cocoa.use-case.tag:list/content (as-content folder-id) :tag-dao tag-dao))
