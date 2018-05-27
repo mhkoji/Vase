@@ -4,21 +4,27 @@
 @export
 (defun add-by-props-stream (props-stream &key name->folder-id
                                               folder-repository)
-  (let ((props-list (cocoa.util.stream:stream-to-list props-stream)))
-    (cocoa.entity.folder:add-folders/sources folder-repository
-     (mapcar (lambda (props)
-               (let ((name (getf props :name)))
-                 (make-source :folder-id   (funcall name->folder-id name)
-                              :name        name
-                              :thumbnail   (getf props :thumbnail)
-                              :modified-at (getf props :modified-at))))
-             props-list))
-    (dolist (props props-list)
-      (cocoa.entity.folder:add-contents folder-repository
-       (funcall name->folder-id (getf props :name))
-       (getf props :contents))))
+  (let* ((props-list (cocoa.util.stream:stream-to-list props-stream))
+         (folder-ids (mapcar (lambda (props)
+                               (funcall name->folder-id
+                                        (getf props :name)))
+                             props-list)))
+    (cocoa.entity.folder:save-folders folder-repository
+     (mapcar (lambda (folder-id props)
+               (make-source :folder-id   folder-id
+                            :name        (getf props :name)
+                            :thumbnail   (getf props :thumbnail)
+                            :modified-at (getf props :modified-at)))
+             folder-ids props-list))
+    (let ((folders (cocoa.entity.folder:list-folders/ids folder-repository
+                    (make-list-spec)
+                    folder-ids))
+          (contents-list (mapcar (lambda (props) (getf props :contents))
+                                 props-list)))
+      (loop for folder in folders
+            for contents in contents-list
+            do (progn (setf (folder-contents folder) contents)))))
   (values))
-
 
 (defun image-id (image)
   (getf image :id))

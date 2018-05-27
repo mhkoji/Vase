@@ -31,6 +31,7 @@
 @export
 (defgeneric folder-thumbnail-delete (dao folder-id-list))
 
+
 @export
 (defun delete-folders/ids (dao ids)
   "Delete the folders"
@@ -38,6 +39,7 @@
   (folder-content-delete dao ids)
   (folder-delete dao ids)
   dao)
+
 
 ;; What a folder is made from
 (defstruct source folder-id name thumbnail modified-at)
@@ -48,9 +50,10 @@
 (export 'source-modified-at)
 
 (defun source->folder-row (source)
-  (make-folder-row :id (source-folder-id source)
-                   :name (source-name source)
-                   :modified-at (source-modified-at source)))
+  (make-folder-row
+   :id (source-folder-id source)
+   :name (source-name source)
+   :modified-at (source-modified-at source)))
 
 (defun source->thumbnail-row (source)
   (make-thumbnail-row
@@ -58,32 +61,33 @@
    :thumbnail-id (thumbnail-id (source-thumbnail source))))
 
 @export
-(defun add-folders/sources (dao sources)
+(defun save-folders (dao sources)
   "Save folders"
-  ;; Delete existing folders
-  (setq dao (delete-folders/ids
-             dao (mapcar #'source-folder-id sources)))
-  ;; Create folders
-  (setq dao (folder-insert
-             dao (mapcar #'source->folder-row sources)))
-  ;; Thumbnail
-  (setq dao (folder-thumbnail-insert
-             dao (mapcar #'source->thumbnail-row sources)))
+  ;; Delete the existing folders
+  (setq dao (delete-folders/ids dao
+             (mapcar #'source-folder-id sources)))
+  ;; Insert folders
+  (setq dao (folder-insert dao
+             (mapcar #'source->folder-row sources)))
+  ;; Insert thumbnails
+  (setq dao (folder-thumbnail-insert dao
+             (mapcar #'source->thumbnail-row sources)))
   dao)
 
-(defclass folder ()
-  ((id        :initarg :id)
-   (name      :initarg :name)
-   (thumbnail :initarg :thumbnail)
-   (dao       :initarg :dao)))
 
-(defclass simple-thumbnail ()
+(defclass folder ()
+  ((dao :initarg :dao)
+   (id :initarg :id)
+   (name :initarg :name)
+   (thumbnail :initarg :thumbnail)))
+
+(defclass folder-thumbnail ()
   ((thumbnail-id
     :initarg :thumbnail-id
     :reader thumbnail-id)))
 
 (defun id->thumbnail (id)
-  (make-instance 'simple-thumbnail :thumbnail-id id))
+  (make-instance 'folder-thumbnail :thumbnail-id id))
 
 
 @export
@@ -125,10 +129,10 @@
               (let ((row (gethash id folder-id->row))
                     (thumbnail (gethash id folder-id->thumbnail)))
                 (make-instance 'folder
+                               :dao dao
                                :id id
                                :name (folder-row-name row)
-                               :thumbnail thumbnail
-                               :dao dao)))
+                               :thumbnail thumbnail)))
             ids)))
 
 @export
@@ -137,6 +141,6 @@
   (list-folders/ids dao spec (folder-select-ids dao offset size)))
 
 @export
-(defun search-folders/name (dao spec keyword)
+(defun search-folders (dao spec keyword)
   "Returns the folders whose names contain the keyword"
   (list-folders/ids dao spec (folder-search-ids dao keyword)))
