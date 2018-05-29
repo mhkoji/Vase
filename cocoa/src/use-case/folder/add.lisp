@@ -23,8 +23,8 @@
                                  props-list)))
       (loop for folder in folders
             for contents in contents-list
-            do (progn (setf (cocoa.entity.folder:folder-contents folder)
-                            contents)))))
+            do (progn (cocoa.entity.folder:update! folder
+                       (cocoa.entity.folder:append-contents contents))))))
   (values))
 
 (defun image-id (image)

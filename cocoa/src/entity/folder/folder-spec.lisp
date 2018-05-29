@@ -9,19 +9,21 @@
                  :id i :name (format nil "name-~A" i))))
 
 @export
-(defun can-insert-then-select-the-inserted-rows (dao)
-  ;; setup
-  (setq dao (folder-insert dao (create-rows 0 3)))
-  ;; exercise && verify
-  (and (equal (folder-select-ids dao 0 2) (list "0" "1"))
-       (equal (folder-select-ids dao 2 4) (list "2" "3"))
-       (let ((rows (folder-select dao (list "0" "1"))))
+(defmacro can-insert-then-select-the-inserted-rows (dao &key test)
+  (let ((g (gensym "DAO")))
+    `(let ((,g ,dao))
+       ;; setup
+       (setq ,g (folder-insert ,g (create-rows 0 3)))
+       ;; exercise && verify
+       (,test (equal (folder-select-ids ,g 0 2) (list "0" "1")))
+       (,test (equal (folder-select-ids ,g 2 4) (list "2" "3")))
+       (let ((rows (folder-select ,g (list "0" "1"))))
          (every (lambda (row i)
-                  (and (string= (folder-row-id row)
-                                (format nil "~A" i))
-                       (string= (folder-row-name row)
-                                (format nil "name-~A" i))))
-                rows (list 0 1)))))
+                  (,test (and (string= (folder-row-id row)
+                                       (format nil "~A" i))
+                              (string= (folder-row-name row)
+                                       (format nil "name-~A" i)))))
+                rows (list 0 1))))))
 
 @export
 (defun can-insert-then-delete-the-inserted-rows (dao)
@@ -33,3 +35,39 @@
          (folder-delete dao (list "1" "2"))
          t)
        (equal (folder-select-ids dao 0 4) (list "0" "3"))))
+
+
+(defclass mock-thumbnail ()
+  ((thumbnail-id
+    :initarg :thumbnail-id
+    :reader thumbnail-id)))
+
+(defclass mock-content ()
+  ((content-id
+    :initarg :content-id
+    :reader content-id)))
+
+(defun make-thumbnail (thumbnail-id)
+  (make-instance 'mock-thumbnail :thumbnail-id thumbnail-id))
+
+(defun make-content (content-id)
+  (make-instance 'mock-content :content-id content-id))
+
+(defun add-default-folder (dao folder-id)
+  (save dao (list (make-source
+                   :folder-id folder-id
+                   :name "a folder name"
+                   :thumbnail (make-thumbnail "thumb:1234")
+                   :modified-at 3736501114))))
+
+@export
+(defun folder-can-contain-contents (dao)
+  (setq dao (add-default-folder dao "1234"))
+  (let ((folder (car (list-by-ids dao (make-list-spec) (list "1234"))))
+        (contents (list (make-content "c:5678"))))
+    (update! folder (append-contents contents))
+    (every (lambda (folder-content content)
+             (string= (content-id folder-content)
+                      (content-id content)))
+           (list-contents folder :from 0 :size (length contents))
+           contents)))

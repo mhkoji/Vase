@@ -153,3 +153,7 @@
 (defun search-by-name (dao spec keyword)
   "Returns the folders whose names contain the keyword"
   (list-by-ids dao spec (folder-search-ids dao keyword)))
+
+
+@export
+(defgeneric update! (folder diff))

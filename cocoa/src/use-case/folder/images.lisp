@@ -25,6 +25,6 @@
                       (cocoa.entity.folder:make-list-spec)
                       (list folder-id)))))
     (mapcar #'content->image-dto
-            (cocoa.entity.folder:folder-contents
+            (cocoa.entity.folder:list-contents
              folder
              :from from :size size))))

@@ -7,6 +7,29 @@
   (:documentation "Returns the unique id of a content"))
 
 
+@export
+(defgeneric folder-content-insert (dao folder-id content-id-list))
+@export
+(defgeneric folder-content-select-ids (dao folder-id))
+@export
+(defgeneric folder-content-delete (dao folder-id-list))
+
+(defclass append-contents-diff ()
+  ((contents :initarg :contents)))
+
+@export
+(defun append-contents (contents)
+  (make-instance 'append-contents-diff :contents contents))
+
+@export
+(defmethod update! (folder (diff append-contents-diff))
+  (let ((dao (slot-value folder 'dao))
+        (folder-id (folder-id folder))
+        (content-ids (mapcar #'content-id
+                             (slot-value diff 'contents))))
+    (folder-content-insert dao folder-id content-ids)))
+
+
 (defclass folder-content ()
   ((content-id :initarg :content-id
                :reader content-id)))
@@ -29,18 +52,10 @@
                        (content-query-from content-query)
                        (content-query-size content-query))))
 
-
 @export
-(defun folder-contents (folder &key from size)
+(defun list-contents (folder &key from size)
   (let ((dao (slot-value folder 'dao))
         (query (make-content-query :folder-id (folder-id folder)
                                    :from from
                                    :size size)))
     (list-contents-by-query dao query)))
-
-@export
-(defun (setf folder-contents) (contents folder)
-  (let ((dao (slot-value folder 'dao))
-        (folder-id (folder-id folder))
-        (content-ids (mapcar #'content-id contents)))
-    (folder-content-insert dao folder-id content-ids)))
