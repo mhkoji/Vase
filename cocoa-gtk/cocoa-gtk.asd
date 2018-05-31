@@ -4,4 +4,6 @@
   :components
   ((:file "gtk"))
 
-  :depends-on (:cocoa :cl-cffi-gtk))
+  :depends-on (:cocoa
+               :cl-arrows
+               :cl-cffi-gtk))

@@ -6,8 +6,27 @@
 (in-package :cocoa.gtk)
 (cl-annot:enable-annot-syntax)
 
+(defun folders (context from &optional (size 5))
+  (let ((frame (make-instance 'gtk-grid :shadow-type :in)))
+    (cocoa.infra.context:with-dao (dao context)
+      (dolist (folder (cocoa.use-case.folder:list/range
+                       from size :folder-dao dao))
+        (let ((thumbnail-frame
+               (make-instance 'gtk-frame :shadow-type :in)))
+          (let* ((thumbnail-path (cocoa.use-case.image:path/id
+                                  (-> folder
+                                      (getf :thumbnail)
+                                      (getf :id))
+                                  :image-dao dao))
+                 (image (gtk-image-new-from-file thumbnail-path)))
+            (gtk-container-add thumbnail-frame image))
+          (gtk-container-add frame thumbnail-frame))))
+    frame))
+
 @export
-(defun main (context)
+(defun main (&optional (context (cocoa.infra.context:load-context)))
+  (let ((index 0)
+        (frame nil))
   (within-main-loop
     (let ((window (make-instance 'gtk-window
                                  :type :toplevel
@@ -18,14 +37,24 @@
                         (lambda (widget)
                           (declare (ignore widget))
                           (leave-gtk-main)))
-      (cocoa.infra.context:with-dao (dao context)
-        (dolist (folder (cocoa.use-case.folder.list:list/range
-                         0 2 :folder-repository dao))
-          (let* ((thumbnail-path (cocoa.use-case.image:path/id
-                                  (-> folder
-                                      (getf :thumbnail)
-                                      (getf :id))
-                                  :image-repository dao))
-                 (image (gtk-image-new-from-file thumbnail-path)))
-            (gtk-container-add window image))))
-      (gtk-widget-show-all window))))
+      (let ((vgrid (make-instance 'gtk-grid
+                                  :orientation :vertical
+                                  :border-width 8)))
+        (let ((title (gtk-label-new "Folders")))
+          (gtk-container-add vgrid title))
+
+        (let ((button (make-instance 'gtk-button :label ">")))
+          (gtk-container-add vgrid button)
+
+          (gtk-container-add vgrid (setq frame (folders context index)))
+
+          (g-signal-connect button "clicked"
+           (lambda (button)
+             (declare (ignore button))
+             (gtk-widget-destroy frame)
+             (incf index 3)
+             (gtk-container-add vgrid (setq frame (folders context index)))
+             (gtk-widget-show-all window))))
+
+        (gtk-container-add window vgrid))
+      (gtk-widget-show-all window)))))
