@@ -49,38 +49,35 @@
   (folder-delete dao ids)
   dao)
 
+@export
+;; A folder configuration from which a folder is saved
+(defstruct folder-config id name thumbnail modified-at)
+(export 'make-folder-config)
 
-;; What a folder is made from
-(defstruct source folder-id name thumbnail modified-at)
-(export 'make-source)
-(export 'source-folder-id)
-(export 'source-name)
-(export 'source-thumbnail)
-(export 'source-modified-at)
 
-(defun source->folder-row (source)
+(defun folder-config-folder-row (config)
   (make-folder-row
-   :id (source-folder-id source)
-   :name (source-name source)
-   :modified-at (source-modified-at source)))
+   :id (folder-config-id config)
+   :name (folder-config-name config)
+   :modified-at (folder-config-modified-at config)))
 
-(defun source->thumbnail-row (source)
+(defun folder-config-thumbnail-row (config)
   (make-thumbnail-row
-   :folder-id (source-folder-id source)
-   :thumbnail-id (thumbnail-id (source-thumbnail source))))
+   :folder-id (folder-config-id config)
+   :thumbnail-id (thumbnail-id (folder-config-thumbnail config))))
 
 @export
-(defun save (dao sources)
+(defun save (dao configs)
   "Save folders"
   ;; Delete the existing folders
   (setq dao (delete-by-ids dao
-             (mapcar #'source-folder-id sources)))
+             (mapcar #'folder-config-id configs)))
   ;; Insert folders
   (setq dao (folder-insert dao
-             (mapcar #'source->folder-row sources)))
+             (mapcar #'folder-config-folder-row configs)))
   ;; Insert thumbnails
   (setq dao (folder-thumbnail-insert dao
-             (mapcar #'source->thumbnail-row sources)))
+             (mapcar #'folder-config-thumbnail-row configs)))
   dao)
 
 

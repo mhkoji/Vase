@@ -1,30 +1,32 @@
 (in-package :cocoa.use-case.folder)
 (cl-annot:enable-annot-syntax)
 
+;;; The representation of the source of a folder
+(defstruct source name modified-at thumbnail contents)
+
 @export
-(defun add-by-props-stream (props-stream &key folder-dao name->folder-id)
-  (let* ((props-list (cocoa.util.stream:stream-to-list props-stream))
-         (folder-ids (mapcar (lambda (props)
-                               (funcall name->folder-id
-                                        (getf props :name)))
-                             props-list)))
-    (cocoa.entity.folder:save folder-dao
-     (mapcar (lambda (folder-id props)
-               (cocoa.entity.folder:make-source
-                :folder-id   folder-id
-                :name        (getf props :name)
-                :thumbnail   (getf props :thumbnail)
-                :modified-at (getf props :modified-at)))
-             folder-ids props-list))
-    (let ((folders (cocoa.entity.folder:list-by-ids folder-dao
-                    (cocoa.entity.folder:make-list-spec)
-                    folder-ids))
-          (contents-list (mapcar (lambda (props) (getf props :contents))
-                                 props-list)))
-      (loop for folder in folders
-            for contents in contents-list
-            do (progn (cocoa.entity.folder:update! folder
-                       (cocoa.entity.folder:append-contents contents))))))
+(defun add-by-source-stream (source-stream &key folder-dao name->folder-id)
+  (let* ((source-list
+          (cocoa.util.stream:stream-to-list source-stream))
+         (folder-ids
+          (mapcar (lambda (source)
+                    (funcall name->folder-id (source-name source)))
+                  source-list)))
+    (let ((configs (mapcar (lambda (folder-id source)
+                             (cocoa.entity.folder:make-folder-config
+                              :id folder-id
+                              :name (source-name source)
+                              :thumbnail (source-thumbnail source)
+                              :modified-at (source-modified-at source)))
+                           folder-ids source-list)))
+      (setq folder-dao (cocoa.entity.folder:save folder-dao configs)))
+    (loop for folder in (cocoa.entity.folder:list-by-ids folder-dao
+                         (cocoa.entity.folder:make-list-spec)
+                         folder-ids)
+          for source in source-list
+       do (let ((diff (cocoa.entity.folder:append-contents
+                       (source-contents source))))
+            (cocoa.entity.folder:update! folder diff))))
   (values))
 
 (defun image-id (image)
@@ -51,22 +53,21 @@
 (export 'make-dir)
 
 @export
-(defun dir->props-converter (&key (sort-file-paths #'identity)
-                                  make-thumbnail-file
-                                  image-dao
-                                  image-factory)
+(defun dir->source-converter (&key (sort-file-paths #'identity)
+                                   make-thumbnail-file
+                                   image-dao
+                                   image-factory)
   (lambda (dir)
     (let ((path (dir-path dir))
           (file-paths (funcall sort-file-paths (dir-file-paths dir))))
-      (list :name path
-            :modified-at (file-write-date path)
-            :thumbnail
-            (let ((thumbnail-file
-                   (funcall make-thumbnail-file (car file-paths))))
-              (make-thumbnail thumbnail-file
-                              :image-dao image-dao
-                              :image-factory image-factory))
-            :contents
-            (make-image-contents file-paths
-                                 :image-dao image-dao
-                                 :image-factory image-factory)))))
+      (make-source
+       :name path
+       :modified-at (file-write-date path)
+       :thumbnail (let ((thumbnail-file
+                         (funcall make-thumbnail-file (car file-paths))))
+                    (make-thumbnail thumbnail-file
+                                    :image-dao image-dao
+                                    :image-factory image-factory))
+       :contents (make-image-contents file-paths
+                                      :image-dao image-dao
+                                      :image-factory image-factory)))))

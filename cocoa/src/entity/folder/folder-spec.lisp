@@ -54,8 +54,8 @@
   (make-instance 'mock-content :content-id content-id))
 
 (defun add-default-folder (dao folder-id)
-  (save dao (list (make-source
-                   :folder-id folder-id
+  (save dao (list (make-folder-config
+                   :id folder-id
                    :name "a folder name"
                    :thumbnail (make-thumbnail "thumb:1234")
                    :modified-at 3736501114))))
