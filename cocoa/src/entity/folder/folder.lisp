@@ -49,11 +49,9 @@
   (folder-delete dao ids)
   dao)
 
-@export
+
 ;; A folder configuration from which a folder is saved
 (defstruct folder-config id name thumbnail modified-at)
-(export 'make-folder-config)
-
 
 (defun folder-config-folder-row (config)
   (make-folder-row
@@ -66,7 +64,6 @@
    :folder-id (folder-config-id config)
    :thumbnail-id (thumbnail-id (folder-config-thumbnail config))))
 
-@export
 (defun save (dao configs)
   "Save folders"
   ;; Delete the existing folders
@@ -79,7 +76,6 @@
   (setq dao (folder-thumbnail-insert dao
              (mapcar #'folder-config-thumbnail-row configs)))
   dao)
-
 
 (defclass folder ()
   ((dao :initarg :dao)

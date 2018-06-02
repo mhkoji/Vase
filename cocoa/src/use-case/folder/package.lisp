@@ -1,3 +1,4 @@
 (defpackage :cocoa.use-case.folder
-  (:use :cl))
+  (:use :cl)
+  (:import-from :cl-arrows :->))
 

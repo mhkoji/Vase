@@ -3,31 +3,29 @@
 
 ;;; The representation of the source of a folder
 (defstruct source name modified-at thumbnail contents)
+(export 'make-source)
 
 @export
-(defun add-by-source-stream (source-stream &key folder-dao name->folder-id)
-  (let* ((source-list
-          (cocoa.util.stream:stream-to-list source-stream))
-         (folder-ids
-          (mapcar (lambda (source)
-                    (funcall name->folder-id (source-name source)))
-                  source-list)))
-    (let ((configs (mapcar (lambda (folder-id source)
-                             (cocoa.entity.folder:make-folder-config
-                              :id folder-id
-                              :name (source-name source)
-                              :thumbnail (source-thumbnail source)
-                              :modified-at (source-modified-at source)))
-                           folder-ids source-list)))
-      (setq folder-dao (cocoa.entity.folder:save folder-dao configs)))
-    (loop for folder in (cocoa.entity.folder:list-by-ids folder-dao
-                         (cocoa.entity.folder:make-list-spec)
-                         folder-ids)
-          for source in source-list
-       do (let ((diff (cocoa.entity.folder:append-contents
-                       (source-contents source))))
-            (cocoa.entity.folder:update! folder diff))))
-  (values))
+(defun add-with-contents (sources &key folder-dao name->folder-id)
+  (let ((folder-ids (mapcar (alexandria:compose name->folder-id
+                                                #'source-name)
+                            sources)))
+    (-> folder-dao
+        (cocoa.entity.folder:do-add!
+          (mapc (lambda (folder-id source)
+                  (cocoa.entity.folder:add!
+                   :id folder-id
+                   :name (source-name source)
+                   :thumbnail (source-thumbnail source)
+                   :modified-at (source-modified-at source)))
+                folder-ids sources))
+        (cocoa.entity.folder:do-update!
+          (mapc (lambda (folder-id source)
+                  (cocoa.entity.folder:update!
+                   folder-id (cocoa.entity.folder:append-contents
+                              (source-contents source))))
+                folder-ids sources)))))
+
 
 (defun image-id (image)
   (getf image :id))

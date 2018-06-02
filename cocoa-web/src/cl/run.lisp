@@ -42,19 +42,18 @@
   (with-dao (dao context)
     (when initialize-data-p
       (initialize dao))
-    (let ((dir-stream
-           (cocoa.util.stream:stream-map
-            (lambda (dir-source)
-              (apply #'cocoa.use-case.folder:make-dir dir-source))
-            (cocoa.infra.fs.retrieve:retrieve root-dir)))
-          (dir->source-converter
-           (cocoa.use-case.folder:dir->source-converter
-            :sort-file-paths sort-file-paths
-            :make-thumbnail-file (make-thumbnail-factory
-                                  (context-thumbnail-root context))
-            :image-factory (context-digest-fn context)
-            :image-dao dao)))
-      (cocoa.use-case.folder:add-by-source-stream
-       (cocoa.util.stream:stream-map dir->source-converter dir-stream)
+    (let ((dir-stream (cocoa.util.stream:stream-map
+                       (lambda (dir-source)
+                         (apply #'cocoa.use-case.folder:make-dir
+                                dir-source))
+                       (cocoa.infra.fs.retrieve:retrieve root-dir))))
+      (cocoa.use-case.folder:add-with-contents
+       (mapcar (cocoa.use-case.folder:dir->source-converter
+                :sort-file-paths sort-file-paths
+                :make-thumbnail-file (make-thumbnail-factory
+                                      (context-thumbnail-root context))
+                :image-factory (context-digest-fn context)
+                :image-dao dao)
+               (cocoa.util.stream:stream-to-list dir-stream))
        :name->folder-id (context-digest-fn context)
        :folder-dao dao))))

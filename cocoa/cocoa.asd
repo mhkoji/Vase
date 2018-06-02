@@ -6,6 +6,7 @@
    (:file "entity/folder/thumbnail")
    (:file "entity/folder/folder")
    (:file "entity/folder/content")
+   (:file "entity/folder/macro")
 
    (:file "entity/fs/image")
 
@@ -45,5 +46,6 @@
                :alexandria
                :anaphora
                :cl-annot
+               :cl-arrows
                :cl-fad
                :ironclad))

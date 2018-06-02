@@ -1,5 +1,6 @@
 (defpackage :cocoa.entity.folder.folder-spec
-  (:use :cl :cocoa.entity.folder))
+  (:use :cl :cocoa.entity.folder)
+  (:import-from :cl-arrows :->))
 (in-package :cocoa.entity.folder.folder-spec)
 (cl-annot:enable-annot-syntax)
 
@@ -53,21 +54,23 @@
 (defun make-content (content-id)
   (make-instance 'mock-content :content-id content-id))
 
-(defun add-default-folder (dao folder-id)
-  (save dao (list (make-folder-config
-                   :id folder-id
-                   :name "a folder name"
-                   :thumbnail (make-thumbnail "thumb:1234")
-                   :modified-at 3736501114))))
-
 @export
 (defun folder-can-contain-contents (dao)
-  (setq dao (add-default-folder dao "1234"))
-  (let ((folder (car (list-by-ids dao (make-list-spec) (list "1234"))))
+  (let ((folder-id "1234")
         (contents (list (make-content "c:5678"))))
-    (update! folder (append-contents contents))
-    (every (lambda (folder-content content)
-             (string= (content-id folder-content)
-                      (content-id content)))
-           (list-contents folder :from 0 :size (length contents))
-           contents)))
+    (-> dao
+        (do-add!
+          (add! :id folder-id
+                :name "a folder name"
+                :thumbnail (make-thumbnail "thumb:1234")
+                :modified-at 3736501114))
+        (do-update!
+          (update! folder-id (append-contents contents))))
+    (let ((folder (car (list-by-ids dao
+                                    (make-list-spec)
+                                    (list folder-id)))))
+      (every (lambda (folder-content content)
+               (string= (content-id folder-content)
+                        (content-id content)))
+             (list-contents folder :from 0 :size (length contents))
+             contents))))
