@@ -16,22 +16,25 @@
 
 @export
 (defun list/range (from size &key folder-dao)
-  (mapcar #'folder->dto (cocoa.entity.folder:list-by-range
-                         folder-dao *bulk-fetching-spec* from size)))
+  (->> (cocoa.entity.folder:list-by-range folder-dao *bulk-fetching-spec*
+                                          from size)
+       (mapcar #'folder->dto)))
 
 @export
 (defun list/ids (ids &key folder-dao)
-  (mapcar #'folder->dto (cocoa.entity.folder:list-by-ids
-                         folder-dao *bulk-fetching-spec* ids)))
+  (->> (cocoa.entity.folder:list-by-ids folder-dao *bulk-fetching-spec*
+                                        ids)
+       (mapcar #'folder->dto)))
 
 @export
 (defun get/id (id &key folder-dao)
-  (folder->dto (car (cocoa.entity.folder:list-by-ids
-                     folder-dao
-                     (cocoa.entity.folder:make-list-spec)
-                     (list id)))))
+  (->> (car (cocoa.entity.folder:list-by-ids folder-dao
+             (cocoa.entity.folder:make-list-spec)
+             (list id)))
+       folder->dto))
 
 @export
 (defun search/name (name &key folder-dao)
-  (mapcar #'folder->dto (cocoa.entity.folder:search-by-name
-                         folder-dao *bulk-fetching-spec* name)))
+  (->> (cocoa.entity.folder:search-by-name folder-dao *bulk-fetching-spec*
+                                           name)
+       (mapcar #'folder->dto)))

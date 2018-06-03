@@ -14,22 +14,6 @@
 @export
 (defgeneric folder-content-delete (dao folder-id-list))
 
-(defclass append-contents-diff ()
-  ((contents :initarg :contents)))
-
-@export
-(defun append-contents (contents)
-  (make-instance 'append-contents-diff :contents contents))
-
-@export
-(defmethod update! (folder (diff append-contents-diff))
-  (let ((dao (slot-value folder 'dao))
-        (folder-id (folder-id folder))
-        (content-ids (mapcar #'content-id
-                             (slot-value diff 'contents))))
-    (folder-content-insert dao folder-id content-ids)))
-
-
 (defclass folder-content ()
   ((content-id :initarg :content-id
                :reader content-id)))

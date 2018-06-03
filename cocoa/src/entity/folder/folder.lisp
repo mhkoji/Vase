@@ -53,6 +53,16 @@
 ;; A folder configuration from which a folder is saved
 (defstruct folder-config id name thumbnail modified-at)
 
+(defun save! (dao configs)
+  (-> dao
+      ;; Delete the existing folders
+      (delete-by-ids (mapcar #'folder-config-id configs))
+      ;; Insert folders
+      (folder-insert (mapcar #'folder-config-folder-row configs))
+      ;; Insert thumbnails
+      (folder-thumbnail-insert (mapcar #'folder-config-thumbnail-row
+                                       configs))))
+
 (defun folder-config-folder-row (config)
   (make-folder-row
    :id (folder-config-id config)
@@ -64,18 +74,6 @@
    :folder-id (folder-config-id config)
    :thumbnail-id (thumbnail-id (folder-config-thumbnail config))))
 
-(defun save (dao configs)
-  "Save folders"
-  ;; Delete the existing folders
-  (setq dao (delete-by-ids dao
-             (mapcar #'folder-config-id configs)))
-  ;; Insert folders
-  (setq dao (folder-insert dao
-             (mapcar #'folder-config-folder-row configs)))
-  ;; Insert thumbnails
-  (setq dao (folder-thumbnail-insert dao
-             (mapcar #'folder-config-thumbnail-row configs)))
-  dao)
 
 (defclass folder ()
   ((dao :initarg :dao)
@@ -146,7 +144,3 @@
 (defun search-by-name (dao spec keyword)
   "Returns the folders whose names contain the keyword"
   (list-by-ids dao spec (folder-search-ids dao keyword)))
-
-
-@export
-(defgeneric update! (folder diff))

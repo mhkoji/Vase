@@ -1,2 +1,3 @@
 (defpackage :cocoa.entity.folder
-  (:use :cl))
+  (:use :cl)
+  (:import-from :cl-arrows :->))

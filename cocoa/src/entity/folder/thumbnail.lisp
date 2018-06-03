@@ -5,3 +5,4 @@
 @export
 (defgeneric thumbnail-id (thumbnail)
   (:documentation "Returns the unique id of the thumbnail"))
+
