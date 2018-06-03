@@ -27,64 +27,48 @@
 (defclass add-action ()
   ((config :initarg :config)))
 
-(defmethod handle! (dao (action add-action))
-  (save! dao (list (slot-value action 'config))))
-
 @export
 (defun add (&key id name thumbnail modified-at)
   (make-instance 'add-action
-   :config (make-folder-config :id id
-                               :name name
-                               :thumbnail thumbnail
-                               :modified-at modified-at)))
+                 :config (make-folder-config
+                          :id id
+                          :name name
+                          :thumbnail thumbnail
+                          :modified-at modified-at)))
+
+(defmethod handle! (dao (action add-action))
+  (save! dao (list (slot-value action 'config))))
 
 
-(defclass bulk-add-action ()
-  ((configs :initarg :configs)))
+(defclass action ()
+  ((update-dao :initarg :update-dao)))
 
-(defmethod handle! (dao (action bulk-add-action))
-  (save! dao (slot-value action 'configs)))
+(defmethod handle! (dao (action action))
+  (funcall (slot-value action 'update-dao) dao))
+
+(defmacro do-update-dao! ((dao) &body body)
+  `(make-instance 'action :update-dao (lambda (,dao) ,@body)))
+
 
 @export
 (defun bulk-add (add-actions)
-  (let ((configs (mapcar (lambda (action) (slot-value action 'config))
-                         add-actions)))
-    (make-instance 'bulk-add-action :configs configs)))
+  (labels ((action-config (action)
+             (slot-value action 'config)))
+    (do-update-dao! (dao)
+      (save! dao (mapcar #'action-config add-actions)))))
 
-
-(defclass change-thumbnail-action ()
-  ((folder-id :initarg :folder-id)
-   (thumbanil-id :initarg :thumbnail-id)))
-
-(defmethod handle! (dao (action change-thumbnail-action))
-  (let ((folder-id (slot-value action 'folder-id))
-        (thumbnail-id (slot-value action 'thumbnail-id)))
+@export
+(defun change-thumbnail (folder-id thumbnail-id)
+  ;; Any verification needed for this action should be writte here
+  (do-update-dao! (dao)
     (-> dao
-        (folder-thumbnail-delete
-         (list folder-id))
+        (folder-thumbnail-delete (list folder-id))
         (folder-thumbnail-insert
          (list (make-thumbnail-row :folder-id folder-id
                                    :thumbnail-id thumbnail-id))))))
 
 @export
-(defun change-thumbnail (folder-id thumbanil-id)
-  ;; Any verification needed for this action should be writte here
-  (make-instance 'change-thumbnail-action
-                 :folder-id folder-id :thumbnail-id thumbanil-id))
-
-
-
-(defclass append-contents-action ()
-  ((folder-id :initarg :folder-id)
-   (contents :initarg :contents)))
-
-(defmethod handle! (dao (action append-contents-action))
-  (let ((folder-id (slot-value action 'folder-id))
-        (content-ids (mapcar #'content-id (slot-value action 'contents))))
-    (folder-content-insert dao folder-id content-ids)))
-
-@export
 (defun append-contents (folder-id contents)
   ;; Any verification needed for this action should be writte here
-  (make-instance 'append-contents-action
-                 :folder-id folder-id :contents contents))
+  (do-update-dao! (dao)
+    (folder-content-insert dao folder-id (mapcar #'content-id contents))))
