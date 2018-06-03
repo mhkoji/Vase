@@ -23,6 +23,7 @@
    (:file "use-case/folder/delete")
    (:file "use-case/folder/list")
    (:file "use-case/folder/images")
+   (:file "use-case/folder/create")
    (:file "use-case/tag/tag")
    (:file "use-case/tag/contents/list")
    (:file "use-case/tag/contents/folder")
