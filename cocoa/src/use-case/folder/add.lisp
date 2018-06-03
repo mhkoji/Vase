@@ -10,8 +10,9 @@
   (let ((folder-ids (mapcar (alexandria:compose name->folder-id
                                                 #'source-name)
                             sources)))
-    (-> (cocoa.entity.folder:handle! folder-dao
-         (cocoa.entity.folder:bulk :add
+    (-> folder-dao
+        (cocoa.entity.folder:handle!
+         (cocoa.entity.folder:bulk-add
           (mapcar (lambda (folder-id source)
                     (cocoa.entity.folder:add
                      :id folder-id
@@ -20,7 +21,7 @@
                      :modified-at (source-modified-at source)))
                   folder-ids sources)))
         (cocoa.entity.folder:handle!
-         (cocoa.entity.folder:bulk :append-contents
+         (cocoa.entity.folder:bulk
           (mapcar (lambda (folder-id source)
                     (cocoa.entity.folder:append-contents
                      folder-id

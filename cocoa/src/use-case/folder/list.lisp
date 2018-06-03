@@ -28,10 +28,9 @@
 
 @export
 (defun get/id (id &key folder-dao)
-  (->> (car (cocoa.entity.folder:list-by-ids folder-dao
-             (cocoa.entity.folder:make-list-spec)
-             (list id)))
-       folder->dto))
+  (let ((spec (cocoa.entity.folder:make-list-spec)))
+    (->> (car (cocoa.entity.folder:list-by-ids folder-dao spec (list id)))
+         folder->dto)))
 
 @export
 (defun search/name (name &key folder-dao)

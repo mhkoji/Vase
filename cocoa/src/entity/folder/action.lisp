@@ -45,13 +45,12 @@
 
 
 @export
-(defgeneric bulk (key actions))
-
-(defmethod bulk ((key (eql :add)) add-actions)
+(defun bulk-add (add-actions)
   (do-handle! (dao)
     (save! dao (mapcar #'add-action-config add-actions))))
 
-(defmethod bulk ((key (eql :append-contents)) append-contents-actions)
+@export
+(defun bulk (actions)
   (do-handle! (dao)
-    (dolist (action append-contents-actions)
+    (dolist (action actions)
       (handle! dao action))))
