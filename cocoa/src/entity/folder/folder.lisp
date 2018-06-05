@@ -80,7 +80,7 @@
 
 
 @export
-(defun delete-by-ids! (dao ids)
+(defun delete-by-ids (dao ids)
   "Delete the folders"
   (folder-thumbnail-delete dao ids)
   (folder-content-delete dao ids)
@@ -100,16 +100,25 @@
    :thumbnail-id (thumbnail-id (folder-config-thumbnail config))))
 
 @export
-(defun save-all! (dao configs)
+(defun add-all (dao configs)
   (-> dao
       ;; Delete the existing folders
-      (delete-by-ids! (mapcar #'folder-config-id configs))
+      (delete-by-ids (mapcar #'folder-config-id configs))
       ;; Insert folders
       (folder-insert (mapcar #'folder-config-folder-row configs))
       ;; Insert thumbnails
       (folder-thumbnail-insert (mapcar #'folder-config-thumbnail-row
                                        configs))))
 
+@export
+(defun update (dao folder)
+  (let ((folder-id (folder-id folder))
+        (thumbnail-id (thumbnail-id (folder-thumbnail folder))))
+    (-> dao
+        (folder-thumbnail-delete (list folder-id))
+        (folder-thumbnail-insert (list (make-thumbnail-row
+                                        :folder-id folder-id
+                                        :thumbnail-id thumbnail-id))))))
 
 ;; The specification of listing folders
 @export

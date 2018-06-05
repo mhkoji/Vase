@@ -59,12 +59,12 @@
   (let ((folder-id "1234")
         (contents (list (make-content "c:5678"))))
     (-> dao
-        (save-all! (list (make-folder-config
-                          :id folder-id
-                          :name "a folder name"
-                          :thumbnail (make-thumbnail "thumb:1234")
-                          :modified-at 3736501114)))
-        (update-contents! (append-contents-op folder-id contents)))
+        (add-all (list (make-folder-config
+                        :id folder-id
+                        :name "a folder name"
+                        :thumbnail (make-thumbnail "thumb:1234")
+                        :modified-at 3736501114)))
+        (update-contents (append-contents-op folder-id contents)))
     (let ((folder (car (list-by-ids dao (list folder-id)))))
       (every (lambda (folder-content content)
                (string= (content-id folder-content)

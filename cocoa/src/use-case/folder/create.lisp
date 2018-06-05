@@ -6,7 +6,7 @@
                                             name->folder-id
                                             thumbnail)
   (let ((id (funcall name->folder-id name)))
-    (-<> (cocoa.entity.folder:save-all! folder-dao
+    (-<> (cocoa.entity.folder:add-all folder-dao
           (list (cocoa.entity.folder:make-folder-config
                  :id id
                  :name name
@@ -20,13 +20,12 @@
   (let ((folder (car (cocoa.entity.folder:list-by-ids
                       folder-dao
                       (list folder-id)))))
-    (setf (folder-thumbnail folder)
+    (setf (cocoa.entity.folder:folder-thumbnail folder)
           (cocoa.use-case.folder.thumbnail:make-of-image image-id))
-    #+nil
-    (save! folder-dao folder)))
+    (cocoa.entity.folder:update folder-dao folder)))
 
 
 @export
 (defun append-contents (folder-dao &key folder-id contents)
-  (cocoa.entity.folder:update-contents! folder-dao
+  (cocoa.entity.folder:update-contents folder-dao
    (cocoa.entity.folder:append-contents-op folder-id contents)))

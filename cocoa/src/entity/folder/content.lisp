@@ -27,15 +27,15 @@
 
 
 @export
-(defgeneric update-contents! (dao op))
+(defgeneric update-contents (dao op))
 
-(defstruct op update-dao!)
+(defstruct op update-dao)
 
-(defun op (update-dao!)
-  (make-op :update-dao! update-dao!))
+(defun op (update-dao)
+  (make-op :update-dao update-dao))
 
-(defmethod update-contents! (dao (op op))
-  (funcall (op-update-dao! op) dao))
+(defmethod update-contents (dao (op op))
+  (funcall (op-update-dao op) dao))
 
 
 (defstruct append-contents-op folder-id contents)
@@ -44,7 +44,7 @@
 (defun append-contents-op (folder-id contents)
   (make-append-contents-op :folder-id folder-id :contents contents))
 
-(defmethod update-contents! (dao (op append-contents-op))
+(defmethod update-contents (dao (op append-contents-op))
   (let ((folder-id (append-contents-op-folder-id op))
         (content-ids (mapcar #'content-id (append-contents-op-contents op))))
     (folder-content-insert dao folder-id content-ids)))
@@ -54,7 +54,7 @@
 (defun bulk-append-contents-op (append-contents-ops)
   (op (lambda (dao)
         (dolist (append-contents-op append-contents-ops)
-          (setq dao (update-contents! dao append-contents-op)))
+          (setq dao (update-contents dao append-contents-op)))
         dao)))
 
 
