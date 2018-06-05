@@ -6,17 +6,10 @@
 (defgeneric content-id (content)
   (:documentation "Returns the unique id of a content"))
 
-
-@export
-(defgeneric folder-content-insert (dao folder-id content-id-list))
-@export
-(defgeneric folder-content-select-ids (dao folder-id))
-@export
-(defgeneric folder-content-delete (dao folder-id-list))
-
 (defclass folder-content ()
   ((content-id :initarg :content-id
                :reader content-id)))
+
 
 (defun id->content (id)
   (make-instance 'folder-content :content-id id))
@@ -27,19 +20,62 @@
                 (min (length seq) (+ size start)))))
     (subseq seq start end)))
 
-(defstruct content-query folder-id from size)
+@export
+(defun list-contents (dao folder &key from size)
+  (let ((contents (folder-content-select-ids dao (folder-id folder))))
+    (mapcar #'id->content (safe-subseq contents from size))))
 
-(defun list-contents-by-query (dao content-query)
-  (mapcar #'id->content
-          (safe-subseq (folder-content-select-ids dao
-                        (content-query-folder-id content-query))
-                       (content-query-from content-query)
-                       (content-query-size content-query))))
 
 @export
-(defun list-contents (folder &key from size)
-  (let ((dao (slot-value folder 'dao))
-        (query (make-content-query :folder-id (folder-id folder)
-                                   :from from
-                                   :size size)))
-    (list-contents-by-query dao query)))
+(defgeneric update-contents! (dao op))
+
+(defstruct op update-dao!)
+
+(defun op (update-dao!)
+  (make-op :update-dao! update-dao!))
+
+(defmethod update-contents! (dao (op op))
+  (funcall (op-update-dao! op) dao))
+
+
+(defstruct append-contents-op folder-id contents)
+
+@export
+(defun append-contents-op (folder-id contents)
+  (make-append-contents-op :folder-id folder-id :contents contents))
+
+(defmethod update-contents! (dao (op append-contents-op))
+  (let ((folder-id (append-contents-op-folder-id op))
+        (content-ids (mapcar #'content-id (append-contents-op-contents op))))
+    (folder-content-insert dao folder-id content-ids)))
+
+
+@export
+(defun bulk-append-contents-op (append-contents-ops)
+  (op (lambda (dao)
+        (dolist (append-contents-op append-contents-ops)
+          (setq dao (update-contents! dao append-contents-op)))
+        dao)))
+
+
+@export
+(defun move-contents-op (source-folder target-folder contents)
+  (let ((content-ids (mapcar #'content-id contents)))
+    (op (lambda (dao)
+          (let ((source-content-ids
+                 (set-difference (folder-content-select-ids dao
+                                  (folder-id source-folder))
+                                 content-ids))
+                (target-content-ids
+                 (union (folder-content-select-ids dao
+                         (folder-id target-folder))
+                        content-ids)))
+            (-> dao
+                (folder-content-delete
+                 (list (folder-id source-folder)))
+                (folder-content-insert
+                 (folder-id source-folder) source-content-ids)
+                (folder-content-delete
+                 (list (folder-id target-folder)))
+                (folder-content-insert
+                 (folder-id target-folder) target-content-ids)))))))

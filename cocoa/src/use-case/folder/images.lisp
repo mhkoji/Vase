@@ -22,9 +22,7 @@
   (ensure-integer! size 100)
   (let ((folder (car (cocoa.entity.folder:list-by-ids
                       folder-dao
-                      (cocoa.entity.folder:make-list-spec)
                       (list folder-id)))))
-    (let ((contents (cocoa.entity.folder:list-contents
-                     folder
-                     :from from :size size)))
-      (mapcar #'content->image-dto contents))))
+    (mapcar #'content->image-dto (cocoa.entity.folder:list-contents
+                                  folder-dao
+                                  folder :from from :size size))))

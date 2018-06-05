@@ -6,7 +6,6 @@
    (:file "entity/folder/thumbnail")
    (:file "entity/folder/folder")
    (:file "entity/folder/content")
-   (:file "entity/folder/action")
 
    (:file "entity/fs/image")
 

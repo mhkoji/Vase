@@ -11,20 +11,18 @@
                                                 #'source-name)
                             sources)))
     (-> folder-dao
-        (cocoa.entity.folder:handle!
-         (cocoa.entity.folder:bulk-add
+        (cocoa.entity.folder:save-all!
+         (mapcar (lambda (folder-id source)
+                   (cocoa.entity.folder:make-folder-config
+                    :id folder-id
+                    :name (source-name source)
+                    :thumbnail (source-thumbnail source)
+                    :modified-at (source-modified-at source)))
+                 folder-ids sources))
+        (cocoa.entity.folder:update-contents!
+         (cocoa.entity.folder:bulk-append-contents-op
           (mapcar (lambda (folder-id source)
-                    (cocoa.entity.folder:add
-                     :id folder-id
-                     :name (source-name source)
-                     :thumbnail (source-thumbnail source)
-                     :modified-at (source-modified-at source)))
-                  folder-ids sources)))
-        (cocoa.entity.folder:handle!
-         (cocoa.entity.folder:bulk
-          (mapcar (lambda (folder-id source)
-                    (cocoa.entity.folder:append-contents
-                     folder-id
+                    (cocoa.entity.folder:append-contents-op folder-id
                      (source-contents source)))
                   folder-ids sources))))))
 
