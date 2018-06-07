@@ -23,6 +23,6 @@
   (let ((folder (car (cocoa.entity.folder:list-by-ids
                       folder-dao
                       (list folder-id)))))
-    (mapcar #'content->image-dto (cocoa.entity.folder:list-contents
+    (mapcar #'content->image-dto (cocoa.entity.folder:folder-contents
                                   folder-dao
                                   folder :from from :size size))))

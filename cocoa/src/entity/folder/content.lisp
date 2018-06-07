@@ -21,7 +21,7 @@
     (subseq seq start end)))
 
 @export
-(defun list-contents (dao folder &key from size)
+(defun folder-contents (dao folder &key from size)
   (let ((contents (folder-content-select-ids dao (folder-id folder))))
     (mapcar #'id->content (safe-subseq contents from size))))
 

@@ -69,5 +69,5 @@
       (every (lambda (folder-content content)
                (string= (content-id folder-content)
                         (content-id content)))
-             (list-contents dao folder :from 0 :size (length contents))
+             (folder-contents dao folder :from 0 :size (length contents))
              contents))))
