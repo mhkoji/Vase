@@ -1,4 +1,8 @@
 ;;; The representation of each content in a folder
+;;; A folder does not contain its contents in memory because the number of the contents in the folder can be large.
+;;; A folder remains its contents in the database and fetch some of them if needed by use cases.
+;;; As the result, an operation on a folder cannot be done in memory, which means that we can not define these operations as functions on a folder.
+;;; In stead, here we define an operation on a folder as a lambda expression that executes the commands on the dao for the operation.
 (in-package :cocoa.entity.folder)
 (cl-annot:enable-annot-syntax)
 
