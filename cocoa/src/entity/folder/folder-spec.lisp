@@ -64,7 +64,8 @@
                         :name "a folder name"
                         :thumbnail (make-thumbnail "thumb:1234")
                         :modified-at 3736501114)))
-        (update-contents (append-contents-op folder-id contents)))
+        (update-contents (make-appending :folder-id folder-id
+                                         :contents contents)))
     (let ((folder (car (list-by-ids dao (list folder-id)))))
       (every (lambda (folder-content content)
                (string= (content-id folder-content)

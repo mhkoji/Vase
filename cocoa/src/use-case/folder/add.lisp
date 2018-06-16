@@ -20,10 +20,12 @@
                     :modified-at (source-modified-at source)))
                  folder-ids sources))
         (cocoa.entity.folder:update-contents
-         (cocoa.entity.folder:bulk-append-contents-op
+         (cocoa.entity.folder:make-appending-bulk
+          :appendings
           (mapcar (lambda (folder-id source)
-                    (cocoa.entity.folder:append-contents-op folder-id
-                     (source-contents source)))
+                    (cocoa.entity.folder:make-appending
+                     :folder-id folder-id
+                     :contents (source-contents source)))
                   folder-ids sources))))))
 
 (defun image-id (image)

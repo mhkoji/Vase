@@ -28,4 +28,5 @@
 @export
 (defun append-contents (folder-dao &key folder-id contents)
   (cocoa.entity.folder:update-contents folder-dao
-   (cocoa.entity.folder:append-contents-op folder-id contents)))
+   (cocoa.entity.folder:make-appending :folder-id folder-id
+                                       :contents contents)))

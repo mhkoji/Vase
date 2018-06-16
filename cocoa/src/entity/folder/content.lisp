@@ -1,8 +1,6 @@
 ;;; The representation of each content in a folder
 ;;; A folder does not contain its contents in memory because the number of the contents in the folder can be large.
-;;; A folder remains its contents in the database and fetch some of them if needed by use cases.
-;;; As the result, an operation on a folder cannot be done in memory, which means that we can not define these operations as functions on a folder.
-;;; In stead, here we define an operation on a folder as a lambda expression that executes the commands on the dao for the operation.
+;;; Thus the folder remains the contents in the database and fetch some of them if needed by use cases.
 (in-package :cocoa.entity.folder)
 (cl-annot:enable-annot-syntax)
 
@@ -33,53 +31,52 @@
 @export
 (defgeneric update-contents (dao op))
 
-(defstruct op update-dao)
 
-(defun op (update-dao)
-  (make-op :update-dao update-dao))
+(defstruct appending
+  "The object that represents the action of appending contents to a folder"
+  folder-id contents)
+(export 'make-appending)
 
-(defmethod update-contents (dao (op op))
-  (funcall (op-update-dao op) dao))
-
-
-(defstruct append-contents-op folder-id contents)
-
-@export
-(defun append-contents-op (folder-id contents)
-  (make-append-contents-op :folder-id folder-id :contents contents))
-
-(defmethod update-contents (dao (op append-contents-op))
-  (let ((folder-id (append-contents-op-folder-id op))
-        (content-ids (mapcar #'content-id (append-contents-op-contents op))))
+(defmethod update-contents (dao (op appending))
+  (let ((folder-id (appending-folder-id op))
+        (content-ids (mapcar #'content-id (appending-contents op))))
     (folder-content-insert dao folder-id content-ids)))
 
 
-@export
-(defun bulk-append-contents-op (append-contents-ops)
-  (op (lambda (dao)
-        (dolist (append-contents-op append-contents-ops)
-          (setq dao (update-contents dao append-contents-op)))
-        dao)))
+(defstruct appending-bulk
+  "The object that represents the action of bulk appending contents to a folder"
+  appendings)
+(export 'make-appending-bulk)
+
+(defmethod update-contents (dao (op appending-bulk))
+  (dolist (appending (appending-bulk-appendings op))
+    (update-contents dao appending)))
 
 
-@export
-(defun move-contents-op (source-folder target-folder contents)
-  (let ((content-ids (mapcar #'content-id contents)))
-    (op (lambda (dao)
-          (let ((source-content-ids
-                 (set-difference (folder-content-select-ids dao
-                                  (folder-id source-folder))
-                                 content-ids))
-                (target-content-ids
-                 (union (folder-content-select-ids dao
-                         (folder-id target-folder))
-                        content-ids)))
-            (-> dao
-                (folder-content-delete
-                 (list (folder-id source-folder)))
-                (folder-content-insert
-                 (folder-id source-folder) source-content-ids)
-                (folder-content-delete
-                 (list (folder-id target-folder)))
-                (folder-content-insert
-                 (folder-id target-folder) target-content-ids)))))))
+(defstruct moving
+  "The object that represents the action of moving contents from a folder to another folder"
+  source target contents)
+(export 'make-moving)
+
+(defmethod update-contents (dao (op moving))
+  (let* ((content-ids
+          (mapcar #'content-id (moving-contents op)))
+         (source-content-ids
+          (set-difference
+           (folder-content-select-ids
+            dao (folder-id (moving-source op)))
+           content-ids))
+         (target-content-ids
+          (union
+           (folder-content-select-ids
+            dao (folder-id (moving-target op)))
+           content-ids)))
+    (-> dao
+        (folder-content-delete
+         (list (folder-id (moving-source op))))
+        (folder-content-insert
+         (folder-id (moving-source op)) source-content-ids)
+        (folder-content-delete
+         (list (folder-id (moving-target op))))
+        (folder-content-insert
+         (folder-id (moving-target op)) target-content-ids))))
