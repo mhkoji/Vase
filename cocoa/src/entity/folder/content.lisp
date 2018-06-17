@@ -8,13 +8,14 @@
 (defgeneric content-id (content)
   (:documentation "Returns the unique id of a content"))
 
-(defclass folder-content ()
-  ((content-id :initarg :content-id
-               :reader content-id)))
+@export
+(defclass content ()
+  ((id :initarg :id :reader content-id)))
 
-
-(defun id->content (id)
-  (make-instance 'folder-content :content-id id))
+@export
+(defun make-content (id)
+  "Create a content from the given id. It is a caller's responsiblity to give a valid id"
+  (make-instance 'content :id id))
 
 (defun safe-subseq (seq from size)
   (let* ((start (or from 0))
@@ -25,7 +26,7 @@
 @export
 (defun folder-contents (dao folder &key from size)
   (let ((contents (folder-content-select-ids dao (folder-id folder))))
-    (mapcar #'id->content (safe-subseq contents from size))))
+    (mapcar #'make-content (safe-subseq contents from size))))
 
 
 @export

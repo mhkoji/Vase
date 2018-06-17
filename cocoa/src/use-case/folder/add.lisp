@@ -1,16 +1,23 @@
-(in-package :cocoa.use-case.folder)
+(defpackage :cocoa.use-case.folder.add
+  (:use :cl)
+  (:import-from :cl-arrows :-> :-<>))
+(in-package :cocoa.use-case.folder.add)
 (cl-annot:enable-annot-syntax)
 
 ;;; The representation of the source of a folder
 (defstruct source name modified-at thumbnail contents)
 (export 'make-source)
 
+(defstruct executor folder-dao name->folder-id)
+(export 'make-executor)
+
 @export
-(defun add-with-contents (sources &key folder-dao name->folder-id)
-  (let ((folder-ids (mapcar (alexandria:compose name->folder-id
-                                                #'source-name)
+(defun add-bulk (executor sources)
+  (let ((folder-ids (mapcar (alexandria:compose
+                             (executor-name->folder-id executor)
+                             #'source-name)
                             sources)))
-    (-> folder-dao
+    (-> (executor-folder-dao executor)
         (cocoa.entity.folder:add-all
          (mapcar (lambda (folder-id source)
                    (cocoa.entity.folder:make-folder-config
@@ -28,45 +35,15 @@
                      :contents (source-contents source)))
                   folder-ids sources))))))
 
-(defun image-id (image)
-  (getf image :id))
-
-(defun make-thumbnail (path &key image-dao image-factory)
-  (let ((image (car (cocoa.use-case.image:add-images (list path)
-                     :image-dao image-dao
-                     :image-factory image-factory))))
-    (cocoa.use-case.folder.thumbnail:make-of-image (image-id image))))
-
-
-(defun image->content (image)
-  (cocoa.use-case.folder.content:make-of-image (image-id image)))
-
-(defun make-image-contents (paths &key image-dao image-factory)
-  (mapcar #'image->content (cocoa.use-case.image:add-images paths
-                            :image-dao image-dao
-                            :image-factory image-factory)))
-
-;;; A representation of a directory in the local file system
-(defstruct dir path file-paths)
-(export 'dir)
-(export 'make-dir)
-
 @export
-(defun dir->source-converter (&key (sort-file-paths #'identity)
-                                   make-thumbnail-file
-                                   image-dao
-                                   image-factory)
-  (lambda (dir)
-    (let ((path (dir-path dir))
-          (file-paths (funcall sort-file-paths (dir-file-paths dir))))
-      (make-source
-       :name path
-       :modified-at (file-write-date path)
-       :thumbnail (let ((thumbnail-file
-                         (funcall make-thumbnail-file (car file-paths))))
-                    (make-thumbnail thumbnail-file
-                                    :image-dao image-dao
-                                    :image-factory image-factory))
-       :contents (make-image-contents file-paths
-                                      :image-dao image-dao
-                                      :image-factory image-factory)))))
+(defun add-from-scratch (executor &key name thumbnail)
+  (let ((id (funcall (executor-name->folder-id executor) name)))
+    (-<> (executor-folder-dao executor)
+         (cocoa.entity.folder:add-all
+          (list (cocoa.entity.folder:make-folder-config
+                 :id id
+                 :name name
+                 :thumbnail thumbnail
+                 :modified-at (get-universal-time))))
+         (cocoa.use-case.folder.get:get-by-id id :folder-dao <>))))
+

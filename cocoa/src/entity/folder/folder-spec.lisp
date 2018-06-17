@@ -37,23 +37,6 @@
          t)
        (equal (folder-select-ids dao 0 4) (list "0" "3"))))
 
-
-(defclass mock-thumbnail ()
-  ((thumbnail-id
-    :initarg :thumbnail-id
-    :reader thumbnail-id)))
-
-(defclass mock-content ()
-  ((content-id
-    :initarg :content-id
-    :reader content-id)))
-
-(defun make-thumbnail (thumbnail-id)
-  (make-instance 'mock-thumbnail :thumbnail-id thumbnail-id))
-
-(defun make-content (content-id)
-  (make-instance 'mock-content :content-id content-id))
-
 @export
 (defun folder-can-contain-contents (dao)
   (let ((folder-id "1234")

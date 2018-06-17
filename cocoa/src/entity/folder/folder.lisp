@@ -31,15 +31,6 @@
 (export 'make-folder-config)
 
 
-(defclass folder-thumbnail ()
-  ((thumbnail-id
-    :initarg :thumbnail-id
-    :reader thumbnail-id)))
-
-(defun id->thumbnail (id)
-  (make-instance 'folder-thumbnail :thumbnail-id id))
-
-
 (defstruct folder-row id name modified-at)
 (export 'make-folder-row)
 (export 'folder-row-id)
@@ -130,7 +121,7 @@
       (setf (gethash (folder-row-id row) folder-id->row) row))
     (dolist (row (folder-thumbnail-select dao ids))
       (let ((folder-id (thumbnail-row-folder-id row))
-            (thumbnail (id->thumbnail (thumbnail-row-thumbnail-id row))))
+            (thumbnail (make-thumbnail (thumbnail-row-thumbnail-id row))))
         (setf (gethash folder-id folder-id->thumbnail) thumbnail)))
     (mapcar (lambda (id)
               (let ((row (gethash id folder-id->row))

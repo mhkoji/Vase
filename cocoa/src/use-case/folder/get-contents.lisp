@@ -1,4 +1,7 @@
-(in-package :cocoa.use-case.folder)
+(defpackage :cocoa.use-case.folder.get-contents
+  (:use :cl)
+  (:import-from :cl-arrows :-<>))
+(in-package :cocoa.use-case.folder.get-contents)
 (cl-annot:enable-annot-syntax)
 
 (defmacro ensure-integer! (var default)
@@ -23,6 +26,6 @@
   (let ((folder (car (cocoa.entity.folder:list-by-ids
                       folder-dao
                       (list folder-id)))))
-    (mapcar #'content->image-dto (cocoa.entity.folder:folder-contents
-                                  folder-dao
-                                  folder :from from :size size))))
+    (mapcar #'content->image-dto
+            (cocoa.entity.folder:folder-contents folder-dao
+             folder :from from :size size))))

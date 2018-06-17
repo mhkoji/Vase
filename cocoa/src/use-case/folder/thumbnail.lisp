@@ -1,25 +1,19 @@
 (defpackage :cocoa.use-case.folder.thumbnail
   (:use :cl)
   (:import-from :cocoa.entity.folder
+                :thumbnail
                 :thumbnail-id))
 (in-package :cocoa.use-case.folder.thumbnail)
 (cl-annot:enable-annot-syntax)
 
 ;;; A thumbnail implementation by some image id
 ;;; Implemented as a plug-in to the folder
-(defclass image-thumbnail ()
-  ((image-id
-    :initarg :image-id
-    :reader image-thumbnail-image-id)))
-
-(defmethod thumbnail-id ((thumbnail image-thumbnail))
-  (image-thumbnail-image-id thumbnail))
-
+(defclass image-thumbnail (thumbnail) ())
 
 @export
 (defun make-of-image (image-id)
   "Make the image instance from the given image-id"
-  (make-instance 'image-thumbnail :image-id image-id))
+  (make-instance 'image-thumbnail :id image-id))
 
 @export
 (defun thumbnail->image-id (thumbnail)

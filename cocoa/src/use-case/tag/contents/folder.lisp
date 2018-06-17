@@ -24,8 +24,8 @@
 (defmethod list-typed-contents ((container list)
                                 (type (eql :folder))
                                 (content-ids list))
-  (cocoa.use-case.folder:list/ids content-ids
-                                  :folder-dao (getf container :folder)))
+  (cocoa.use-case.folder.get:list-by-ids content-ids
+   :folder-dao (getf container :folder)))
 
 @export
 (defun set-tags! (folder-id tag-ids &key tag-dao)

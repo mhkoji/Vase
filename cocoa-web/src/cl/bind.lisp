@@ -62,13 +62,13 @@
               :out (lambda (xs) (make-json-response
                                  (array-of #'folder xs)))) app
     (with-dao (dao context)
-      (cocoa.use-case.folder:list/range from size :folder-dao dao)))
+      (cocoa.use-case.folder.get:list-by-range from size :folder-dao dao)))
   (do-route! ("/api/folder/:id"
               :method :get
               :in ((folder-id :param :id))
               :out (lambda (f) (make-json-response (folder f)))) app
     (with-dao (dao context)
-      (cocoa.use-case.folder:get/id folder-id :folder-dao dao)))
+      (cocoa.use-case.folder.get:get-by-id folder-id :folder-dao dao)))
   (do-route! ("/api/folder/:id/images"
               :method :get
               :in ((folder-id :param :id)
@@ -77,8 +77,8 @@
               :out (lambda (xs) (make-json-response
                                  (array-of #'image xs)))) app
     (with-dao (dao context)
-      (cocoa.use-case.folder:list-images folder-id :from from :size size
-                                         :folder-dao dao)))
+      (cocoa.use-case.folder.get-contents:list-images
+       folder-id :from from :size size :folder-dao dao)))
   (do-route! ("/api/folder/:id/tags"
               :method :get
               :in ((folder-id :param :id))
