@@ -9,16 +9,22 @@
   (list :id (cocoa.entity.fs.image:image-id image)
         :path (cocoa.entity.fs.image:image-path image)))
 
+(defstruct add-images image-factory image-dao)
+(export 'make-add-images)
+
 @export
-(defun add-images (paths &key image-factory image-dao)
+(defun add-images (add-images paths)
+  "The use case of adding images"
   (let ((images (cocoa.entity.fs.image:make-by-paths
-                 image-factory
+                 (add-images-image-factory add-images)
                  paths)))
-    (cocoa.entity.fs.image:save image-dao images)
+    (cocoa.entity.fs.image:save (add-images-image-dao add-images)
+                                images)
     (mapcar #'image->dto images)))
 
 @export
-(defun path/id (id &key image-dao)
+(defun get-path (image-dao id)
+  "The use case of getting the path of an image"
   (when-let ((image (car (cocoa.entity.fs.image:list-by-ids
                           image-dao
                           (list id)))))

@@ -1,7 +1,4 @@
-(defpackage :cocoa.use-case.folder.get-contents
-  (:use :cl)
-  (:import-from :cl-arrows :-<>))
-(in-package :cocoa.use-case.folder.get-contents)
+(in-package :cocoa.use-case.folder)
 (cl-annot:enable-annot-syntax)
 
 (defmacro ensure-integer! (var default)

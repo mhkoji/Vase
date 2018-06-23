@@ -1,23 +1,20 @@
-(defpackage :cocoa.use-case.folder.add
-  (:use :cl)
-  (:import-from :cl-arrows :-> :-<>))
-(in-package :cocoa.use-case.folder.add)
+(in-package :cocoa.use-case.folder)
 (cl-annot:enable-annot-syntax)
 
 ;;; The representation of the source of a folder
 (defstruct source name modified-at thumbnail contents)
 (export 'make-source)
 
-(defstruct executor folder-dao name->folder-id)
-(export 'make-executor)
+(defstruct add-folders folder-dao name->folder-id)
+(export 'make-add-folders)
 
 @export
-(defun add-bulk (executor sources)
+(defun bulk-add (add-folders sources)
   (let ((folder-ids (mapcar (alexandria:compose
-                             (executor-name->folder-id executor)
+                             (add-folders-name->folder-id add-folders)
                              #'source-name)
                             sources)))
-    (-> (executor-folder-dao executor)
+    (-> (add-folders-folder-dao add-folders)
         (cocoa.entity.folder:add-all
          (mapcar (lambda (folder-id source)
                    (cocoa.entity.folder:make-folder-config
@@ -36,14 +33,14 @@
                   folder-ids sources))))))
 
 @export
-(defun add-from-scratch (executor &key name thumbnail)
-  (let ((id (funcall (executor-name->folder-id executor) name)))
-    (-<> (executor-folder-dao executor)
+(defun add (add-folders &key name thumbnail)
+  (let ((id (funcall (add-folders-name->folder-id add-folders) name)))
+    (-<> (add-folders-folder-dao add-folders)
          (cocoa.entity.folder:add-all
           (list (cocoa.entity.folder:make-folder-config
                  :id id
                  :name name
                  :thumbnail thumbnail
                  :modified-at (get-universal-time))))
-         (cocoa.use-case.folder.get:get-by-id id :folder-dao <>))))
+         (cocoa.use-case.folder:get-by-id id :folder-dao <>))))
 

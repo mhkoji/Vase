@@ -14,11 +14,10 @@
    (:file "entity/tag/tag")
 
    (:file "use-case/image")
-   (:file "use-case/image/add")
-   (:file "use-case/image/get")
    (:file "util/stream")
    (:file "use-case/folder/thumbnail")
    (:file "use-case/folder/content")
+   (:file "use-case/folder/packages")
    (:file "use-case/folder/get")
    (:file "use-case/folder/get-contents")
    (:file "use-case/folder/add")

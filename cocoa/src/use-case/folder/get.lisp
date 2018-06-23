@@ -1,7 +1,4 @@
-(defpackage :cocoa.use-case.folder.get
-  (:use :cl)
-  (:import-from :cl-arrows :-> :->> :-<>))
-(in-package :cocoa.use-case.folder.get)
+(in-package :cocoa.use-case.folder)
 (cl-annot:enable-annot-syntax)
 
 (defun thumbnail->dto (thumbnail)
