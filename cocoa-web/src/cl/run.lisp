@@ -36,7 +36,7 @@
       thumbnail-file)))
 
 (defun make-thumbnail (add-images path)
-  (-> (car (cocoa.use-case.image.add:call add-images (list path)))
+  (-> (car (cocoa.use-case.image.add:by-paths add-images (list path)))
       (getf :id)
       (cocoa.use-case.folder.thumbnail:make-of-image)))
 
@@ -46,7 +46,7 @@
                  (getf :id)
                  (cocoa.use-case.folder.content:make-of-image))))
     (mapcar #'image->content
-            (cocoa.use-case.image.add:call add-images paths))))
+            (cocoa.use-case.image.add:by-paths add-images paths))))
 
 ;;; A representation of a directory in the local file system
 (defstruct dir path file-paths)

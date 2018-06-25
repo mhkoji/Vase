@@ -21,6 +21,6 @@
   (funcall add-images paths))
 
 @export
-(defun by-paths (add-images path)
+(defun by-paths (add-images paths)
   "The use case of adding images by paths"
   (funcall add-images paths))
