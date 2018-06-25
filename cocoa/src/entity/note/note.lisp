@@ -21,7 +21,7 @@
 (defgeneric note-rem-value (note memo))
 
 @export
-(defgeneric make-note (note))
+(defgeneric make-note (note-dao))
 @export
 (defgeneric copy-note (note))
 

@@ -57,7 +57,7 @@
   (lambda (dir)
     (let ((path (dir-path dir))
           (file-paths (funcall sort-file-paths (dir-file-paths dir))))
-      (cocoa.use-case.folder:make-source
+      (cocoa.use-case.folder.add-bulk:make-source
        :name path
        :modified-at (file-write-date path)
        :thumbnail (let ((thumbnail-file
@@ -76,8 +76,8 @@
     (let ((dir-stream (cocoa.util.stream:stream-map
                        (lambda (dir-source) (apply #'make-dir dir-source))
                        (cocoa.infra.fs.retrieve:retrieve root-dir))))
-      (cocoa.use-case.folder:bulk-add
-       (cocoa.use-case.folder:make-add-folders
+      (cocoa.use-case.folder.add-bulk:call
+       (cocoa.use-case.folder.add-bulk:make-add-bulk
         :folder-dao dao
         :name->folder-id (context-digest-fn context))
        (mapcar (make-dir->source-converter

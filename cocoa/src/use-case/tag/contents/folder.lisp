@@ -24,7 +24,7 @@
 (defmethod list-typed-contents ((container list)
                                 (type (eql :folder))
                                 (content-ids list))
-  (cocoa.use-case.folder:list-by-ids content-ids
+  (cocoa.use-case.folder.list:list-by-ids content-ids
    :folder-dao (getf container :folder)))
 
 @export

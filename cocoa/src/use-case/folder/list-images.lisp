@@ -1,4 +1,7 @@
-(in-package :cocoa.use-case.folder)
+(defpackage :cocoa.use-case.folder.list-images
+  (:use :cl)
+  (:import-from :cl-arrows :-> :->> :-<>))
+(in-package :cocoa.use-case.folder.list-images)
 (cl-annot:enable-annot-syntax)
 
 (defmacro ensure-integer! (var default)
@@ -13,7 +16,7 @@
 
 ;;; folder images
 @export
-(defun list-images (folder-id &key from size folder-dao)
+(defun call (folder-id &key from size folder-dao)
   ;@type! folder-id !integer
   ;@type! from integer 0
   ;@type! size integer 100

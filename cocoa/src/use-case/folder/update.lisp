@@ -1,4 +1,6 @@
-(in-package :cocoa.use-case.folder)
+(defpackage :cocoa.use-case.folder.update
+  (:use :cl))
+(in-package :cocoa.use-case.folder.update)
 (cl-annot:enable-annot-syntax)
 
 @export
