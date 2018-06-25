@@ -135,7 +135,7 @@
               :in ((image-id :param :id))
               :out #'make-file-response) app
     (with-dao (dao context)
-      (cocoa.use-case.image:get-path dao image-id)))
+      (cocoa.use-case.image.get-path:call dao image-id)))
   app)
 
 @export

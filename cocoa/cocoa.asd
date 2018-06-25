@@ -13,7 +13,8 @@
    (:file "entity/tag/content")
    (:file "entity/tag/tag")
 
-   (:file "use-case/image")
+   (:file "use-case/image/add")
+   (:file "use-case/image/get-path")
    (:file "util/stream")
    (:file "use-case/folder/thumbnail")
    (:file "use-case/folder/content")

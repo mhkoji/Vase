@@ -1,8 +1,6 @@
-(defpackage :cocoa.use-case.image
-  (:use :cl)
-  (:import-from :alexandria
-                :when-let))
-(in-package :cocoa.use-case.image)
+(defpackage :cocoa.use-case.image.add
+  (:use :cl))
+(in-package :cocoa.use-case.image.add)
 (cl-annot:enable-annot-syntax)
 
 (defun image->dto (image)
@@ -13,7 +11,7 @@
 (export 'make-add-images)
 
 @export
-(defun add-images (add-images paths)
+(defun call (add-images paths)
   "The use case of adding images"
   (let ((images (cocoa.entity.fs.image:make-by-paths
                  (add-images-image-factory add-images)
@@ -21,11 +19,3 @@
     (cocoa.entity.fs.image:save (add-images-image-dao add-images)
                                 images)
     (mapcar #'image->dto images)))
-
-@export
-(defun get-path (image-dao id)
-  "The use case of getting the path of an image"
-  (when-let ((image (car (cocoa.entity.fs.image:list-by-ids
-                          image-dao
-                          (list id)))))
-    (cocoa.entity.fs.image:image-path image)))
