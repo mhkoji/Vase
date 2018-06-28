@@ -5,7 +5,7 @@
 (cl-annot:enable-annot-syntax)
 
 @export
-(defun add (folder-dao name->folder-id &key name thumbnail)
+(defun call (folder-dao name->folder-id &key name thumbnail)
   (let ((id (funcall name->folder-id name)))
     (-<> folder-dao
          (cocoa.entity.folder:add-all
