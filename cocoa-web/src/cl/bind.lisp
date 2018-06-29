@@ -62,13 +62,14 @@
               :out (lambda (xs) (make-json-response
                                  (array-of #'folder xs)))) app
     (with-dao (dao context)
-      (cocoa.use-case.folder.list:list-by-range from size :folder-dao dao)))
+      (funcall (cocoa.use-case.folder:list-by-range dao)
+               :from from :size size)))
   (do-route! ("/api/folder/:id"
               :method :get
               :in ((folder-id :param :id))
               :out (lambda (f) (make-json-response (folder f)))) app
     (with-dao (dao context)
-      (cocoa.use-case.folder.list:get-by-id folder-id :folder-dao dao)))
+      (funcall (cocoa.use-case.folder:get-by-id dao) folder-id)))
   (do-route! ("/api/folder/:id/images"
               :method :get
               :in ((folder-id :param :id)
@@ -77,8 +78,8 @@
               :out (lambda (xs) (make-json-response
                                  (array-of #'image xs)))) app
     (with-dao (dao context)
-      (cocoa.use-case.folder.list-images:call
-       folder-id :from from :size size :folder-dao dao)))
+      (funcall (cocoa.use-case.folder:list-images dao)
+               folder-id :from from :size size)))
   (do-route! ("/api/folder/:id/tags"
               :method :get
               :in ((folder-id :param :id))
@@ -135,7 +136,7 @@
               :in ((image-id :param :id))
               :out #'make-file-response) app
     (with-dao (dao context)
-      (cocoa.use-case.image.get-path:call dao image-id)))
+      (funcall (cocoa.use-case.image:get-path dao) image-id)))
   app)
 
 @export
