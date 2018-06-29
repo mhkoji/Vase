@@ -36,7 +36,9 @@
 (defgeneric list-typed-contents (container type content-ids))
 
 @export
-(defun list/id (tag-id &key tag-dao container)
-  (tag-typed-contents (car (list-tags/ids tag-dao (list tag-id)))
-                      (alexandria:curry #'list-typed-contents
-                                        container)))
+(defun list-by-id (tag-dao container)
+  (let ((type-content-ids->object
+         (alexandria:curry #'list-typed-contents container)))
+    (lambda (tag-id)
+      (let ((tag (car (list-tags/ids tag-dao (list tag-id)))))
+        (tag-typed-contents tag type-content-ids->object)))))

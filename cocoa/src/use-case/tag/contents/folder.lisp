@@ -21,12 +21,16 @@
 (defun as-content (folder-id)
   (make-simple-content folder-id :folder))
 
-(defmethod list-typed-contents ((container list)
+
+@export
+(defclass container ()
+  ((list-by-ids-use-case :initarg :list-by-ids-use-case)))
+
+(defmethod list-typed-contents ((container container)
                                 (type (eql :folder))
                                 (content-ids list))
-  (funcall (cocoa.use-case.folder:list-by-ids
-            (getf container :folder))
-           content-ids))
+  (funcall (slot-value container 'list-by-ids-use-case) content-ids))
+
 
 @export
 (defun set-tags! (folder-id tag-ids &key tag-dao)

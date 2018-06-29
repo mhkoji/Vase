@@ -117,7 +117,7 @@
 ;;;; Update
 @export
 (defun change-thumbnail (folder-dao)
-  (lambda (&key folder-id image-id)
+  (lambda (folder-id image-id)
     (let ((folder (car (cocoa.entity.folder:list-by-ids
                         folder-dao
                         (list folder-id)))))

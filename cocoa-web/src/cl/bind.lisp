@@ -120,9 +120,11 @@
               :out (lambda (xs) (make-json-response
                                  (array-of #'folder xs)))) app
     (with-dao (dao context)
-      (cocoa.use-case.tag.contents:list/id tag-id
-                                           :tag-dao dao
-                                           :container (list :folder dao))))
+      (funcall (cocoa.use-case.tag.contents:list-by-id dao
+                (make-instance 'cocoa.use-case.tag.contents.folder:container
+                 :list-by-ids-use-case
+                 (cocoa.use-case.folder:list-by-ids dao)))
+               tag-id)))
   (do-route! ("/api/tag/:id"
               :method :put
               :in ((tag-id :param :id)
