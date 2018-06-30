@@ -1,6 +1,6 @@
 (defpackage :cocoa.web
   (:use :cl
-        :cocoa.infra.context
+        :cocoa.ext.context
         :cocoa.web.bind)
   (:import-from :cl-arrows :->))
 (in-package :cocoa.web)
@@ -31,7 +31,7 @@
                    "~Athumbnail$~A"
                    thumbnail-root
                    (cl-ppcre:regex-replace-all "/" source-file "$"))))
-      (cocoa.infra.fs.thumbnail:ensure-thumbnail-exists thumbnail-file
+      (cocoa.ext.fs.thumbnail:ensure-thumbnail-exists thumbnail-file
                                                         source-file)
       thumbnail-file)))
 
@@ -74,13 +74,16 @@
       (initialize dao))
     (let ((dir-stream (cocoa.util.stream:stream-map
                        (lambda (dir-source) (apply #'make-dir dir-source))
-                       (cocoa.infra.fs.retrieve:retrieve root-dir))))
-      (funcall (cocoa.use-case.folder:add-bulk
-                dao (context-digest-fn context))
-               (mapcar (make-dir->source-converter
-                        sort-file-paths
-                        (make-thumbnail-file-factory
-                         (context-thumbnail-root context))
-                        (cocoa.use-case.image:add-images
-                         (context-digest-fn context) dao))
-                       (cocoa.util.stream:stream-to-list dir-stream))))))
+                       (cocoa.ext.fs.retrieve:retrieve root-dir))))
+      (-> (cocoa.use-case.folder:add-bulk
+           (cocoa.folder:folder-repository dao)
+           (context-digest-fn context))
+          (funcall (mapcar
+                    (make-dir->source-converter
+                     sort-file-paths
+                     (make-thumbnail-file-factory
+                      (context-thumbnail-root context))
+                     (cocoa.use-case.image:add-images
+                      (cocoa.fs.image:image-repository dao)
+                      (context-digest-fn context)))
+                    (cocoa.util.stream:stream-to-list dir-stream)))))))
