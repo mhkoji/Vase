@@ -1,9 +1,9 @@
-(defpackage :cocoa.use-case.folder.spec-fiveam
+(defpackage :cocoa.ext.test.use-case.folder-fiveam
   (:use :cl :fiveam
-        :cocoa.testing.sqlite3
+        :cocoa.ext.testing.sqlite3
         :cocoa.use-case.folder.spec))
-(in-package :cocoa.use-case.folder.spec-fiveam)
-(in-suite* :cocoa.use-case.folder :in :cocoa)
+(in-package :cocoa.ext.test.use-case.folder-fiveam)
+(in-suite* :cocoa.ext.test.use-case.folder :in :cocoa)
 
 (test can-list-the-added-folders
   (with-sqlite3-dao (dao)

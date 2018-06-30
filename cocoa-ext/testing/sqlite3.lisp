@@ -1,6 +1,6 @@
-(defpackage :cocoa.testing.sqlite3
+(defpackage :cocoa.ext.testing.sqlite3
   (:use :cl))
-(in-package :cocoa.testing.sqlite3)
+(in-package :cocoa.ext.testing.sqlite3)
 (cl-annot:enable-annot-syntax)
 
 @export
