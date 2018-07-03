@@ -63,17 +63,18 @@
               :out (lambda (xs) (make-json-response
                                  (array-of #'folder xs)))) app
     (with-dao (dao context)
-      (-> (cocoa.use-case.folder:list-by-range
+      (-> (cocoa.use-case.folder.list-by-range:prepare
            (cocoa.folder:folder-repository dao))
-          (funcall :from from :size size))))
+          (cocoa.use-case.folder.list-by-range:exec
+           :from from :size size))))
   (do-route! ("/api/folder/:id"
               :method :get
               :in ((folder-id :param :id))
               :out (lambda (f) (make-json-response (folder f)))) app
     (with-dao (dao context)
-      (-> (cocoa.use-case.folder:get-by-id
+      (-> (cocoa.use-case.folder.get-by-id:prepare
            (cocoa.folder:folder-repository dao))
-          (funcall folder-id))))
+          (cocoa.use-case.folder.get-by-id:exec folder-id))))
   (do-route! ("/api/folder/:id/images"
               :method :get
               :in ((folder-id :param :id)
@@ -82,9 +83,10 @@
               :out (lambda (xs) (make-json-response
                                  (array-of #'image xs)))) app
     (with-dao (dao context)
-      (-> (cocoa.use-case.folder:list-images
+      (-> (cocoa.use-case.folder.list-images:prepare
            (cocoa.folder:folder-repository dao))
-          (funcall folder-id :from from :size size))))
+          (cocoa.use-case.folder.list-images:exec
+           folder-id :from from :size size))))
   (do-route! ("/api/folder/:id/tags"
               :method :get
               :in ((folder-id :param :id))
@@ -135,7 +137,7 @@
            (cocoa.tag:tag-repository tag)
            (make-instance 'cocoa.use-case.tag.contents.folder:container
                           :list-folders-by-ids
-                          (cocoa.use-case.folder:list-by-ids
+                          (cocoa.use-case.folder.list-by-ids:prepare
                            (cocoa.folder:folder-repository dao))))
           (funcall tag-id))))
   (do-route! ("/api/tag/:id"
@@ -152,9 +154,9 @@
               :in ((image-id :param :id))
               :out #'make-file-response) app
     (with-dao (dao context)
-      (-> (cocoa.use-case.image:get-path
+      (-> (cocoa.use-case.image.get-path:prepare
            (cocoa.fs.image:image-repository dao))
-          (funcall image-id))))
+          (cocoa.use-case.image.get-path:exec image-id))))
   app)
 
 @export

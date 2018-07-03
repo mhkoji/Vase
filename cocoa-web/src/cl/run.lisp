@@ -36,7 +36,8 @@
       thumbnail-file)))
 
 (defun make-thumbnail (add-images-use-case path)
-  (-> (car (funcall add-images-use-case (list path)))
+  (-> (car (cocoa.use-case.image.add:exec add-images-use-case
+                                          (list path)))
       (getf :id)
       (cocoa.use-case.folder.thumbnail:make-of-image)))
 
@@ -45,7 +46,9 @@
              (-> image
                  (getf :id)
                  (cocoa.use-case.folder.content:make-of-image))))
-    (mapcar #'image->content (funcall add-images-use-case paths))))
+    (mapcar #'image->content (cocoa.use-case.image.add:exec
+                              add-images-use-case
+                              paths))))
 
 ;;; A representation of a directory in the local file system
 (defstruct dir path file-paths)
@@ -56,7 +59,7 @@
   (lambda (dir)
     (let ((path (dir-path dir))
           (file-paths (funcall sort-file-paths (dir-file-paths dir))))
-      (cocoa.use-case.folder:make-source
+      (cocoa.use-case.folder.add-bulk:make-source
        :name path
        :modified-at (file-write-date path)
        :thumbnail (let ((thumbnail-file
@@ -75,15 +78,15 @@
     (let ((dir-stream (cocoa.util.stream:stream-map
                        (lambda (dir-source) (apply #'make-dir dir-source))
                        (cocoa.ext.fs.retrieve:retrieve root-dir))))
-      (-> (cocoa.use-case.folder:add-bulk
+      (-> (cocoa.use-case.folder.add-bulk:prepare
            (cocoa.folder:folder-repository dao)
            (context-digest-fn context))
-          (funcall (mapcar
-                    (make-dir->source-converter
-                     sort-file-paths
-                     (make-thumbnail-file-factory
-                      (context-thumbnail-root context))
-                     (cocoa.use-case.image:add-images
-                      (cocoa.fs.image:image-repository dao)
-                      (context-digest-fn context)))
-                    (cocoa.util.stream:stream-to-list dir-stream)))))))
+          (cocoa.use-case.folder.add-bulk:exec
+           (mapcar (make-dir->source-converter
+                    sort-file-paths
+                    (make-thumbnail-file-factory
+                     (context-thumbnail-root context))
+                    (cocoa.use-case.image.add:prepare
+                     (cocoa.fs.image:image-repository dao)
+                     (context-digest-fn context)))
+                   (cocoa.util.stream:stream-to-list dir-stream)))))))
