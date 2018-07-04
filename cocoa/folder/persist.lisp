@@ -96,6 +96,15 @@
                  (folder-config-id folder-config)
                  (thumbnail-id (folder-config-thumbnail folder-config))))
 
+
+;; A folder configuration from which the folder is saved
+(defstruct folder-config id name thumbnail modified-at)
+(export '(make-folder-config
+          folder-config-id
+          folder-config-name
+          folder-config-thumbnail
+          folder-config-modified-at))
+
 @export
 (defun save-folders (folder-repository configs)
   ;; Delete the existing folders

@@ -7,26 +7,37 @@
 @export
 (defmacro can-list-the-added-folders (folder-dao &key test)
   `(progn
-     (-> (cocoa.use-case.folder.add-bulk:prepare
-          (cocoa.folder:folder-repository ,folder-dao) #'identity)
-         (cocoa.use-case.folder.add-bulk:exec
-          (list (cocoa.use-case.folder.add-bulk:make-source
-                 :name "folder-1"
-                 :modified-at 100
-                 :thumbnail (cocoa.use-case.folder.thumbnail:make-of-image
-                             "thumb:1"))
-                (cocoa.use-case.folder.add-bulk:make-source
-                 :name "folder-2"
-                 :modified-at 200
-                 :thumbnail (cocoa.use-case.folder.thumbnail:make-of-image
-                             "thumb:2")))))
+     (-> (cocoa.use-case.folder.add-bulk-by-dirs:prepare
+          :folder-repository
+          (cocoa.folder:folder-repository ,folder-dao)
+          :path->folder-id
+          (lambda (path)
+            (subseq path (length "/path/")))
+          :make-thumbnail-file
+          (lambda (path)
+            (format nil "~A:thumb" path))
+          :add-images-by-paths
+          (lambda (paths)
+            (mapcar (lambda (path)
+                      (cocoa.use-case.folder.add-bulk-by-dirs:make-image
+                       :id path))
+                    paths)))
+         (cocoa.use-case.folder.add-bulk-by-dirs:exec
+          (list (cocoa.use-case.folder.add-bulk-by-dirs:make-dir
+                 :path "/path/f1"
+                 :file-paths (list "/path/f1/aaa" "/path/f1/bbb")
+                 :modified-at 100)
+                (cocoa.use-case.folder.add-bulk-by-dirs:make-dir
+                 :path "/path/f2"
+                 :file-paths (list "/path/f2/ccc" "/path/f1/ddd")
+                 :modified-at 200))))
      (let ((folder (car (-> (cocoa.use-case.folder.list-by-ids:prepare
                              (cocoa.folder:folder-repository ,folder-dao))
                             (cocoa.use-case.folder.list-by-ids:exec
-                             (list "folder-1"))))))
+                             (list "f1"))))))
        (,test (string= (-> folder (getf :id))
-                       "folder-1"))
+                       "f1"))
        (,test (string= (-> folder (getf :name))
-                       "folder-1"))
+                       "/path/f1"))
        (,test (string= (-> folder (getf :thumbnail) (getf :id))
-                       "thumb:1")))))
+                       "/path/f1/aaa:thumb")))))

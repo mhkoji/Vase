@@ -29,15 +29,6 @@
 (defun (setf folder-thumbnail) (thumbnail folder)
   (setf (slot-value folder 'thumbnail) thumbnail))
 
-;; A folder configuration from which the folder is saved
-(defstruct folder-config id name thumbnail modified-at)
-(export '(make-folder-config
-          folder-config-id
-          folder-config-name
-          folder-config-thumbnail
-          folder-config-modified-at))
-
-
 ;;;; The representation of the thumbnail of a folder
 @export
 (defgeneric thumbnail-id (thumbnail)
