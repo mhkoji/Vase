@@ -1,6 +1,6 @@
-(defpackage :cocoa.ext.fs.thumbnail
+(defpackage :cocoa.infra.fs.thumbnail
   (:use :cl))
-(in-package :cocoa.ext.fs.thumbnail)
+(in-package :cocoa.infra.fs.thumbnail)
 (cl-annot:enable-annot-syntax)
 
 ;; thumbnail

@@ -1,4 +1,4 @@
-(in-package :cocoa.ext.db.sqlite3.folder)
+(in-package :cocoa.infra.db.sqlite3.folder)
 
 (defmethod folder-content-insert ((dao sqlite3-dao)
                                   (folder-id string)

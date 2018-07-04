@@ -1,4 +1,4 @@
-(asdf:defsystem :cocoa-ext
+(asdf:defsystem :cocoa-infra
   :serial t
   :components
   ((:file "third_party/proton/proton")

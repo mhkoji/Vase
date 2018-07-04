@@ -1,6 +1,6 @@
 (defpackage :cocoa.web
   (:use :cl
-        :cocoa.ext.context
+        :cocoa.infra.context
         :cocoa.web.bind)
   (:import-from :cl-arrows :->))
 (in-package :cocoa.web)
@@ -29,7 +29,7 @@
                    "~Athumbnail$~A"
                    thumbnail-root
                    (cl-ppcre:regex-replace-all "/" source-file "$"))))
-      (cocoa.ext.fs.thumbnail:ensure-thumbnail-exists thumbnail-file
+      (cocoa.infra.fs.thumbnail:ensure-thumbnail-exists thumbnail-file
                                                         source-file)
       thumbnail-file)))
 
@@ -57,4 +57,4 @@
              (destructuring-bind (&key path file-paths) args
                (cocoa.use-case.folder.add-bulk-by-dirs:make-dir
                 :path path :file-paths file-paths)))
-           (cocoa.ext.fs.retrieve:retrieve root-dir)))))))
+           (cocoa.infra.fs.retrieve:retrieve root-dir)))))))

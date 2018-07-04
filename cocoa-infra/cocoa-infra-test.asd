@@ -1,4 +1,4 @@
-(asdf:defsystem :cocoa-ext-test
+(asdf:defsystem :cocoa-infra-test
   :serial t
   :components
   ((:file "testing/fiveam")

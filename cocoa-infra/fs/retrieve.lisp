@@ -1,6 +1,6 @@
-(defpackage :cocoa.ext.fs.retrieve
+(defpackage :cocoa.infra.fs.retrieve
   (:use :cl :cocoa.util.stream))
-(in-package :cocoa.ext.fs.retrieve)
+(in-package :cocoa.infra.fs.retrieve)
 (cl-annot:enable-annot-syntax)
 
 (defun files-and-subdirectories (dir)

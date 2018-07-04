@@ -7,7 +7,7 @@
    (:file "bind")
    (:file "run"))
   :depends-on (:cocoa
-               :cocoa-ext
+               :cocoa-infra
 
                :cl-who
                :cl-arrows

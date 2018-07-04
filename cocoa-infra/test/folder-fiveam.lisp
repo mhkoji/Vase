@@ -1,10 +1,10 @@
-(defpackage :cocoa.ext.test.folder-fiveam
+(defpackage :cocoa.infra.test.folder-fiveam
   (:use :cl :fiveam
         :cocoa.folder
         :cocoa.folder.folder-spec
-        :cocoa.ext.testing.sqlite3))
-(in-package :cocoa.ext.test.folder-fiveam)
-(in-suite* :cocoa.ext.test.folder :in :cocoa)
+        :cocoa.infra.testing.sqlite3))
+(in-package :cocoa.infra.test.folder-fiveam)
+(in-suite* :cocoa.infra.test.folder :in :cocoa)
 
 (test insert-then-can-select-the-inserted-rows
   (with-sqlite3-dao (dao)
