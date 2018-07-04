@@ -18,7 +18,7 @@
    (:file "use-case/folder/content")
    (:file "use-case/folder/folder")
    (:file "use-case/folder/add")
-   (:file "use-case/folder/add-bulk")
+   (:file "use-case/folder/add-bulk-by-dirs")
    (:file "use-case/folder/get-by-id")
    (:file "use-case/folder/list-by-ids")
    (:file "use-case/folder/list-by-range")

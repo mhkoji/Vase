@@ -21,8 +21,6 @@
              (bind-html!))
          :port port)))
 
-
-
 (defun make-thumbnail-file-factory (thumbnail-root)
   (lambda (source-file)
     (log:debug "Creating thumbnail for: ~A" source-file)
@@ -35,38 +33,6 @@
                                                         source-file)
       thumbnail-file)))
 
-(defun make-thumbnail (add-images-use-case path)
-  (-> (car (cocoa.use-case.image.add:exec add-images-use-case
-                                          (list path)))
-      (getf :id)
-      (cocoa.use-case.folder.thumbnail:make-of-image)))
-
-(defun make-image-contents (add-images-use-case paths)
-  (labels ((image->content (image)
-             (-> image
-                 (getf :id)
-                 (cocoa.use-case.folder.content:make-of-image))))
-    (mapcar #'image->content (cocoa.use-case.image.add:exec
-                              add-images-use-case
-                              paths))))
-
-;;; A representation of a directory in the local file system
-(defstruct dir path file-paths)
-
-(defun make-dir->source-converter (sort-file-paths
-                                   make-thumbnail-file
-                                   add-images-use-case)
-  (lambda (dir)
-    (let ((path (dir-path dir))
-          (file-paths (funcall sort-file-paths (dir-file-paths dir))))
-      (cocoa.use-case.folder.add-bulk:make-source
-       :name path
-       :modified-at (file-write-date path)
-       :thumbnail (let ((thumbnail-file
-                         (funcall make-thumbnail-file (car file-paths))))
-                    (make-thumbnail add-images-use-case thumbnail-file))
-       :contents (make-image-contents add-images-use-case file-paths)))))
-
 @export
 (defun add-folders (root-dir
                     &key (context (load-context))
@@ -75,18 +41,20 @@
   (with-dao (dao context)
     (when initialize-data-p
       (initialize dao))
-    (let ((dir-stream (cocoa.util.stream:stream-map
-                       (lambda (dir-source) (apply #'make-dir dir-source))
-                       (cocoa.ext.fs.retrieve:retrieve root-dir))))
-      (-> (cocoa.use-case.folder.add-bulk:prepare
-           (cocoa.folder:folder-repository dao)
-           (context-digest-fn context))
-          (cocoa.use-case.folder.add-bulk:exec
-           (mapcar (make-dir->source-converter
-                    sort-file-paths
-                    (make-thumbnail-file-factory
-                     (context-thumbnail-root context))
-                    (cocoa.use-case.image.add:prepare
-                     (cocoa.fs.image:image-repository dao)
-                     (context-digest-fn context)))
-                   (cocoa.util.stream:stream-to-list dir-stream)))))))
+    (-> (cocoa.use-case.folder.add-bulk-by-dirs:prepare
+         :folder-repository (cocoa.folder:folder-repository dao)
+         :path->folder-id (context-digest-fn context)
+         :sort-file-paths sort-file-paths
+         :make-thumbnail-file (make-thumbnail-file-factory
+                               (context-thumbnail-root context))
+         :use-case/image/add (cocoa.use-case.image.add:prepare
+                              (cocoa.fs.image:image-repository dao)
+                              (context-digest-fn context)))
+        (cocoa.use-case.folder.add-bulk-by-dirs:exec
+         (cocoa.util.stream:stream-to-list
+          (cocoa.util.stream:stream-map
+           (lambda (args)
+             (destructuring-bind (&key path file-paths) args
+               (cocoa.use-case.folder.add-bulk-by-dirs:make-dir
+                :path path :file-paths file-paths)))
+           (cocoa.ext.fs.retrieve:retrieve root-dir)))))))
