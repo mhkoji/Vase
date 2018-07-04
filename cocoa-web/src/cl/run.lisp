@@ -33,7 +33,6 @@
                                                         source-file)
       thumbnail-file)))
 
-@export
 (defun add-folders (root-dir
                     &key (context (load-context))
                          (sort-file-paths #'identity)
