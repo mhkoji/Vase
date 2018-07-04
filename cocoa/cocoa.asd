@@ -1,5 +1,4 @@
 (asdf:defsystem :cocoa
-  :pathname #P"cocoa/"
   :serial t
   :components
   ((:file "folder/folder")

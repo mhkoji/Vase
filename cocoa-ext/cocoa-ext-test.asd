@@ -1,5 +1,4 @@
 (asdf:defsystem :cocoa-ext-test
-  :pathname #P"cocoa-ext/"
   :serial t
   :components
   ((:file "testing/fiveam")

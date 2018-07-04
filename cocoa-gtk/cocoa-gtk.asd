@@ -1,5 +1,4 @@
 (asdf:defsystem :cocoa-gtk
-  :pathname #P"cocoa-gtk/"
   :serial t
   :components
   ((:file "gtk"))

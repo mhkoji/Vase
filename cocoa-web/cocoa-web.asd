@@ -1,5 +1,5 @@
 (asdf:defsystem :cocoa-web
-  :pathname #P"cocoa-web/src/cl/"
+  :pathname #P"src/cl/"
   :serial t
   :components
   ((:file "json")

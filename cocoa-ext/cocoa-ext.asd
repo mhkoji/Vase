@@ -1,5 +1,4 @@
 (asdf:defsystem :cocoa-ext
-  :pathname #P"cocoa-ext/"
   :serial t
   :components
   ((:file "third_party/proton/proton")
