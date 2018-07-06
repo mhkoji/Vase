@@ -16,7 +16,6 @@
    (:file "use-case/folder/content")
    (:file "use-case/folder/folder")
    (:file "use-case/tag/tag")
-   (:file "use-case/tag/contents/list")
    (:file "use-case/tag/contents/folder")
 
    (:file "util/stream"))

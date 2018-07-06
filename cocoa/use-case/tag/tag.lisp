@@ -9,36 +9,26 @@
   (list :id (cocoa.tag:tag-id tag) :name (cocoa.tag:tag-name tag)))
 
 @export
-(defun create (tag-repository)
-  (lambda (name)
-    (-> (cocoa.tag:make-tag tag-repository name)
-        (cocoa.tag:save-tag tag-repository))
-    (values)))
+(defun create (name &key tag-repository)
+  (-> (cocoa.tag:make-tag tag-repository name)
+      (cocoa.tag:save-tag tag-repository))
+  (values))
 
 @export
-(defun list-by-range (tag-repository)
-  (lambda (from size)
-    (->> (cocoa.tag:load-tags-by-range tag-repository from size)
-         (mapcar #'tag->dto))))
+(defun list-by-range (from size &key tag-repository)
+  (->> (cocoa.tag:load-tags-by-range tag-repository from size)
+       (mapcar #'tag->dto)))
 
 @export
-(defun list-by-content (tag-repository)
-  (lambda (content)
-    (->> (cocoa.tag:load-tags-by-content tag-repository content)
-         (mapcar #'tag->dto))))
+(defun delete-by-id (tag-id &key tag-repository)
+  (cocoa.tag:delete-tags tag-repository (list tag-id))
+  (values))
 
 @export
-(defun delete-by-id (tag-repository)
-  (lambda (tag-id)
-    (cocoa.tag:delete-tags tag-repository (list tag-id))
-    (values)))
-
-@export
-(defun change-name (tag-repository)
-  (lambda (tag-id name)
-    (when-let ((tag (car (cocoa.tag:load-tags-by-ids
-                          tag-repository
-                          (list tag-id)))))
-      (setf (cocoa.tag:tag-name tag) name)
-      (cocoa.tag:save-tag tag-repository tag))
-    (values)))
+(defun change-name (tag-id name &key tag-repository)
+  (when-let ((tag (car (cocoa.tag:load-tags-by-ids
+                        tag-repository
+                        (list tag-id)))))
+    (setf (cocoa.tag:tag-name tag) name)
+    (cocoa.tag:save-tag tag-repository tag))
+  (values))

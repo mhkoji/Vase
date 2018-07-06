@@ -109,9 +109,12 @@
             (tag-select/ids tag-dao ids))))
 
 @export
-(defun load-tags-by-content (dao content)
-  (mapcar (lambda (row) (make-tag row dao))
-          (tag-content-select-tags dao (content-content-row content))))
+(defun load-tags-by-content (tag-repository content)
+  (let ((tag-dao (tag-repository-tag-dao tag-repository)))
+    (mapcar (lambda (row) (make-tag row tag-dao))
+            (tag-content-select-tags
+             tag-dao
+             (content-content-row content)))))
 
 @export
 (defun delete-tags (tag-repository ids)

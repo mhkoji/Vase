@@ -11,11 +11,14 @@
 (defclass image-thumbnail (thumbnail) ())
 
 @export
-(defun make-of-image (image-id)
-  "Make the image instance from the given image-id"
+(defun of-image (image-id)
+  "Make the image instance from the given image"
   (make-instance 'image-thumbnail :id image-id))
 
 @export
 (defun thumbnail->image-id (thumbnail)
   "Extract the image id of the thumbnail, if any"
   (thumbnail-id thumbnail))
+
+
+

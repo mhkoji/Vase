@@ -63,17 +63,15 @@
               :out (lambda (xs) (make-json-response
                                  (array-of #'folder xs)))) app
     (with-dao (dao context)
-      (-> (cocoa.use-case.folder:list-by-range
-           (cocoa.folder:folder-repository dao))
-          (funcall :from from :size size))))
+      (cocoa.use-case.folder:list-by-range from size
+       :folder-repository (cocoa.folder:folder-repository dao))))
   (do-route! ("/api/folder/:id"
               :method :get
               :in ((folder-id :param :id))
               :out (lambda (f) (make-json-response (folder f)))) app
     (with-dao (dao context)
-      (-> (cocoa.use-case.folder:get-by-id
-           (cocoa.folder:folder-repository dao))
-          (funcall folder-id))))
+      (cocoa.use-case.folder:get-by-id folder-id
+       :folder-repository (cocoa.folder:folder-repository dao))))
   (do-route! ("/api/folder/:id/images"
               :method :get
               :in ((folder-id :param :id)
@@ -82,79 +80,72 @@
               :out (lambda (xs) (make-json-response
                                  (array-of #'image xs)))) app
     (with-dao (dao context)
-      (-> (cocoa.use-case.folder:list-images
-           (cocoa.folder:folder-repository dao))
-          (funcall folder-id :from from :size size))))
+      (cocoa.use-case.folder:get-images
+       folder-id :from from :size size
+       :folder-repository (cocoa.folder:folder-repository dao))))
   (do-route! ("/api/folder/:id/tags"
               :method :get
               :in ((folder-id :param :id))
               :out (lambda (xs) (make-json-response
                                  (array-of #'tag xs)))) app
     (with-dao (dao context)
-      (-> (cocoa.use-case.tag.contents.folder:get-tags
-           (cocoa.tag:tag-repository tag))
-          (funcall folder-id))))
+      (cocoa.use-case.folder:get-tags folder-id
+       :tag-repository (cocoa.tag:tag-repository dao))))
   (do-route! ("/api/folder/:id/tags"
               :method :post
               :in ((folder-id :param :id)
                    (tag-ids :query "tag_ids"))
               :out #'make-json-response) app
     (with-dao (dao context)
-      (-> (cocoa.use-case.tag.contents.folder:set-tags!
-           (cocoa.tag:tag-repository tag))
-          (funcall folder-id tag-ids))))
+      (cocoa.use-case.folder:set-tags folder-id tag-ids
+       :tag-repository (cocoa.tag:tag-repository dao))))
 
   (do-route! ("/api/tags"
               :method :get
               :out (lambda (xs) (make-json-response
                                  (array-of #'tag xs)))) app
     (with-dao (dao context)
-      (-> (cocoa.use-case.tag:list-by-range (cocoa.tag:tag-repository tag))
-          (funcall 0 50))))
+      (cocoa.use-case.tag:list-by-range 0 50
+       :tag-repository (cocoa.tag:tag-repository dao))))
   (do-route! ("/api/tags"
               :method :post
               :in ((name :query "name"))
               :out #'make-json-response) app
     (with-dao (dao context)
-      (-> (cocoa.use-case.tag:create (cocoa.tag:tag-repository tag))
-          (funcall name))))
+      (cocoa.use-case.tag:create name
+       :tag-repository (cocoa.tag:tag-repository dao))))
   (do-route! ("/api/tag/:id"
               :method :delete
               :in ((tag-id :param :id))
               :out #'make-json-response) app
     (with-dao (dao context)
-      (-> (cocoa.use-case.tag:delete-by-id (cocoa.tag:tag-repository tag))
-          (funcall tag-id))))
+      (cocoa.use-case.tag:delete-by-id tag-id
+       :tag-repository (cocoa.tag:tag-repository dao))))
   (do-route! ("/api/tag/:id/folders"
               :method :get
               :in ((tag-id :param :id))
               :out (lambda (xs) (make-json-response
                                  (array-of #'folder xs)))) app
     (with-dao (dao context)
-      (-> (cocoa.use-case.tag.contents:list-by-id
-           (cocoa.tag:tag-repository tag)
-           (make-instance 'cocoa.use-case.tag.contents.folder:container
-                          :list-folders-by-ids
-                          (cocoa.use-case.folder:list-by-ids
-                           (cocoa.folder:folder-repository dao))))
-          (funcall tag-id))))
+      (cocoa.use-case.tag.contents.folder:get-folders tag-id
+       :tag-repository (cocoa.tag:tag-repository dao)
+       :folder-repository (cocoa.folder:folder-repository dao))))
   (do-route! ("/api/tag/:id"
               :method :put
               :in ((tag-id :param :id)
                    (name :query "name"))
               :out #'make-json-response) app
     (with-dao (dao context)
-      (-> (cocoa.use-case.tag:change-name (cocoa.tag:tag-repository dao))
-          (funcall tag-id name))))
+      (cocoa.use-case.tag:change-name tag-id name
+       :tag-repository (cocoa.tag:tag-repository dao))))
 
   (do-route! ("/_i/:id"
               :method :get
               :in ((image-id :param :id))
               :out #'make-file-response) app
     (with-dao (dao context)
-      (-> (cocoa.use-case.image:get-path
-           (cocoa.fs.image:image-repository dao))
-          (funcall image-id))))
+      (cocoa.use-case.image:get-path image-id
+       :image-repository (cocoa.fs.image:image-repository dao))))
   app)
 
 @export

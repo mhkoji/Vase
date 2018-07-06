@@ -9,7 +9,7 @@
 ;;; A image content implemented by some image id
 ;;; Implemented as a plug-in to the folder
 @export
-(defun make-of-image (image-id)
+(defun of-image (image-id)
   (make-instance 'content :id (format nil "image:~A" image-id)))
 
 @export
