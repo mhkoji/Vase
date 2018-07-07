@@ -127,7 +127,7 @@
               :out (lambda (xs) (make-json-response
                                  (array-of #'folder xs)))) app
     (with-dao (dao context)
-      (cocoa.use-case.tag.contents.folder:get-folders tag-id
+      (cocoa.use-case.tag.contents:get-folders tag-id
        :tag-repository (cocoa.tag:tag-repository dao)
        :folder-repository (cocoa.folder:folder-repository dao))))
   (do-route! ("/api/tag/:id"

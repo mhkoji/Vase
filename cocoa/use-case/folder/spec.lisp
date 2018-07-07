@@ -72,7 +72,7 @@
         (format nil "~A:thumb" path)))
      (cocoa.use-case.folder:set-tags "f1" (list 1)
       :tag-repository (cocoa.tag:tag-repository ,dao))
-     (let ((folders (cocoa.use-case.tag.contents.folder:get-folders 1
+     (let ((folders (cocoa.use-case.tag.contents:get-folders 1
                      :tag-repository
                      (cocoa.tag:tag-repository ,dao)
                      :folder-repository

@@ -182,6 +182,16 @@
   (make-instance 'cocoa.tag:content :id folder-id :type :folder))
 
 @export
+(defclass folder-container ()
+  ((folder-repository :initarg :folder-repository)))
+
+(defmethod cocoa.tag:render-contents ((container folder-container)
+                                      (type (eql :folder))
+                                      (content-ids list))
+  (let ((folder-repos (slot-value container 'folder-repository)))
+    (list-by-ids content-ids :folder-repository folder-repos)))
+
+@export
 (defun set-tags (folder-id tag-ids &key tag-repository)
   (let ((content (as-tagged-content folder-id)))
     (dolist (tag (cocoa.tag:load-tags-by-content tag-repository content))
