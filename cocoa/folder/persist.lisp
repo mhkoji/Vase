@@ -10,15 +10,20 @@
 @export
 (defgeneric folder-select (folder-dao ids))
 @export
+(defgeneric folder-row (folder-dao folder-id name modified-at))
+@export
 (defgeneric folder-row-folder-id (folder-row))
 @export
 (defgeneric folder-row-name (folder-row))
+@export
+(defgeneric folder-row-modified-at (folder-row))
+
 @export
 (defgeneric folder-select-ids (folder-dao offset size))
 @export
 (defgeneric folder-search-ids (folder-dao keyword))
 @export
-(defgeneric folder-insert (folder-dao folder-configs))
+(defgeneric folder-insert (folder-dao folder-rows))
 @export
 (defgeneric folder-delete (folder-dao folder-id-list))
 
@@ -59,12 +64,12 @@
         (setf (gethash folder-id folder-id->thumbnail) thumbnail)))
 
     (mapcar (lambda (id)
-              (let ((row (gethash id folder-id->row))
-                    (thumbnail (gethash id folder-id->thumbnail)))
-                (make-instance 'folder
-                               :id id
-                               :name (folder-row-name row)
-                               :thumbnail thumbnail)))
+              (let ((row (gethash id folder-id->row)))
+                (make-folder
+                 :id id
+                 :name (folder-row-name row)
+                 :thumbnail (gethash id folder-id->thumbnail)
+                 :modified-at (folder-row-modified-at row))))
             ids)))
 
 @export
@@ -91,38 +96,40 @@
        (folder-content-delete ids)
        (folder-delete ids))))
 
-(defun folder-config-thumbnail-row (folder-dao folder-config)
+(defun folder-thumbnail-row (folder-dao folder)
   (thumbnail-row folder-dao
-                 (folder-config-id folder-config)
-                 (thumbnail-id (folder-config-thumbnail folder-config))))
+                 (folder-id folder)
+                 (thumbnail-id (folder-thumbnail folder))))
 
+(defun folder-folder-row (folder-dao folder)
+  (folder-row folder-dao
+              (folder-id folder)
+              (folder-name folder)
+              (folder-modified-at folder)))
 
 ;; A folder configuration from which the folder is saved
-(defstruct folder-config id name thumbnail modified-at)
-(export '(make-folder-config
-          folder-config-id
-          folder-config-name
-          folder-config-thumbnail
-          folder-config-modified-at))
-
 @export
-(defun save-folders (folder-repository configs)
+(defun save-folders (folder-repository folders)
   ;; Delete the existing folders
   (setq folder-repository (delete-folders-by-ids
                            folder-repository
-                           (mapcar #'folder-config-id configs)))
+                           (mapcar #'folder-id folders)))
   (make-folder-repository
    :folder-dao
-   (let ((thumbnail-rows
-          (mapcar (alexandria:curry
-                   #'folder-config-thumbnail-row
-                   (folder-repository-folder-dao folder-repository))
-                  configs)))
-     (-> (folder-repository-folder-dao folder-repository)
-         ;; Insert folders
-         (folder-insert configs)
-         ;; Insert thumbnails
-         (folder-thumbnail-insert thumbnail-rows)))))
+   (let ((folder-dao (folder-repository-folder-dao folder-repository)))
+     (let ((folder-rows
+            (mapcar (alexandria:curry #'folder-folder-row
+                                      folder-dao)
+                    folders))
+           (thumbnail-rows
+            (mapcar (alexandria:curry #'folder-thumbnail-row
+                                      folder-dao)
+                    folders)))
+       (-> folder-dao
+           ;; Insert folders
+           (folder-insert folder-rows)
+           ;; Insert thumbnails
+           (folder-thumbnail-insert thumbnail-rows))))))
 
 @export
 (defun update-folder (folder-repository folder)

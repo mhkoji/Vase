@@ -24,7 +24,7 @@
 
 (defstruct appending
   "The object that represents the action of appending contents to a folder"
-  folder-id contents)
+  folder contents)
 (export 'make-appending)
 
 (defmethod update-contents (folder-repository (op appending))
@@ -32,7 +32,7 @@
    :folder-dao
    (-> (folder-repository-folder-dao folder-repository)
        (folder-content-insert
-        (appending-folder-id op)
+        (folder-id (appending-folder op))
         (mapcar #'content-id (appending-contents op))))))
 
 (defstruct appending-bulk

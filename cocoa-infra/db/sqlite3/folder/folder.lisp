@@ -6,35 +6,51 @@
 (in-package :cocoa.infra.db.sqlite3.folder)
 
 ;; insert
-(defmethod folder-insert ((dao sqlite3-dao) (configs list))
+(defstruct folder-row %folder-id %name %modified-at)
+
+(defmethod folder-row ((dao sqlite3-dao) folder-id name modified-at)
+  (make-folder-row :%folder-id folder-id
+                   :%name name
+                   :%modified-at modified-at))
+
+(defmethod folder-row-folder-id ((row folder-row))
+  (folder-row-%folder-id row))
+
+(defmethod folder-row-name ((row folder-row))
+  (folder-row-%name row))
+
+(defmethod folder-row-modified-at ((row folder-row))
+  (folder-row-%modified-at row))
+
+
+(defmethod folder-insert ((dao sqlite3-dao) (rows list))
   (->> (mapcar #'list
-               (mapcar #'folder-config-id configs)
-               (mapcar #'folder-config-name configs)
-               (mapcar #'folder-config-modified-at configs))
+               (mapcar #'folder-row-folder-id rows)
+               (mapcar #'folder-row-name rows)
+               (mapcar #'folder-row-modified-at rows))
        (insert-bulk dao +folders+
                     (list +folder-id+
                           +folders/name+
                           +folders/modified-at+)))
   dao)
 
-(defmethod folder-row-folder-id ((plist list))
-  (getf plist :|folder_id|))
-
-(defmethod folder-row-name ((plist list))
-  (getf plist :|name|))
-
 (defmethod folder-select ((dao sqlite3-dao) (ids list))
   (when ids
-    (query dao
-           (join " SELECT"
-                 "  *"
-                 " FROM"
-                 " " +folders+
-                 " WHERE"
-                 " " +folder-id+ " in (" (placeholder ids) ")")
-           ids)))
+    (->> (query dao
+          (join " SELECT"
+                "  *"
+                " FROM"
+                " " +folders+
+                " WHERE"
+                " " +folder-id+ " in (" (placeholder ids) ")")
+          ids)
+         (mapcar (lambda (plist)
+                   (make-folder-row
+                    :%folder-id (getf plist :|folder_id|)
+                    :%name (getf plist :|name|)
+                    :%modified-at (getf plist :|modified_at|)))))))
 
-(defmethod folder-select-ids ((dao sqlite3-dao) offset size)
+  (defmethod folder-select-ids ((dao sqlite3-dao) offset size)
   (mapcar #'second
           (query dao
                  (join " SELECT"

@@ -5,29 +5,11 @@
 (cl-annot:enable-annot-syntax)
 
 ;;; The representation of a folder
-@export
-(defclass folder ()
-  ((id :initarg :id)
-   (name :initarg :name)
-   (thumbnail :initarg :thumbnail)))
-
-@export
-(defun folder-id (folder)
-  "Returns the unique id of a content"
-  (slot-value folder 'id))
-
-@export
-(defun folder-name (folder)
-  "Returns the name of a folder"
-  (slot-value folder 'name))
-
-@export
-(defun folder-thumbnail (folder)
-  "Returns the thumbanil of a folder"
-  (slot-value folder 'thumbnail))
-
-(defun (setf folder-thumbnail) (thumbnail folder)
-  (setf (slot-value folder 'thumbnail) thumbnail))
+(defstruct folder id name thumbnail modified-at)
+(export '(make-folder
+          folder-id
+          folder-name
+          folder-thumbnail))
 
 ;;;; The representation of the thumbnail of a folder
 @export

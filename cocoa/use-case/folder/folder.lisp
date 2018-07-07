@@ -58,45 +58,40 @@
     (cocoa.use-case.folder.thumbnail:of-image
      (car (funcall add-images-by-paths (list thumbnail-file))))))
 
-(defun dir-folder-config (dir folder-id
-                          &key make-thumbnail-file
-                               add-images-by-paths)
-  (let ((path (dir-path dir)))
-    (cocoa.folder:make-folder-config
-     :id folder-id
-     :name path
-     :thumbnail (dir-thumbnail dir
-                 :make-thumbnail-file make-thumbnail-file
-                 :add-images-by-paths add-images-by-paths)
-     :modified-at (dir-modified-at dir))))
-
-(defun dir-appending (dir folder-id &key add-images-by-paths)
-  (cocoa.folder:make-appending
-   :folder-id folder-id
-   :contents (mapcar #'cocoa.use-case.folder.content:of-image
-                     (funcall add-images-by-paths (dir-file-paths dir)))))
-
+(defun dir-contents (dir &key add-images-by-paths)
+  (mapcar #'cocoa.use-case.folder.content:of-image
+          (funcall add-images-by-paths (dir-file-paths dir))))
 @export
 (defun add-bulk (dirs &key folder-repository
                            make-folder-id-by-path
                            make-thumbnail-file
                            add-images-by-paths)
-  (labels ((folder-config (dir folder-id)
-             (dir-folder-config dir folder-id
-              :make-thumbnail-file make-thumbnail-file
-              :add-images-by-paths add-images-by-paths))
-           (appending (dir folder-id)
-             (dir-appending dir folder-id
-              :add-images-by-paths add-images-by-paths))
-           (dir-folder-id (dir)
-             (funcall make-folder-id-by-path (dir-path dir))))
-    (let ((folder-ids (mapcar #'dir-folder-id dirs)))
-      (-> folder-repository
-          (cocoa.folder:save-folders
-           (mapcar #'folder-config dirs folder-ids))
-          (cocoa.folder:update-contents
-           (cocoa.folder:make-appending-bulk
-            :appendings (mapcar #'appending dirs folder-ids)))))))
+  (labels ((dir->folder-id (dir)
+             (funcall make-folder-id-by-path (dir-path dir)))
+           (dir->folder (dir folder-id)
+             (let ((thumbnail
+                    (dir-thumbnail dir
+                     :make-thumbnail-file make-thumbnail-file
+                     :add-images-by-paths add-images-by-paths)))
+               (cocoa.folder:make-folder
+                :id folder-id
+                :name (dir-path dir)
+                :thumbnail thumbnail
+                :modified-at (dir-modified-at dir))))
+           (dir->appending (dir folder)
+             (cocoa.folder:make-appending
+              :folder folder
+              :contents (dir-contents dir
+                         :add-images-by-paths add-images-by-paths))))
+    (let ((folders (mapcar #'dir->folder
+                           dirs
+                           (mapcar #'dir->folder-id dirs))))
+      (let ((appending-bulk (cocoa.folder:make-appending-bulk
+                             :appendings
+                             (mapcar #'dir->appending dirs folders))))
+        (cocoa.folder:save-folders folder-repository folders)
+        (cocoa.folder:update-contents folder-repository appending-bulk))))
+  (values))
 
 (defun add (&key name thumbnail
                  folder-repository
@@ -104,7 +99,7 @@
   (let ((id (funcall make-folder-id-by-name name)))
     (-<> folder-repository
          (cocoa.folder:save-folders
-          (list (cocoa.folder:make-folder-config
+          (list (cocoa.folder:make-folder
                  :id id
                  :name name
                  :thumbnail thumbnail
@@ -123,9 +118,12 @@
 
 @export
 (defun append-contents (folder-id contents &key folder-repository)
-  (let ((appending (cocoa.folder:make-appending
-                    :folder-id folder-id :contents contents)))
-    (cocoa.folder:update-contents folder-repository appending)))
+  (let ((folder (car (cocoa.folder:load-folders-by-ids folder-repository
+                      (list folder-id)))))
+    (let ((appending (cocoa.folder:make-appending
+                      :folder folder
+                      :contents contents)))
+      (cocoa.folder:update-contents folder-repository appending))))
 
 @export
 (defun delete-by-id (folder-id &key folder-repository)
