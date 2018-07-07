@@ -8,3 +8,7 @@
 (test can-list-the-added-folders
   (with-sqlite3-dao (dao)
     (can-list-the-added-folders dao :test is)))
+
+(test can-attach-tags-to-a-folder
+  (with-sqlite3-dao (dao)
+    (can-attach-tags-to-a-folder dao :test is)))

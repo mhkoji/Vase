@@ -45,3 +45,42 @@
        (,test (= (length images) 2))
        (,test (string= (-> images (elt 0) (getf :id)) "f1/aaa"))
        (,test (string= (-> images (elt 1) (getf :id)) "f1/bbb")))))
+
+@export
+(defmacro can-attach-tags-to-a-folder (dao &key test)
+  `(progn
+     (cocoa.use-case.tag:create "A tag"
+      :tag-repository (cocoa.tag:tag-repository ,dao))
+     (cocoa.use-case.folder:add-bulk
+      (list (cocoa.use-case.folder:make-dir
+             :path "/path/f1"
+             :image-paths (list "/path/f1/aaa" "/path/f1/bbb")
+             :modified-at 100)
+            (cocoa.use-case.folder:make-dir
+             :path "/path/f2"
+             :image-paths (list "/path/f2/ccc" "/path/f1/ddd")
+             :modified-at 200))
+      :id-generator
+      (lambda (path)
+        (subseq path (length "/path/")))
+      :image-repository
+      (cocoa.fs.image:image-repository ,dao)
+      :folder-repository
+      (cocoa.folder:folder-repository ,dao)
+      :make-thumbnail-file
+      (lambda (path)
+        (format nil "~A:thumb" path)))
+     (cocoa.use-case.folder:set-tags "f1" (list 1)
+      :tag-repository (cocoa.tag:tag-repository ,dao))
+     (let ((folders (cocoa.use-case.tag.contents.folder:get-folders 1
+                     :tag-repository
+                     (cocoa.tag:tag-repository ,dao)
+                     :folder-repository
+                     (cocoa.folder:folder-repository ,dao))))
+       (,test (= (length folders) 1))
+       (,test (string= (-> folders (elt 0) (getf :id))
+                       "f1"))
+       (,test (string= (-> folders (elt 0) (getf :name))
+                       "/path/f1"))
+       (,test (string= (-> folders (elt 0) (getf :thumbnail) (getf :id))
+                       "f1/aaa:thumb")))))
