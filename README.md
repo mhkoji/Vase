@@ -35,8 +35,8 @@ CL-USER> (ql:quickload :cocoa-web)
 ```
 CL-USER> (defvar *context*
            (cocoa.infra.context:make-context
-            :digest-fn
-            #'cocoa.infra.context:sha256-3
+            :id-generator
+            (make-instance 'cocoa.id:sha256-3)
             :connection-factory
             (make-instance 'proton:sqlite3-factory
                            :db-path "/tmp/cocoa/db.sqlite3")

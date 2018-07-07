@@ -4,34 +4,44 @@
 (in-package :cocoa.use-case.folder.spec)
 (cl-annot:enable-annot-syntax)
 
+(defmethod cocoa.id:gen ((generator function) (string string))
+  (funcall generator string))
+
 @export
-(defmacro can-list-the-added-folders (folder-dao &key test)
+(defmacro can-list-the-added-folders (dao &key test)
   `(progn
      (cocoa.use-case.folder:add-bulk
       (list (cocoa.use-case.folder:make-dir
              :path "/path/f1"
-             :file-paths (list "/path/f1/aaa" "/path/f1/bbb")
+             :image-paths (list "/path/f1/aaa" "/path/f1/bbb")
              :modified-at 100)
             (cocoa.use-case.folder:make-dir
              :path "/path/f2"
-             :file-paths (list "/path/f2/ccc" "/path/f1/ddd")
+             :image-paths (list "/path/f2/ccc" "/path/f1/ddd")
              :modified-at 200))
-      :folder-repository
-      (cocoa.folder:folder-repository ,folder-dao)
-      :make-folder-id-by-path
+      :id-generator
       (lambda (path)
         (subseq path (length "/path/")))
+      :image-repository
+      (cocoa.fs.image:image-repository ,dao)
+      :folder-repository
+      (cocoa.folder:folder-repository ,dao)
       :make-thumbnail-file
       (lambda (path)
-        (format nil "~A:thumb" path))
-      :add-images-by-paths
-      #'identity)
+        (format nil "~A:thumb" path)))
      (let ((folder (car (cocoa.use-case.folder:list-by-ids (list "f1")
                          :folder-repository
-                         (cocoa.folder:folder-repository ,folder-dao)))))
+                         (cocoa.folder:folder-repository ,dao)))))
        (,test (string= (-> folder (getf :id))
                        "f1"))
        (,test (string= (-> folder (getf :name))
                        "/path/f1"))
        (,test (string= (-> folder (getf :thumbnail) (getf :id))
-                       "/path/f1/aaa:thumb")))))
+                       "f1/aaa:thumb")))
+     (let ((images (cocoa.use-case.folder:get-images "f1"
+                    :from 0 :size 10
+                    :folder-repository
+                    (cocoa.folder:folder-repository ,dao))))
+       (,test (= (length images) 2))
+       (,test (string= (-> images (elt 0) (getf :id)) "f1/aaa"))
+       (,test (string= (-> images (elt 1) (getf :id)) "f1/bbb")))))

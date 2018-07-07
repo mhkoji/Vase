@@ -48,23 +48,13 @@
          (destructuring-bind (&key path file-paths) args
            (cocoa.use-case.folder:make-dir
             :path path
-            :file-paths (funcall sort-file-paths file-paths)
+            ;; Assume that all the files in each dir are an image.
+            :image-paths (funcall sort-file-paths file-paths)
             :modified-at (file-write-date path))))
        (cocoa.infra.fs.retrieve:retrieve root-dir)))
-     :folder-repository
-     (cocoa.folder:folder-repository dao)
-     :make-folder-id-by-path
-     (context-digest-fn context)
-     :make-thumbnail-file
-     (make-thumbnail-file-factory (context-thumbnail-root context))
-     :add-images-by-paths
-     (labels ((add-images (paths)
-                (cocoa.use-case.image:add-images paths
-                 :image-repository
-                 (cocoa.fs.image:image-repository dao)
-                 :path->image-id
-                 (context-digest-fn context)))
-              (image-id (image)
-                (getf image :id)))
-       (lambda (paths)
-         (->> (add-images paths) (mapcar #'image-id)))))))
+     :id-generator (context-id-generator context)
+     :image-repository (cocoa.fs.image:image-repository dao)
+     :folder-repository (cocoa.folder:folder-repository dao)
+     :make-thumbnail-file (make-thumbnail-file-factory
+                           (context-thumbnail-root context)))
+    (values)))

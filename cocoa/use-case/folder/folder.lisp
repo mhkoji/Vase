@@ -49,62 +49,76 @@
 ;;;; Add
 
 ;;; The representation of a directory in the local file system
-(defstruct dir path file-paths modified-at)
+(defstruct dir path image-paths modified-at)
 (export 'make-dir)
 
-(defun dir-thumbnail (dir &key make-thumbnail-file add-images-by-paths)
-  (let ((thumbnail-file
-         (funcall make-thumbnail-file (car (dir-file-paths dir)))))
-    (cocoa.use-case.folder.thumbnail:of-image
-     (car (funcall add-images-by-paths (list thumbnail-file))))))
+(defun dir-thumbnail (dir &key make-thumbnail-file
+                               id-generator
+                               image-repository)
+  (let ((thumbnail-path (funcall make-thumbnail-file
+                                 (car (dir-image-paths dir)))))
+    (let ((thumbnail-image (cocoa.fs.image:make-image
+                            (cocoa.id:gen id-generator thumbnail-path)
+                            thumbnail-path)))
+      (cocoa.fs.image:save-images image-repository
+                                  (list thumbnail-image))
+      (cocoa.use-case.folder.thumbnail:of-image
+       (cocoa.fs.image:image-id thumbnail-image)))))
 
-(defun dir-contents (dir &key add-images-by-paths)
-  (mapcar #'cocoa.use-case.folder.content:of-image
-          (funcall add-images-by-paths (dir-file-paths dir))))
+(defun dir-contents (dir &key id-generator image-repository)
+  (let ((images (mapcar (lambda (path)
+                          (let ((id (cocoa.id:gen id-generator path)))
+                            (cocoa.fs.image:make-image id path)))
+                        (dir-image-paths dir))))
+    (cocoa.fs.image:save-images image-repository images)
+    (mapcar (alexandria:compose
+             #'cocoa.use-case.folder.content:of-image
+             #'cocoa.fs.image:image-id)
+            images)))
+
 @export
-(defun add-bulk (dirs &key folder-repository
-                           make-folder-id-by-path
-                           make-thumbnail-file
-                           add-images-by-paths)
-  (labels ((dir->folder-id (dir)
-             (funcall make-folder-id-by-path (dir-path dir)))
-           (dir->folder (dir folder-id)
-             (let ((thumbnail
-                    (dir-thumbnail dir
-                     :make-thumbnail-file make-thumbnail-file
-                     :add-images-by-paths add-images-by-paths)))
-               (cocoa.folder:make-folder
-                :id folder-id
-                :name (dir-path dir)
-                :thumbnail thumbnail
-                :modified-at (dir-modified-at dir))))
-           (dir->appending (dir folder)
-             (cocoa.folder:make-appending
-              :folder folder
-              :contents (dir-contents dir
-                         :add-images-by-paths add-images-by-paths))))
-    (let ((folders (mapcar #'dir->folder
-                           dirs
-                           (mapcar #'dir->folder-id dirs))))
-      (let ((appending-bulk (cocoa.folder:make-appending-bulk
-                             :appendings
-                             (mapcar #'dir->appending dirs folders))))
+(defun add-bulk (dirs &key id-generator
+                           image-repository
+                           folder-repository
+                           make-thumbnail-file)
+  (labels ((dir-folder (dir)
+             (cocoa.folder:make-folder
+              :id (cocoa.id:gen id-generator (dir-path dir))
+              :name (dir-path dir)
+              :thumbnail (dir-thumbnail dir
+                          :make-thumbnail-file make-thumbnail-file
+                          :id-generator id-generator
+                          :image-repository image-repository)
+              :modified-at (dir-modified-at dir))))
+    (let ((folders
+           (mapcar #'dir-folder dirs))
+          (contents-list
+           (mapcar (alexandria:rcurry #'dir-contents
+                    :id-generator id-generator
+                    :image-repository image-repository)
+                   dirs)))
+      (let ((appending-bulk
+             (cocoa.folder:make-appending-bulk
+              :appendings (mapcar (lambda (folder contents)
+                                    (cocoa.folder:make-appending
+                                     :folder folder
+                                     :contents contents))
+                                  folders contents-list))))
         (cocoa.folder:save-folders folder-repository folders)
-        (cocoa.folder:update-contents folder-repository appending-bulk))))
-  (values))
+        (cocoa.folder:update-contents folder-repository appending-bulk))
+      (mapcar #'folder->resp folders))))
 
 (defun add (&key name thumbnail
                  folder-repository
-                 make-folder-id-by-name)
-  (let ((id (funcall make-folder-id-by-name name)))
-    (-<> folder-repository
-         (cocoa.folder:save-folders
-          (list (cocoa.folder:make-folder
-                 :id id
+                 id-generator)
+  (let ((folder (cocoa.folder:make-folder
+                 :id (cocoa.id:gen id-generator name)
                  :name name
                  :thumbnail thumbnail
                  :modified-at (get-universal-time))))
-         (get-by-id id :folder-repository <>))))
+    (cocoa.folder:save-folders folder-repository (list folder))
+    (folder->resp folder)))
+
 
 
 ;;;; Update

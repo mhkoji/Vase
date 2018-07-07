@@ -11,6 +11,8 @@
    (:file "tag")
    (:file "tag-persist")
 
+   (:file "id")
+
    (:file "use-case/image")
    (:file "use-case/folder/thumbnail")
    (:file "use-case/folder/content")
@@ -22,6 +24,7 @@
 
   :depends-on (:alexandria
                :anaphora
+               :babel
                :cl-annot
                :cl-arrows
                :cl-fad
