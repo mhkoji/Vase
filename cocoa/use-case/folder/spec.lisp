@@ -51,6 +51,7 @@
   `(progn
      (cocoa.use-case.tag:create "A tag"
       :tag-repository (cocoa.tag:tag-repository ,dao))
+
      (cocoa.use-case.folder:add-bulk
       (list (cocoa.use-case.folder:make-dir
              :path "/path/f1"
@@ -70,9 +71,11 @@
       :make-thumbnail-file
       (lambda (path)
         (format nil "~A:thumb" path)))
-     (cocoa.use-case.folder:set-tags "f1" (list 1)
+
+     (cocoa.use-case.folder:set-tags "f1" (list "1")
       :tag-repository (cocoa.tag:tag-repository ,dao))
-     (let ((folders (cocoa.use-case.tag.contents:get-folders 1
+
+     (let ((folders (cocoa.use-case.tag.contents:get-folders "1"
                      :tag-repository
                      (cocoa.tag:tag-repository ,dao)
                      :folder-repository
@@ -83,4 +86,12 @@
        (,test (string= (-> folders (elt 0) (getf :name))
                        "/path/f1"))
        (,test (string= (-> folders (elt 0) (getf :thumbnail) (getf :id))
-                       "f1/aaa:thumb")))))
+                       "f1/aaa:thumb")))
+     (let ((tags (cocoa.use-case.folder:get-tags "f1"
+                  :tag-repository (cocoa.tag:tag-repository ,dao))))
+       (,test (= (length tags) 1))
+       (,test (string= (-> tags (elt 0) (getf :id))
+                       "1"))
+       (,test (string= (-> tags (elt 0) (getf :name))
+                       "A tag")))))
+
