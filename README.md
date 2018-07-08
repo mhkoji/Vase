@@ -34,7 +34,7 @@ CL-USER> (ql:quickload :cocoa-web)
 
 ```
 CL-USER> (defvar *context*
-           (cocoa.infra.context:make-context
+           (cocoa.di.context:make-context
             :id-generator
             (make-instance 'cocoa.id:sha256-3)
             :connection-factory

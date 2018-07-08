@@ -1,9 +1,9 @@
-(defpackage :cocoa.infra.db.sqlite3.folder
+(defpackage :cocoa.db.sqlite3.folder
   (:use :cl
         :cocoa.folder
-        :cocoa.infra.db.sqlite3)
+        :cocoa.db.sqlite3)
   (:import-from :cl-arrows :->>))
-(in-package :cocoa.infra.db.sqlite3.folder)
+(in-package :cocoa.db.sqlite3.folder)
 
 ;; insert
 (defstruct folder-row %folder-id %name %modified-at)

@@ -1,6 +1,6 @@
 (defpackage :cocoa.web
   (:use :cl
-        :cocoa.infra.context
+        :cocoa.di.context
         :cocoa.web.bind)
   (:import-from :cl-arrows :-> :->>))
 (in-package :cocoa.web)
@@ -29,7 +29,7 @@
                    "~Athumbnail$~A"
                    thumbnail-root
                    (cl-ppcre:regex-replace-all "/" source-file "$"))))
-      (cocoa.infra.fs.thumbnail:ensure-thumbnail-exists thumbnail-file
+      (cocoa.util.fs.thumbnail:ensure-thumbnail-exists thumbnail-file
                                                         source-file)
       thumbnail-file)))
 
@@ -51,7 +51,7 @@
             ;; Assume that all the files in each dir are an image.
             :image-paths (funcall sort-file-paths file-paths)
             :modified-at (file-write-date path))))
-       (cocoa.infra.fs.retrieve:retrieve root-dir)))
+       (cocoa.util.fs.retrieve:retrieve root-dir)))
      :id-generator (context-id-generator context)
      :image-repository (cocoa.fs.image:image-repository dao)
      :folder-repository (cocoa.folder:folder-repository dao)

@@ -31,7 +31,7 @@
 
 @export
 (defun load-rendered-contents-by-tag (tag container)
-  (let ((contents (cocoa.tag:tag-contents tag))
+  (let ((contents (tag-contents tag))
         (local-ids nil)
         (type->local-ids (make-hash-table))
         (id->content (make-hash-table))

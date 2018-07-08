@@ -1,7 +1,7 @@
-(defpackage :cocoa.use-case.folder.spec
+(defpackage :cocoa.spec.folder
   (:use :cl)
   (:import-from :cl-arrows :->))
-(in-package :cocoa.use-case.folder.spec)
+(in-package :cocoa.spec.folder)
 (cl-annot:enable-annot-syntax)
 
 (defmethod cocoa.id:gen ((generator function) (string string))

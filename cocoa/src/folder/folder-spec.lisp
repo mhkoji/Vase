@@ -1,7 +1,7 @@
-(defpackage :cocoa.folder.folder-spec
+(defpackage :cocoa.folder-spec
   (:use :cl :cocoa.folder)
   (:import-from :cl-arrows :->))
-(in-package :cocoa.folder.folder-spec)
+(in-package :cocoa.folder-spec)
 (cl-annot:enable-annot-syntax)
 
 (defun create-folder-rows (dao from to)

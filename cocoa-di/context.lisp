@@ -1,6 +1,6 @@
-(defpackage :cocoa.infra.context
+(defpackage :cocoa.di.context
   (:use :cl))
-(in-package :cocoa.infra.context)
+(in-package :cocoa.di.context)
 (cl-annot:enable-annot-syntax)
 
 @export
@@ -34,7 +34,7 @@
 
 
 (defmethod connection->dao ((conn proton:sqlite3))
-  (make-instance 'cocoa.infra.db.sqlite3:sqlite3-dao :connection conn))
+  (make-instance 'cocoa.db.sqlite3:sqlite3-dao :connection conn))
 
-(defmethod initialize ((dao cocoa.infra.db.sqlite3:sqlite3-dao))
-  (cocoa.infra.db.sqlite3:create-tables dao))
+(defmethod initialize ((dao cocoa.db.sqlite3:sqlite3-dao))
+  (cocoa.db.sqlite3:create-tables dao))
