@@ -29,9 +29,9 @@
       :make-thumbnail-file
       (lambda (path)
         (format nil "~A:thumb" path)))
-     (let ((folder (car (cocoa.use-case.folder:list-by-ids (list "f1")
-                         :folder-repository
-                         (cocoa.folder:folder-repository ,dao)))))
+     (let ((folder (cocoa.use-case.folder:get-by-id "f1"
+                    :folder-repository
+                    (cocoa.folder:folder-repository ,dao))))
        (,test (string= (-> folder (getf :id))
                        "f1"))
        (,test (string= (-> folder (getf :name))

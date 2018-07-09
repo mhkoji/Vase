@@ -22,16 +22,11 @@
   (list :id (cocoa.tag:tag-id tag) :name (cocoa.tag:tag-name tag)))
 
 
-;;;; Get
+;;;; List
 
 @export
 (defun list-by-range (from size &key folder-repository)
   (->> (cocoa.folder:load-folders-by-range folder-repository from size)
-       (mapcar #'folder->resp)))
-
-@export
-(defun list-by-ids (ids &key folder-repository)
-  (->> (cocoa.folder:load-folders-by-ids folder-repository ids)
        (mapcar #'folder->resp)))
 
 @export
@@ -40,10 +35,69 @@
        (mapcar #'folder->resp)))
 
 
+;;;; Get
+
+(defun accept-folder-id (folder-id)
+  (assert (typep folder-id 'string))
+  folder-id)
+
 @export
 (defun get-by-id (id &key folder-repository)
-  (->> (car (cocoa.folder:load-folders-by-ids folder-repository (list id)))
+  (accept-folder-id id)
+  (->> (car (cocoa.folder:load-folders-by-ids
+             folder-repository
+             (list id)))
        folder->resp))
+
+(defmacro ensure-integer! (var default)
+  `(progn
+     (when (stringp ,var)
+       (setq ,var (parse-integer ,var :junk-allowed t)))
+     (when (null ,var)
+       (setq ,var ,default))))
+
+@export
+(defun get-images (folder-id &key from size folder-repository)
+  "The use case of listing images in a folder"
+  ;@type! folder-repos !folder-repository
+  ;@type! folder-id !integer
+  ;@type! from integer 0
+  ;@type! size integer 100
+  (ensure-integer! from 0)
+  (ensure-integer! size 100)
+  (let ((folder (car (cocoa.folder:load-folders-by-ids
+                      folder-repository
+                      (list folder-id)))))
+    (->> (cocoa.folder:folder-contents
+           folder folder-repository :from from :size size)
+         (remove-if-not
+          #'cocoa.use-case.folder.content:content->image-id)
+         (mapcar #'content->resp))))
+
+;;;; Update
+@export
+(defun change-thumbnail (folder-id image-id &key folder-repository)
+  (accept-folder-id folder-id)
+  (let ((folder (car (cocoa.folder:load-folders-by-ids folder-repository
+                      (list folder-id)))))
+    (setf (cocoa.folder:folder-thumbnail folder)
+          (cocoa.use-case.folder.thumbnail:of-image image-id))
+    (cocoa.folder:update-folder folder-repository folder)))
+
+@export
+(defun append-contents (folder-id contents &key folder-repository)
+  (accept-folder-id folder-id)
+  (let ((folder (car (cocoa.folder:load-folders-by-ids folder-repository
+                      (list folder-id)))))
+    (let ((appending (cocoa.folder:make-appending
+                      :folder folder
+                      :contents contents)))
+      (cocoa.folder:update-contents folder-repository appending))))
+
+@export
+(defun delete-by-id (folder-id &key folder-repository)
+  (accept-folder-id folder-id)
+  (cocoa.folder:delete-folders-by-ids folder-repository (list folder-id)))
 
 
 ;;;; Add
@@ -120,62 +174,7 @@
     (folder->resp folder)))
 
 
-
-;;;; Update
-@export
-(defun change-thumbnail (folder-id image-id &key folder-repository)
-  (let ((folder (car (cocoa.folder:load-folders-by-ids folder-repository
-                      (list folder-id)))))
-    (setf (cocoa.folder:folder-thumbnail folder)
-          (cocoa.use-case.folder.thumbnail:of-image image-id))
-    (cocoa.folder:update-folder folder-repository folder)))
-
-@export
-(defun append-contents (folder-id contents &key folder-repository)
-  (let ((folder (car (cocoa.folder:load-folders-by-ids folder-repository
-                      (list folder-id)))))
-    (let ((appending (cocoa.folder:make-appending
-                      :folder folder
-                      :contents contents)))
-      (cocoa.folder:update-contents folder-repository appending))))
-
-@export
-(defun delete-by-id (folder-id &key folder-repository)
-  (cocoa.folder:delete-folders-by-ids folder-repository (list folder-id)))
-
-
-;;;; Contents
-
-(defmacro ensure-integer! (var default)
-  `(progn
-     (when (stringp ,var)
-       (setq ,var (parse-integer ,var :junk-allowed t)))
-     (when (null ,var)
-       (setq ,var ,default))))
-
-@export
-(defun get-images (folder-id &key from size folder-repository)
-  "The use case of listing images in a folder"
-  ;@type! folder-repos !folder-repository
-  ;@type! folder-id !integer
-  ;@type! from integer 0
-  ;@type! size integer 100
-  (ensure-integer! from 0)
-  (ensure-integer! size 100)
-  (let ((folder (car (cocoa.folder:load-folders-by-ids
-                      folder-repository
-                      (list folder-id)))))
-    (->> (cocoa.folder:folder-contents
-           folder folder-repository :from from :size size)
-         (remove-if-not
-          #'cocoa.use-case.folder.content:content->image-id)
-         (mapcar #'content->resp))))
-
 ;;;; Tag
-
-(defun accept-folder-id (folder-id)
-  (assert (typep folder-id 'string))
-  folder-id)
 
 (defun as-tagged-content (folder-id)
   (accept-folder-id folder-id)
@@ -189,7 +188,8 @@
                                       (type (eql :folder))
                                       (content-ids list))
   (let ((folder-repos (slot-value container 'folder-repository)))
-    (list-by-ids content-ids :folder-repository folder-repos)))
+    (->> (cocoa.folder:load-folders-by-ids folder-repos content-ids)
+         (mapcar #'folder->resp))))
 
 @export
 (defun set-tags (folder-id tag-ids &key tag-repository)
