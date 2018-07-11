@@ -19,7 +19,7 @@
 
   ;; cooca.spec
   (with-sqlite3-dao (dao)
-    (cocoa.spec.folder:can-list-the-added-folders dao :test is))
+    (cocoa.spec.folder:can-get-the-added-folder dao :test is))
 
   (with-sqlite3-dao (dao)
     (cocoa.spec.folder:can-attach-tags-to-a-folder dao :test is)))

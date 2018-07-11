@@ -63,14 +63,14 @@
               :out (lambda (xs) (make-json-response
                                  (array-of #'folder xs)))) app
     (with-dao (dao context)
-      (cocoa.use-case.folder:list-by-range from size
+      (cocoa.use-case.folder:get-overviews-by-range from size
        :folder-repository (cocoa.folder:folder-repository dao))))
   (do-route! ("/api/folder/:id"
               :method :get
               :in ((folder-id :param :id))
               :out (lambda (f) (make-json-response (folder f)))) app
     (with-dao (dao context)
-      (cocoa.use-case.folder:get-by-id folder-id
+      (cocoa.use-case.folder:get-folder folder-id
        :folder-repository (cocoa.folder:folder-repository dao))))
   (do-route! ("/api/folder/:id/images"
               :method :get

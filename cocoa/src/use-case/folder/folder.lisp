@@ -25,12 +25,12 @@
 ;;;; List
 
 @export
-(defun list-by-range (from size &key folder-repository)
+(defun get-overviews-by-range (from size &key folder-repository)
   (->> (cocoa.folder:load-folders-by-range folder-repository from size)
        (mapcar #'folder->resp)))
 
 @export
-(defun search-by-name (name &key folder-repository)
+(defun get-overviews-by-search (name &key folder-repository)
   (->> (cocoa.folder:search-folders-by-name folder-repository name)
        (mapcar #'folder->resp)))
 
@@ -42,7 +42,7 @@
   folder-id)
 
 @export
-(defun get-by-id (id &key folder-repository)
+(defun get-folder (id &key folder-repository)
   (accept-folder-id id)
   (->> (car (cocoa.folder:load-folders-by-ids
              folder-repository

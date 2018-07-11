@@ -8,7 +8,7 @@
   (funcall generator string))
 
 @export
-(defmacro can-list-the-added-folders (dao &key test)
+(defmacro can-get-the-added-folder (dao &key test)
   `(progn
      (cocoa.use-case.folder:add-bulk
       (list (cocoa.use-case.folder:make-dir
@@ -29,7 +29,7 @@
       :make-thumbnail-file
       (lambda (path)
         (format nil "~A:thumb" path)))
-     (let ((folder (cocoa.use-case.folder:get-by-id "f1"
+     (let ((folder (cocoa.use-case.folder:get-folder "f1"
                     :folder-repository
                     (cocoa.folder:folder-repository ,dao))))
        (,test (string= (-> folder (getf :id))
