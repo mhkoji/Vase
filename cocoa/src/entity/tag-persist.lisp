@@ -1,4 +1,4 @@
-(in-package :cocoa.tag)
+(in-package :cocoa.entity.tag)
 (cl-annot:enable-annot-syntax)
 
 (defstruct tag-row tag-id name)

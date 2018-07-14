@@ -1,6 +1,6 @@
 (defpackage :cocoa.db.tag.sqlite3
   (:use :cl
-        :cocoa.tag
+        :cocoa.entity.tag
         :cocoa.db.sqlite3))
 (in-package :cocoa.db.tag.sqlite3)
 

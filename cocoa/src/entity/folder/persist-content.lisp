@@ -1,7 +1,7 @@
 ;;; The representation of each content in a folder
 ;;; A folder does not contain its contents in memory because the number of the contents in the folder can be large.
 ;;; Thus the folder remains the contents in the database and fetch some of them if needed by use cases.
-(in-package :cocoa.folder)
+(in-package :cocoa.entity.folder)
 (cl-annot:enable-annot-syntax)
 
 (defun safe-subseq (seq from size)

@@ -1,9 +1,9 @@
-(defpackage :cocoa.use-case.folder.content
+(defpackage :cocoa.folder.content
   (:use :cl)
-  (:import-from :cocoa.folder
+  (:import-from :cocoa.entity.folder
                 :content
                 :content-id))
-(in-package :cocoa.use-case.folder.content)
+(in-package :cocoa.folder.content)
 (cl-annot:enable-annot-syntax)
 
 ;;; A image content implemented by some image id

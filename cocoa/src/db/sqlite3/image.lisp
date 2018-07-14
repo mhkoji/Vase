@@ -1,6 +1,6 @@
 (defpackage :cocoa.db.sqlite3.fs.image
   (:use :cl
-        :cocoa.fs.image
+        :cocoa.entity.fs.image
         :cocoa.db.sqlite3)
   (:import-from :cl-arrows :->>))
 (in-package :cocoa.db.sqlite3.fs.image)

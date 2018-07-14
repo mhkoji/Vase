@@ -3,5 +3,5 @@
   :components
   ((:file "context"))
 
-  :depends-on (:cocoa-db))
+  :depends-on (:cocoa))
 

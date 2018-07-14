@@ -1,9 +1,9 @@
-(defpackage :cocoa.use-case.folder.thumbnail
+(defpackage :cocoa.folder.thumbnail
   (:use :cl)
-  (:import-from :cocoa.folder
+  (:import-from :cocoa.entity.folder
                 :thumbnail
                 :thumbnail-id))
-(in-package :cocoa.use-case.folder.thumbnail)
+(in-package :cocoa.folder.thumbnail)
 (cl-annot:enable-annot-syntax)
 
 ;;; A thumbnail implementation by some image id

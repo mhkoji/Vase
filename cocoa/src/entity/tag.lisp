@@ -1,7 +1,7 @@
-(defpackage :cocoa.tag
+(defpackage :cocoa.entity.tag
   (:use :cl)
   (:import-from :cl-arrows :->> :->))
-(in-package :cocoa.tag)
+(in-package :cocoa.entity.tag)
 (cl-annot:enable-annot-syntax)
 
 ;;;; The definition of a content, to which tags are attached
@@ -43,14 +43,13 @@
         (setf (gethash local-id id->content) content)))
     (loop for local-id in local-ids
           for content in contents do
-      (let ((type (cocoa.tag:content-type content)))
+      (let ((type (content-type content)))
         (push local-id (gethash type type->local-ids))))
     (loop for type being the hash-keys of type->local-ids
           for local-ids = (gethash type type->local-ids)
           for content-ids = (mapcar
                              (lambda (local-id)
-                               (cocoa.tag:content-id
-                                (gethash local-id id->content)))
+                               (content-id (gethash local-id id->content)))
                              local-ids) do
       (loop for local-id in local-ids
             for rendered-obj in (render-contents container

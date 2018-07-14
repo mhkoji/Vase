@@ -1,6 +1,6 @@
-(defpackage :cocoa.id
+(defpackage :cocoa.entity.id
   (:use :cl))
-(in-package :cocoa.id)
+(in-package :cocoa.entity.id)
 (cl-annot:enable-annot-syntax)
 
 @export

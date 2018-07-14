@@ -1,8 +1,8 @@
 ;;; A file representation based on the local file system
-(defpackage :cocoa.fs.image
+(defpackage :cocoa.entity.fs.image
   (:use :cl)
   (:import-from :cl-arrows :-> :->>))
-(in-package :cocoa.fs.image)
+(in-package :cocoa.entity.fs.image)
 (cl-annot:enable-annot-syntax)
 
 (defclass image ()

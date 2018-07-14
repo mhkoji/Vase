@@ -1,37 +1,58 @@
 (asdf:defsystem :cocoa
   :serial t
-  :pathname #P"src/"
   :components
-  ((:file "folder/folder")
-   (:file "folder/persist")
-   (:file "folder/persist-content")
-
-   (:file "fs/image")
-   (:file "fs/image-persist")
-
-   (:file "tag")
-   (:file "tag-persist")
-
-   (:file "id")
-
-   (:module use-case
-    :pathname "use-case"
+  ((:module src
+    :pathname "src/"
     :components
-    ((:file "image")
+    ((:module entity
+      :pathname "entity"
+      :components
+      ((:file "folder/folder")
+       (:file "folder/persist")
+       (:file "folder/persist-content")
+
+       (:file "fs/image")
+       (:file "fs/image-persist")
+
+       (:file "tag")
+       (:file "tag-persist")
+
+       (:file "id")))
+
+     (:file "image")
      (:file "folder/thumbnail")
      (:file "folder/content")
      (:file "folder/folder")
      (:file "tag/tag")
-     (:file "tag/contents")))
+     (:file "tag/contents")
 
-   (:module util
-    :pathname "util"
+     (:module util
+      :pathname "util"
+      :components
+      ((:file "stream")
+       (:file "fs/thumbnail")
+       (:file "fs/retrieve")))))
+
+   (:module third-party
+    :pathname "third_party"
     :components
-    ((:file "stream")
-     (:file "fs/thumbnail")
-     (:file "fs/retrieve"))))
+    ((:file "proton/proton")))
 
-  :depends-on (:alexandria
+   (:module src-db
+    :pathname "src/db"
+    :components
+    ((:file "sqlite3/sqlite3")
+     (:file "sqlite3/folder/folder")
+     (:file "sqlite3/folder/content")
+     (:file "sqlite3/image")
+     (:file "sqlite3/tag"))))
+
+  :depends-on (; For proton
+               :cl-dbi
+               :cl-interpol
+               :sqlite
+
+               :alexandria
                :anaphora
                :babel
                :cl-annot

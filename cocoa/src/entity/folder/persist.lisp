@@ -1,4 +1,4 @@
-(in-package :cocoa.folder)
+(in-package :cocoa.entity.folder)
 (cl-annot:enable-annot-syntax)
 
 (defstruct folder-repository folder-dao)

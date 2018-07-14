@@ -1,4 +1,4 @@
-(in-package :cocoa.fs.image)
+(in-package :cocoa.entity.fs.image)
 (cl-annot:enable-annot-syntax)
 
 (defstruct image-repository image-dao)

@@ -41,20 +41,20 @@
   (with-dao (dao context)
     (when initialize-data-p
       (initialize dao))
-    (cocoa.use-case.folder:add-bulk
+    (cocoa.folder:add-bulk
      (cocoa.util.stream:stream-to-list
       (cocoa.util.stream:stream-map
        (lambda (args)
          (destructuring-bind (&key path file-paths) args
-           (cocoa.use-case.folder:make-dir
+           (cocoa.folder:make-dir
             :path path
             ;; Assume that all the files in each dir are an image.
             :image-paths (funcall sort-file-paths file-paths)
             :modified-at (file-write-date path))))
        (cocoa.util.fs.retrieve:retrieve root-dir)))
      :id-generator (context-id-generator context)
-     :image-repository (cocoa.fs.image:image-repository dao)
-     :folder-repository (cocoa.folder:folder-repository dao)
+     :image-repository (cocoa.entity.fs.image:image-repository dao)
+     :folder-repository (cocoa.entity.folder:folder-repository dao)
      :make-thumbnail-file (make-thumbnail-file-factory
                            (context-thumbnail-root context)))
     (values)))

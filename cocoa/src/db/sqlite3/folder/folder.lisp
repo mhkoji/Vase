@@ -1,6 +1,6 @@
 (defpackage :cocoa.db.sqlite3.folder
   (:use :cl
-        :cocoa.folder
+        :cocoa.entity.folder
         :cocoa.db.sqlite3)
   (:import-from :cl-arrows :->>))
 (in-package :cocoa.db.sqlite3.folder)
