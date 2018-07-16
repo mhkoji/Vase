@@ -26,6 +26,8 @@
       (cocoa.entity.fs.image:image-repository ,dao)
       :folder-repository
       (cocoa.entity.folder:folder-repository ,dao)
+      :folder-content-repository
+      (cocoa.entity.folder:folder-content-repository ,dao)
       :make-thumbnail-file
       (lambda (path)
         (format nil "~A:thumb" path)))
@@ -41,7 +43,9 @@
      (let ((images (cocoa.folder:get-images "f1"
                     :from 0 :size 10
                     :folder-repository
-                    (cocoa.entity.folder:folder-repository ,dao))))
+                    (cocoa.entity.folder:folder-repository ,dao)
+                    :folder-content-repository
+                    (cocoa.entity.folder:folder-content-repository ,dao))))
        (,test (= (length images) 2))
        (,test (string= (-> images (elt 0) (getf :id)) "f1/aaa"))
        (,test (string= (-> images (elt 1) (getf :id)) "f1/bbb")))))
@@ -68,6 +72,8 @@
       (cocoa.entity.fs.image:image-repository ,dao)
       :folder-repository
       (cocoa.entity.folder:folder-repository ,dao)
+      :folder-content-repository
+      (cocoa.entity.folder:folder-content-repository ,dao)
       :make-thumbnail-file
       (lambda (path)
         (format nil "~A:thumb" path)))

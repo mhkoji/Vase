@@ -60,7 +60,9 @@
        (setq ,var ,default))))
 
 @export
-(defun get-images (folder-id &key from size folder-repository)
+(defun get-images (folder-id &key from size
+                                  folder-repository
+                                  folder-content-repository)
   "The use case of listing images in a folder"
   ;@type! folder-repos !folder-repository
   ;@type! folder-id !integer
@@ -71,8 +73,8 @@
   (let ((folder (car (cocoa.entity.folder:load-folders-by-ids
                       folder-repository
                       (list folder-id)))))
-    (->> (cocoa.entity.folder:folder-contents
-          folder folder-repository :from from :size size)
+    (->> (cocoa.entity.folder:folder-contents folder-content-repository
+          folder :from from :size size)
          (remove-if-not
           #'cocoa.folder.content:content->image-id)
          (mapcar #'content->resp))))
@@ -89,7 +91,9 @@
     (cocoa.entity.folder:update-folder folder-repository folder)))
 
 @export
-(defun append-contents (folder-id contents &key folder-repository)
+(defun append-contents (folder-id contents
+                        &key folder-repository
+                             folder-content-repository)
   (accept-folder-id folder-id)
   (let ((folder (car (cocoa.entity.folder:load-folders-by-ids
                       folder-repository
@@ -97,7 +101,8 @@
     (let ((appending (cocoa.entity.folder:make-appending
                       :folder folder
                       :contents contents)))
-      (cocoa.entity.folder:update-contents folder-repository appending))))
+      (cocoa.entity.folder:update-contents folder-content-repository
+                                           appending))))
 
 @export
 (defun delete-by-id (folder-id &key folder-repository)
@@ -122,7 +127,7 @@
                                                  thumbnail-path)
                             thumbnail-path)))
       (cocoa.entity.fs.image:save-images image-repository
-                                  (list thumbnail-image))
+                                         (list thumbnail-image))
       (cocoa.folder.thumbnail:of-image
        (cocoa.entity.fs.image:image-id thumbnail-image)))))
 
@@ -142,6 +147,7 @@
 (defun add-bulk (dirs &key id-generator
                            image-repository
                            folder-repository
+                           folder-content-repository
                            make-thumbnail-file)
   (labels ((dir-folder (dir)
              (cocoa.entity.folder:make-folder
@@ -152,24 +158,22 @@
                           :id-generator id-generator
                           :image-repository image-repository)
               :modified-at (dir-modified-at dir))))
-    (let ((folders
-           (mapcar #'dir-folder dirs))
-          (contents-list
-           (mapcar (alexandria:rcurry #'dir-contents
-                    :id-generator id-generator
-                    :image-repository image-repository)
-                   dirs)))
+    (let ((folders (mapcar #'dir-folder dirs)))
+      (cocoa.entity.folder:save-folders folder-repository folders)
       (let ((appending-bulk
-             (cocoa.entity.folder:make-appending-bulk
-              :appendings (mapcar (lambda (folder contents)
-                                    (cocoa.entity.folder:make-appending
-                                     :folder folder
-                                     :contents contents))
-                                  folders contents-list))))
-        (cocoa.entity.folder:save-folders folder-repository
-                                          folders)
-        (cocoa.entity.folder:update-contents folder-repository
-                                             appending-bulk))
+             (->> dirs
+                  (mapcar (alexandria:rcurry #'dir-contents
+                           :id-generator id-generator
+                           :image-repository image-repository))
+                  (mapcar (lambda (folder contents)
+                            (cocoa.entity.folder:make-appending
+                             :folder folder
+                             :contents contents))
+                          folders)
+                  (cocoa.entity.folder:make-appending-bulk
+                   :appendings))))
+        (cocoa.entity.folder:update-contents
+         folder-content-repository appending-bulk))
       (mapcar #'folder->resp folders))))
 
 (defun add (&key name thumbnail

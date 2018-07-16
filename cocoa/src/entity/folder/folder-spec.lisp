@@ -40,25 +40,24 @@
        (equal (folder-select-ids dao 0 4) (list "0" "3"))))
 
 @export
-(defun folder-can-contain-contents (folder-repository)
+(defun folder-can-contain-contents (folder-repository
+                                    folder-content-repository)
   (let ((folder (make-folder
                  :id "1234"
                  :name "a folder name"
                  :thumbnail (make-thumbnail "thumb:1234")
                  :modified-at 3736501114))
         (contents (list (make-content "c:5678"))))
-    (setq folder-repository
-     (-> folder-repository
-         (save-folders (list folder))
-         (update-contents (make-appending :folder folder
-                                          :contents contents))))
+    (save-folders folder-repository
+                  (list folder))
+    (update-contents folder-content-repository
+                     (make-appending :folder folder :contents contents))
     (let ((loaded-folder
            (car (load-folders-by-ids folder-repository
                                      (list (folder-id folder))))))
       (every (lambda (folder-content content)
                (string= (content-id folder-content)
                         (content-id content)))
-             (folder-contents loaded-folder
-                              folder-repository
-                              :from 0 :size (length contents))
+             (folder-contents folder-content-repository
+              loaded-folder :from 0 :size (length contents))
              contents))))

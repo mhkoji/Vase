@@ -15,7 +15,8 @@
 
   (with-sqlite3-dao (dao)
     (is (cocoa.entity.folder-spec:folder-can-contain-contents
-         (cocoa.entity.folder:folder-repository dao)))))
+         (cocoa.entity.folder:folder-repository dao)
+         (cocoa.entity.folder:folder-content-repository dao)))))
 
 (test test-applications
   (with-sqlite3-dao (dao)

@@ -40,7 +40,7 @@
               :method :get
               :out #'cocoa.web-simple.view:folder-list) app
     (with-dao (dao context)
-      (cocoa.use-case.folder:list-by-range 0 500
+      (cocoa.folder:get-overviews-by-range 0 500
        :folder-repository (cocoa.folder:folder-repository dao))))
 
   (do-route! ("/_i/:id"

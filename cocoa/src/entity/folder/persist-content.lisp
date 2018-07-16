@@ -1,4 +1,4 @@
-;;; The representation of each content in a folder
+;;; A representation of each content in a folder
 ;;; A folder does not contain its contents in memory because the number of the contents in the folder can be large.
 ;;; Thus the folder remains the contents in the database and fetch some of them if needed by use cases.
 (in-package :cocoa.entity.folder)
@@ -11,8 +11,14 @@
     (subseq seq start end)))
 
 @export
-(defun folder-contents (folder folder-repository &key from size)
-  (let ((folder-dao (folder-repository-folder-dao folder-repository)))
+(defun folder-content-repository (folder-dao)
+  (make-folder-repository :folder-dao folder-dao))
+
+@export
+(defun folder-contents (folder-content-repository folder
+                        &key from size)
+  (let ((folder-dao
+         (folder-repository-folder-dao folder-content-repository)))
     (let ((content-ids
            (-> (folder-content-select-ids folder-dao (folder-id folder))
                (safe-subseq from size))))
@@ -20,17 +26,17 @@
 
 
 @export
-(defgeneric update-contents (folder-repository op))
+(defgeneric update-contents (folder-content-repository op))
 
 (defstruct appending
   "The object that represents the action of appending contents to a folder"
   folder contents)
 (export 'make-appending)
 
-(defmethod update-contents (folder-repository (op appending))
+(defmethod update-contents (folder-content-repository (op appending))
   (make-folder-repository
    :folder-dao
-   (-> (folder-repository-folder-dao folder-repository)
+   (-> (folder-repository-folder-dao folder-content-repository)
        (folder-content-insert
         (folder-id (appending-folder op))
         (mapcar #'content-id (appending-contents op))))))
@@ -40,10 +46,10 @@
   appendings)
 (export 'make-appending-bulk)
 
-(defmethod update-contents (folder-repository (op appending-bulk))
+(defmethod update-contents (folder-content-repository (op appending-bulk))
   (dolist (appending (appending-bulk-appendings op))
-    (update-contents folder-repository appending))
-  folder-repository)
+    (update-contents folder-content-repository appending))
+  folder-content-repository)
 
 
 (defstruct moving
@@ -51,9 +57,9 @@
   source target contents)
 (export 'make-moving)
 
-(defmethod update-contents (folder-repository (op moving))
+(defmethod update-contents (folder-content-repository (op moving))
   (let* ((folder-dao
-          (folder-repository-folder-dao folder-repository))
+          (folder-repository-folder-dao folder-content-repository))
          (content-ids
           (mapcar #'content-id (moving-contents op)))
          (source-content-ids

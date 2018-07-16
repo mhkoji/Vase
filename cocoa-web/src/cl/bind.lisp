@@ -82,7 +82,10 @@
     (with-dao (dao context)
       (cocoa.folder:get-images
        folder-id :from from :size size
-       :folder-repository (cocoa.entity.folder:folder-repository dao))))
+       :folder-repository
+       (cocoa.entity.folder:folder-repository dao)
+       :folder-content-repository
+       (cocoa.entity.folder:folder-content-repository dao))))
   (do-route! ("/api/folder/:id/tags"
               :method :get
               :in ((folder-id :param :id))

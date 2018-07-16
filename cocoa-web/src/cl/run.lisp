@@ -52,9 +52,14 @@
             :image-paths (funcall sort-file-paths file-paths)
             :modified-at (file-write-date path))))
        (cocoa.util.fs.retrieve:retrieve root-dir)))
-     :id-generator (context-id-generator context)
-     :image-repository (cocoa.entity.fs.image:image-repository dao)
-     :folder-repository (cocoa.entity.folder:folder-repository dao)
-     :make-thumbnail-file (make-thumbnail-file-factory
-                           (context-thumbnail-root context)))
+     :id-generator
+     (context-id-generator context)
+     :image-repository
+     (cocoa.entity.fs.image:image-repository dao)
+     :folder-repository
+     (cocoa.entity.folder:folder-repository dao)
+     :folder-content-repository
+     (cocoa.entity.folder:folder-content-repository dao)
+     :make-thumbnail-file
+     (make-thumbnail-file-factory (context-thumbnail-root context)))
     (values)))
