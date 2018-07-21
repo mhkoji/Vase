@@ -41,12 +41,12 @@
   (with-dao (dao context)
     (when initialize-data-p
       (initialize dao))
-    (cocoa.folder:add-bulk
+    (cocoa.folder.folder:add-bulk
      (cocoa.util.stream:stream-to-list
       (cocoa.util.stream:stream-map
        (lambda (args)
          (destructuring-bind (&key path file-paths) args
-           (cocoa.folder:make-dir
+           (cocoa.folder.folder:make-dir
             :path path
             ;; Assume that all the files in each dir are an image.
             :image-paths (funcall sort-file-paths file-paths)
