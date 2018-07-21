@@ -22,6 +22,6 @@
   (with-sqlite3-dao (dao)
     (cocoa.folder.folder-spec:can-get-the-added-folder dao :test is))
 
-  (with-sqlite3-dao (dao)
+    (with-sqlite3-dao (dao)
     (cocoa.folder.folder-spec:can-attach-tags-to-a-folder dao :test is)))
 

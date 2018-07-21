@@ -20,9 +20,11 @@
        (:file "id")))
 
      (:file "image")
-     (:file "folder/thumbnail")
-     (:file "folder/content")
+     (:file "folder/util")
      (:file "folder/folder")
+     (:file "folder/overview")
+     (:file "folder/content")
+     (:file "folder/tag")
      (:file "tag/tag")
      (:file "tag/contents")
 
