@@ -47,7 +47,12 @@
      (:file "sqlite3/folder/folder")
      (:file "sqlite3/folder/content")
      (:file "sqlite3/image")
-     (:file "sqlite3/tag"))))
+     (:file "sqlite3/tag")))
+
+   (:module src-di
+    :pathname "src/di"
+    :components
+    ((:file "context"))))
 
   :depends-on (; For proton
                :cl-dbi
