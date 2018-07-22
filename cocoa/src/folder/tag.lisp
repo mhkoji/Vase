@@ -1,17 +1,6 @@
-(defpackage :cocoa.folder.tag
-  (:use :cl)
-  (:import-from :cl-arrows :->>))
-(in-package :cocoa.folder.tag)
+(in-package :cocoa.folder)
 (cl-annot:enable-annot-syntax)
 
-(defun thumbnail->resp (thumbnail)
-  (list :id (cocoa.entity.folder:thumbnail->image-id thumbnail)))
-
-(defun folder->resp (folder)
-  (list :id (cocoa.entity.folder:folder-id folder)
-        :name (cocoa.entity.folder:folder-name folder)
-        :thumbnail (thumbnail->resp (cocoa.entity.folder:folder-thumbnail
-                                     folder))))
 (defun tag->resp (tag)
   (list :id (cocoa.entity.tag:tag-id tag)
         :name (cocoa.entity.tag:tag-name tag)))
@@ -33,7 +22,7 @@
          (mapcar #'folder->resp))))
 
 @export
-(defun set-tags (folder-id tag-ids &key tag-repository)
+(defun set-folder-tags (folder-id tag-ids &key tag-repository)
   (let ((content (as-tagged-content folder-id)))
     (dolist (tag (cocoa.entity.tag:load-tags-by-content
                   tag-repository
@@ -45,7 +34,7 @@
       (cocoa.entity.tag:attach-tag tag content))))
 
 @export
-(defun get-tags (folder-id &key tag-repository)
+(defun get-folder-tags (folder-id &key tag-repository)
   (->> (cocoa.entity.tag:load-tags-by-content
         tag-repository
         (as-tagged-content folder-id))

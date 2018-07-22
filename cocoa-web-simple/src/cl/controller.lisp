@@ -35,20 +35,20 @@
                (funcall ,(or out #'identity) (progn ,@body)))))))
 
 @export
-(defun bind-use-cases! (app &key context)
+(defun bind-app! (app &key context)
   (do-route! ("/folders"
               :method :get
               :out #'cocoa.web-simple.view:folder-list) app
     (with-dao (dao context)
-      (cocoa.folder:get-overviews-by-range 0 500
-       :folder-repository (cocoa.folder:folder-repository dao))))
+      (cocoa.folder.overview:list-overviews 0 500
+       :folder-repository (cocoa.entity.folder:folder-repository dao)))
 
   (do-route! ("/_i/:id"
               :method :get
               :in ((image-id :param :id))
               :out #'cocoa.web-simple.view:file) app
     (with-dao (dao context)
-      (cocoa.use-case.image:get-path image-id
+      (cocoa.image:get-path image-id
        :image-repository (cocoa.fs.image:image-repository dao))))
 
   app)

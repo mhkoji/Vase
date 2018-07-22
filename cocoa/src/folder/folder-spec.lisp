@@ -10,12 +10,12 @@
 @export
 (defmacro can-get-the-added-folder (dao &key test)
   `(progn
-     (cocoa.folder.folder:add-bulk
-      (list (cocoa.folder.folder:make-dir
+     (cocoa.folder:add-bulk
+      (list (cocoa.folder:make-dir
              :path "/path/f1"
              :image-paths (list "/path/f1/aaa" "/path/f1/bbb")
              :modified-at 100)
-            (cocoa.folder.folder:make-dir
+            (cocoa.folder:make-dir
              :path "/path/f2"
              :image-paths (list "/path/f2/ccc" "/path/f1/ddd")
              :modified-at 200))
@@ -31,7 +31,7 @@
       :make-thumbnail-file
       (lambda (path)
         (format nil "~A:thumb" path)))
-     (let ((folder (cocoa.folder.folder:get-folder "f1"
+     (let ((folder (cocoa.folder:get-folder "f1"
                     :folder-repository
                     (cocoa.entity.folder:folder-repository ,dao))))
        (,test (string= (-> folder (getf :id))
@@ -56,12 +56,12 @@
      (cocoa.tag:create "A tag"
       :tag-repository (cocoa.entity.tag:tag-repository ,dao))
 
-     (cocoa.folder.folder:add-bulk
-      (list (cocoa.folder.folder:make-dir
+     (cocoa.folder:add-bulk
+      (list (cocoa.folder:make-dir
              :path "/path/f1"
              :image-paths (list "/path/f1/aaa" "/path/f1/bbb")
              :modified-at 100)
-            (cocoa.folder.folder:make-dir
+            (cocoa.folder:make-dir
              :path "/path/f2"
              :image-paths (list "/path/f2/ccc" "/path/f1/ddd")
              :modified-at 200))
@@ -78,7 +78,7 @@
       (lambda (path)
         (format nil "~A:thumb" path)))
 
-     (cocoa.folder.tag:set-tags "f1" (list "1")
+     (cocoa.folder:set-folder-tags "f1" (list "1")
       :tag-repository (cocoa.entity.tag:tag-repository ,dao))
 
      (let ((folders (cocoa.tag.contents:get-folders "1"
@@ -93,7 +93,7 @@
                        "/path/f1"))
        (,test (string= (-> folders (elt 0) (getf :thumbnail) (getf :id))
                        "f1/aaa:thumb")))
-     (let ((tags (cocoa.folder.tag:get-tags "f1"
+     (let ((tags (cocoa.folder:get-folder-tags "f1"
                   :tag-repository
                   (cocoa.entity.tag:tag-repository ,dao))))
        (,test (= (length tags) 1))

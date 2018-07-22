@@ -63,14 +63,14 @@
               :out (lambda (xs) (make-json-response
                                  (array-of #'folder xs)))) app
     (with-dao (dao context)
-      (cocoa.folder.overview:list-overviews from size
+      (cocoa.folder:list-folder-overviews from size
        :folder-repository (cocoa.entity.folder:folder-repository dao))))
   (do-route! ("/api/folder/:id"
               :method :get
               :in ((folder-id :param :id))
               :out (lambda (f) (make-json-response (folder f)))) app
     (with-dao (dao context)
-      (cocoa.folder.folder:get-folder folder-id
+      (cocoa.folder:get-folder folder-id
        :folder-repository (cocoa.entity.folder:folder-repository dao))))
   (do-route! ("/api/folder/:id/images"
               :method :get
@@ -92,7 +92,7 @@
               :out (lambda (xs) (make-json-response
                                  (array-of #'tag xs)))) app
     (with-dao (dao context)
-      (cocoa.folder.tag:get-tags folder-id
+      (cocoa.folder:get-folder-tags folder-id
        :tag-repository (cocoa.entity.tag:tag-repository dao))))
   (do-route! ("/api/folder/:id/tags"
               :method :post
@@ -100,7 +100,7 @@
                    (tag-ids :query "tag_ids"))
               :out #'make-json-response) app
     (with-dao (dao context)
-      (cocoa.folder.tag:set-tags folder-id tag-ids
+      (cocoa.folder:set-folder-tags folder-id tag-ids
        :tag-repository (cocoa.entity.tag:tag-repository dao))))
 
   (do-route! ("/api/tags"

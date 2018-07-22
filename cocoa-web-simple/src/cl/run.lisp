@@ -14,7 +14,7 @@
   (setq *handler*
         (clack:clackup
          (-> (make-instance 'ningle:<app>)
-             (cocoa.web-simple.controller:bind-use-cases!
+             (cocoa.web-simple.controller:bind-app!
               :context context)
              (cocoa.web-simple.controller:bind-resources!
               (namestring *default-pathname-defaults*)))

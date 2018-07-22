@@ -10,5 +10,5 @@
    (car (cocoa.entity.tag:load-tags-by-ids
          tag-repository
          (list tag-id)))
-   (make-instance 'cocoa.folder.tag:folder-container
+   (make-instance 'cocoa.folder:folder-container
     :folder-repository folder-repository)))

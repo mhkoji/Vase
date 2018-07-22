@@ -1,7 +1,7 @@
-(defpackage :cocoa.folder.folder
+(defpackage :cocoa.folder
   (:use :cl)
   (:import-from :cl-arrows :-> :->> :-<>))
-(in-package :cocoa.folder.folder)
+(in-package :cocoa.folder)
 (cl-annot:enable-annot-syntax)
 
 (defun thumbnail->resp (thumbnail)
@@ -36,7 +36,7 @@
 
 ;;;; Delete
 @export
-(defun delete-by-id (folder-id &key folder-repository)
+(defun delete-folder (folder-id &key folder-repository)
   (cocoa.folder.util:accept-folder-id folder-id)
   (cocoa.entity.folder:delete-folders-by-ids folder-repository
                                              (list folder-id)))
