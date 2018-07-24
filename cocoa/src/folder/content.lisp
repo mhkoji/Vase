@@ -1,6 +1,5 @@
 (defpackage :cocoa.folder.content
-  (:use :cl)
-  (:import-from :cl-arrows :->>))
+  (:use :cl))
 (in-package :cocoa.folder.content)
 (cl-annot:enable-annot-syntax)
 
@@ -15,36 +14,37 @@
   (list :id (cocoa.entity.folder:content->image-id content)))
 
 @export
-(defun get-images (folder-id &key from size
-                                  folder-repository
-                                  folder-content-repository)
+(defun get-images (folder-id &key db from size)
   "The use case of listing images in a folder"
-  ;@type! folder-repos !folder-repository
+  ;@type! db !db
   ;@type! folder-id !integer
   ;@type! from integer 0
   ;@type! size integer 100
   (ensure-integer! from 0)
   (ensure-integer! size 100)
   (cocoa.folder.util:accept-folder-id folder-id)
-  (let ((folder (car (cocoa.entity.folder:load-folders-by-ids
-                      folder-repository
+  (let ((folder (car (cocoa.entity.folder.repository:load-by-ids
+                      db
                       (list folder-id)))))
-    (->> (cocoa.entity.folder:folder-contents folder-content-repository
-          folder :from from :size size)
-         (remove-if-not
-          #'cocoa.entity.folder:content->image-id)
-         (mapcar #'content->resp))))
+    (let ((contents
+           (cocoa.entity.folder:folder-contents db folder
+            :from from :size size)))
+      (let ((image-contents
+             (remove-if-not #'cocoa.entity.folder:content->image-id
+                            contents)))
+        (mapcar #'content->resp image-contents)))))
 
 @export
 (defun append-contents (folder-id contents
-                        &key folder-repository
+                        &key db
                              folder-content-repository)
   (cocoa.folder.util:accept-folder-id folder-id)
-  (let ((folder (car (cocoa.entity.folder:load-folders-by-ids
-                      folder-repository
-                      (list folder-id)))))
-    (let ((appending (cocoa.entity.folder:make-appending
-                      :folder folder
-                      :contents contents)))
-      (cocoa.entity.folder:update-folder-contents
-       folder-content-repository appending))))
+  (let ((folder
+         (car (cocoa.entity.folder.repository:load-folders-by-ids
+               db
+               (list folder-id)))))
+    (let ((appending
+           (cocoa.entity.folder.content.op:make-appending
+            :folder folder
+            :contents contents)))
+      (cocoa.entity.folder.content.repository:update db appending))))
