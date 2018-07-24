@@ -4,7 +4,8 @@
   ((:module src
     :pathname "src"
     :components
-    ((:file "entity/folder/folder-spec")
+    ((:file "entity/folder/db-spec")
+     (:file "entity/folder/folder-spec")
      (:file "folder/folder-spec")))
 
    (:module test

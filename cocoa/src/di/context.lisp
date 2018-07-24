@@ -4,9 +4,9 @@
 (cl-annot:enable-annot-syntax)
 
 @export
-(defgeneric initialize (dao))
+(defgeneric initialize (db))
 
-(defgeneric connection->dao (conn))
+(defgeneric connection->db (conn))
 
 (defstruct context id-generator connection-factory thumbnail-root)
 (export 'make-context)
@@ -14,11 +14,11 @@
 (export 'context-thumbnail-root)
 
 @export
-(defmacro with-dao ((dao context &key domain) &body body)
+(defmacro with-db ((db context &key domain) &body body)
   (let ((factory (gensym "FACTORY"))
         (callback (gensym "CALLBACK")))
     `(labels ((,callback (conn)
-                (let ((,dao (connection->dao conn)))
+                (let ((,db (connection->db conn)))
                   ,@body)))
        (let ((,factory (context-connection-factory ,context)))
          (proton:call/connection ,factory #',callback
@@ -33,8 +33,8 @@
     (with-open-file (in path) (read in))))
 
 
-(defmethod connection->dao ((conn proton:sqlite3))
-  (make-instance 'cocoa.db.sqlite3:sqlite3-dao :connection conn))
+(defmethod connection->db ((conn proton:sqlite3))
+  (make-instance 'cocoa.db.sqlite3:sqlite3-db :connection conn))
 
-(defmethod initialize ((dao cocoa.db.sqlite3:sqlite3-dao))
-  (cocoa.db.sqlite3:create-tables dao))
+(defmethod initialize ((db cocoa.db.sqlite3:sqlite3-db))
+  (cocoa.db.sqlite3:create-tables db))

@@ -4,11 +4,11 @@
 (cl-annot:enable-annot-syntax)
 
 @export
-(defmacro with-sqlite3-dao ((dao) &rest body)
+(defmacro with-sqlite3-db ((db) &rest body)
   `(proton:call/connection
     (make-instance 'proton:in-memory-sqlite3-factory)
     (lambda (conn)
-      (let ((,dao (make-instance 'cocoa.db.sqlite3:sqlite3-dao
+      (let ((,db (make-instance 'cocoa.db.sqlite3:sqlite3-db
                                  :connection conn)))
-        (cocoa.db.sqlite3:create-tables ,dao)
+        (cocoa.db.sqlite3:create-tables ,db)
         ,@body))))

@@ -1,64 +1,34 @@
-(defpackage :cocoa.entity.folder-spec
-  (:use :cl :cocoa.entity.folder)
+(defpackage :cocoa.entity.folder.folder-spec
+  (:use :cl)
   (:import-from :cl-arrows :->))
-(in-package :cocoa.entity.folder-spec)
+(in-package :cocoa.entity.folder.folder-spec)
 (cl-annot:enable-annot-syntax)
 
-(defun create-folder-rows (dao from to)
-  (loop for i from from to to
-        collect (folder-row dao
-                            i
-                            (format nil "name-~A" i)
-                            nil)))
-
 @export
-(defmacro can-insert-then-select-the-inserted-rows (dao &key test)
-  (let ((g (gensym "DAO")))
-    `(let ((,g ,dao))
-       ;; setup
-       (setq ,g (folder-insert ,g (create-folder-rows ,g 0 3)))
-       ;; exercise && verify
-       (,test (equal (folder-select-ids ,g 0 2) (list "0" "1")))
-       (,test (equal (folder-select-ids ,g 2 4) (list "2" "3")))
-       (let ((rows (folder-select ,g (list "0" "1"))))
-         (every (lambda (row i)
-                  (,test (and (string= (folder-row-folder-id row)
-                                       (format nil "~A" i))
-                              (string= (folder-row-name row)
-                                       (format nil "name-~A" i)))))
-                rows (list 0 1))))))
-
-@export
-(defun can-insert-then-delete-the-inserted-rows (dao)
-  ;; setup
-  (setq dao (folder-insert dao (create-folder-rows dao 0 3)))
-  ;; exercise && verify
-  (and (equal (folder-select-ids dao 0 4) (list "0" "1" "2" "3"))
-       (progn
-         (folder-delete dao (list "1" "2"))
-         t)
-       (equal (folder-select-ids dao 0 4) (list "0" "3"))))
-
-@export
-(defun folder-can-contain-contents (folder-repository
-                                    folder-content-repository)
-  (let ((folder (make-folder
+(defun folder-can-contain-contents (db)
+  (let ((folder (cocoa.entity.folder:make-folder
                  :id "1234"
                  :name "a folder name"
-                 :thumbnail (make-thumbnail "thumb:1234")
+                 :thumbnail (cocoa.entity.folder:make-thumbnail
+                             "thumb:1234")
                  :modified-at 3736501114))
-        (contents (list (make-content "c:5678"))))
-    (save-folders folder-repository
-                  (list folder))
-    (update-folder-contents folder-content-repository
-                            (make-appending :folder folder
-                                            :contents contents))
+        (contents (list (cocoa.entity.folder.content:make-content
+                         "c:5678"))))
+    (-> db
+        (cocoa.entity.folder.repository:save-bulk
+         (list folder))
+        (cocoa.entity.folder.content.repository:update
+         (cocoa.entity.folder.content.op:make-appending
+          :folder folder :contents contents)))
     (let ((loaded-folder
-           (car (load-folders-by-ids folder-repository
-                                     (list (folder-id folder))))))
+           (car (cocoa.entity.folder.repository:load-by-ids
+                 db
+                 (list (cocoa.entity.folder:folder-id folder))))))
       (every (lambda (folder-content content)
-               (string= (content-id folder-content)
-                        (content-id content)))
-             (folder-contents folder-content-repository
-              loaded-folder :from 0 :size (length contents))
+               (string= (cocoa.entity.folder.content:content-id
+                         folder-content)
+                        (cocoa.entity.folder.content:content-id
+                         content)))
+             (cocoa.entity.folder.content.repository:folder-contents
+              db loaded-folder :from 0 :size (length contents))
              contents))))

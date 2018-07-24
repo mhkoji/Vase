@@ -3,8 +3,8 @@
 (in-package :cocoa.entity.folder.content.op)
 
 (defstruct deleting-bulk folders)
-(export '(deleteing-bulk
-          deleteing-bulk-folders
+(export '(deleting-bulk
+          deleting-bulk-folders
           make-deleting-bulk))
 
 
@@ -15,6 +15,12 @@
           appending-folder
           appending-contents
           make-appending))
+
+
+(defstruct appending-bulk appendings)
+(export '(appending-bulk
+          appending-bulk-appendings
+          make-appending-bulk))
 
 
 (defstruct moving

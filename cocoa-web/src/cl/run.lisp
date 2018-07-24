@@ -38,9 +38,9 @@
                     &key (context (load-context))
                          (sort-file-paths #'identity)
                          (initialize-data-p t))
-  (with-dao (dao context)
+  (with-db (db context)
     (when initialize-data-p
-      (initialize dao))
+      (initialize db))
     (cocoa.folder:add-bulk
      (cocoa.util.stream:stream-to-list
       (cocoa.util.stream:stream-map
@@ -52,14 +52,8 @@
             :image-paths (funcall sort-file-paths file-paths)
             :modified-at (file-write-date path))))
        (cocoa.util.fs.retrieve:retrieve root-dir)))
-     :id-generator
-     (context-id-generator context)
-     :image-repository
-     (cocoa.entity.fs.image:image-repository dao)
-     :folder-repository
-     (cocoa.entity.folder:folder-repository dao)
-     :folder-content-repository
-     (cocoa.entity.folder:folder-content-repository dao)
+     :db db
+     :id-generator (context-id-generator context)
      :make-thumbnail-file
-     (make-thumbnail-file-factory (context-thumbnail-root context)))
-    (values)))
+     (make-thumbnail-file-factory (context-thumbnail-root context))))
+  (values))

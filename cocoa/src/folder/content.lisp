@@ -11,7 +11,7 @@
        (setq ,var ,default))))
 
 (defun content->resp (content)
-  (list :id (cocoa.entity.folder:content->image-id content)))
+  (list :id (cocoa.entity.folder.content:content->image-id content)))
 
 @export
 (defun get-images (folder-id &key db from size)
@@ -27,21 +27,18 @@
                       db
                       (list folder-id)))))
     (let ((contents
-           (cocoa.entity.folder:folder-contents db folder
-            :from from :size size)))
+           (cocoa.entity.folder.content.repository:folder-contents
+            db folder :from from :size size)))
       (let ((image-contents
-             (remove-if-not #'cocoa.entity.folder:content->image-id
+             (remove-if-not #'cocoa.entity.folder.content:content->image-id
                             contents)))
         (mapcar #'content->resp image-contents)))))
 
 @export
-(defun append-contents (folder-id contents
-                        &key db
-                             folder-content-repository)
+(defun append-contents (folder-id contents &key db)
   (cocoa.folder.util:accept-folder-id folder-id)
   (let ((folder
-         (car (cocoa.entity.folder.repository:load-folders-by-ids
-               db
+         (car (cocoa.entity.folder.repository:load-by-ids db
                (list folder-id)))))
     (let ((appending
            (cocoa.entity.folder.content.op:make-appending

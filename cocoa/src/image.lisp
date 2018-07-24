@@ -6,9 +6,8 @@
 (cl-annot:enable-annot-syntax)
 
 @export
-(defun get-path (id &key image-repository)
+(defun get-path (id &key db)
   "The use case of "
-  (when-let ((image (car (cocoa.entity.fs.image:load-images-by-ids
-                          image-repository
+  (when-let ((image (car (cocoa.entity.fs.image.repository:load-by-ids db
                           (list id)))))
     (cocoa.entity.fs.image:image-path image)))

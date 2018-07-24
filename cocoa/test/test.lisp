@@ -5,23 +5,21 @@
 (in-suite* :cocoa.db.test :in :cocoa)
 
 (test test-entities
-  (with-sqlite3-dao (dao)
-    (cocoa.entity.folder-spec:can-insert-then-select-the-inserted-rows
-     dao :test is))
+  (with-sqlite3-db (db)
+    (cocoa.entity.folder.db-spec:can-insert-then-select-the-inserted-rows
+     db :test is))
 
-  (with-sqlite3-dao (dao)
-    (is (cocoa.entity.folder-spec:can-insert-then-delete-the-inserted-rows
-         dao)))
+  (with-sqlite3-db (db)
+    (is (cocoa.entity.folder.db-spec:can-insert-then-delete-the-inserted-rows
+         db)))
 
-  (with-sqlite3-dao (dao)
-    (is (cocoa.entity.folder-spec:folder-can-contain-contents
-         (cocoa.entity.folder:folder-repository dao)
-         (cocoa.entity.folder:folder-content-repository dao)))))
+  (with-sqlite3-db (db)
+    (is (cocoa.entity.folder.folder-spec:folder-can-contain-contents db))))
 
 (test test-applications
-  (with-sqlite3-dao (dao)
-    (cocoa.folder.folder-spec:can-get-the-added-folder dao :test is))
+  (with-sqlite3-db (db)
+    (cocoa.folder.folder-spec:can-get-the-added-folder db :test is))
 
-    (with-sqlite3-dao (dao)
-    (cocoa.folder.folder-spec:can-attach-tags-to-a-folder dao :test is)))
+    (with-sqlite3-db (db)
+    (cocoa.folder.folder-spec:can-attach-tags-to-a-folder db :test is)))
 

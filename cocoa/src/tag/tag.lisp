@@ -10,26 +10,26 @@
         :name (cocoa.entity.tag:tag-name tag)))
 
 @export
-(defun create (name &key tag-repository)
-  (-> (cocoa.entity.tag:make-tag tag-repository name)
-      (cocoa.entity.tag:save-tag tag-repository))
+(defun create (name &key db)
+  (let ((tag (cocoa.entity.tag.repository:make db name)))
+    (cocoa.entity.tag.repository:save db tag))
   (values))
 
 @export
-(defun list-by-range (from size &key tag-repository)
-  (->> (cocoa.entity.tag:load-tags-by-range tag-repository from size)
+(defun list-by-range (from size &key db)
+  (->> (cocoa.entity.tag.repository:load-by-range db from size)
        (mapcar #'tag->dto)))
 
 @export
-(defun delete-by-id (tag-id &key tag-repository)
-  (cocoa.entity.tag:delete-tags tag-repository (list tag-id))
+(defun delete-by-id (tag-id &key db)
+  (cocoa.entity.tag.repository:delete-bulk db (list tag-id))
   (values))
 
 @export
-(defun change-name (tag-id name &key tag-repository)
-  (when-let ((tag (car (cocoa.entity.tag:load-tags-by-ids
-                        tag-repository
+(defun change-name (tag-id name &key db)
+  (when-let ((tag (car (cocoa.entity.tag.repository:load-by-ids
+                        db
                         (list tag-id)))))
     (setf (cocoa.entity.tag:tag-name tag) name)
-    (cocoa.entity.tag:save-tag tag-repository tag))
+    (cocoa.entity.tag.repository:update db tag))
   (values))

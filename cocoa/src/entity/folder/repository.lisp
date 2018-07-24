@@ -1,9 +1,10 @@
 (defpackage :cocoa.entity.folder.repository
-  (:use :cl :cocoa.entity.folder))
+  (:use :cl :cocoa.entity.folder)
+  (:import-from :cl-arrows :->))
 (in-package :cocoa.entity.folder.repository)
 (cl-annot:enable-annot-syntax)
 
-;;; Primitive language.
+;;; A primitive language
 @export
 (defgeneric folder-select (db ids))
 @export
@@ -64,14 +65,12 @@
 @export
 (defun load-by-range (db offset size)
   "Returns the folders within the range"
-  (let ((folder-ids (folder-select-ids db offset size)))
-    (load-by-ids db folder-ids)))
+  (load-by-ids db (folder-select-ids db offset size)))
 
 @export
 (defun search-by-name (db keyword)
   "Returns the folders whose names contain the keyword"
-  (let ((folder-ids (folder-search-ids db keyword)))
-    (load-by-ids db folder-ids)))
+  (load-by-ids db (folder-search-ids db keyword)))
 
 @export
 (defun delete-by-ids (db ids)
@@ -92,7 +91,7 @@
               (cocoa.entity.folder::folder-modified-at folder)))
 
 @export
-(defun save-all (db folders)
+(defun save-bulk (db folders)
   (let ((folder-rows
          (mapcar (alexandria:curry #'folder-folder-row db)
                  folders))
@@ -109,7 +108,6 @@
 
 @export
 (defun update (db folder)
-  (make-repository
-   :db
-   (-> (folder-thumbnail-delete (list (folder-id folder)))
-       (folder-thumbnail-insert (list folder)))))
+  (-> db
+      (folder-thumbnail-delete (list (folder-id folder)))
+      (folder-thumbnail-insert (list folder))))

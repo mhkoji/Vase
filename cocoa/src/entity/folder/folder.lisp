@@ -25,6 +25,7 @@
 (defun make-thumbnail (id)
   (make-instance 'thumbnail :id id))
 
+
 @export
 (defun make-thumbnail/image (image-id)
   "Make an image instance from the given image. It is a caller's responsiblity to give a valid id"

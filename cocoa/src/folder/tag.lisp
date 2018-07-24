@@ -12,30 +12,27 @@
 
 @export
 (defclass folder-container ()
-  ((folder-repository :initarg :folder-repository)))
+  ((db :initarg :db)))
 
 (defmethod cocoa.entity.tag:render-contents ((container folder-container)
                                              (type (eql :folder))
                                              (content-ids list))
-  (let ((folder-repos (slot-value container 'folder-repository)))
-    (->> (cocoa.entity.folder:load-folders-by-ids folder-repos content-ids)
+  (let ((db (slot-value container 'db)))
+    (->> (cocoa.entity.folder.repository:load-by-ids db content-ids)
          (mapcar #'folder->resp))))
 
 @export
-(defun set-folder-tags (folder-id tag-ids &key tag-repository)
+(defun set-folder-tags (folder-id tag-ids &key db)
   (let ((content (as-tagged-content folder-id)))
-    (dolist (tag (cocoa.entity.tag:load-tags-by-content
-                  tag-repository
-                  content))
-      (cocoa.entity.tag:detach-tag tag content))
-    (dolist (tag (cocoa.entity.tag:load-tags-by-ids
-                  tag-repository
-                  tag-ids))
-      (cocoa.entity.tag:attach-tag tag content))))
+    (dolist (tag (cocoa.entity.tag.repository:load-by-content db
+                                                              content))
+      (cocoa.entity.tag.repository:detach-tag tag content))
+    (dolist (tag (cocoa.entity.tag.repository:load-by-ids db
+                                                          tag-ids))
+      (cocoa.entity.tag.repository:attach-tag tag content))))
 
 @export
-(defun get-folder-tags (folder-id &key tag-repository)
-  (->> (cocoa.entity.tag:load-tags-by-content
-        tag-repository
-        (as-tagged-content folder-id))
-       (mapcar #'tag->resp)))
+(defun get-folder-tags (folder-id &key db)
+  (let ((content (as-tagged-content folder-id)))
+    (->> (cocoa.entity.tag.repository:load-by-content db content)
+         (mapcar #'tag->resp))))

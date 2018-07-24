@@ -2,13 +2,11 @@
 (cl-annot:enable-annot-syntax)
 
 @export
-(defun list-folder-overviews (from size &key folder-repository)
-  (->> (cocoa.entity.folder:load-folders-by-range folder-repository
-                                                  from size)
+(defun list-folder-overviews (from size &key db)
+  (->> (cocoa.entity.folder.repository:load-by-range db from size)
        (mapcar #'folder->resp)))
 
 @export
-(defun search-folder-overviews (name &key folder-repository)
-  (->> (cocoa.entity.folder:search-folders-by-name folder-repository
-                                                   name)
+(defun search-folder-overviews (name &key db)
+  (->> (cocoa.entity.folder.repository:search-by-name db name)
        (mapcar #'folder->resp)))

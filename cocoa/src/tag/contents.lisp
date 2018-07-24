@@ -5,10 +5,7 @@
 (cl-annot:enable-annot-syntax)
 
 @export
-(defun get-folders (tag-id &key tag-repository folder-repository)
+(defun get-folders (tag-id &key db)
   (cocoa.entity.tag:load-rendered-contents-by-tag
-   (car (cocoa.entity.tag:load-tags-by-ids
-         tag-repository
-         (list tag-id)))
-   (make-instance 'cocoa.folder:folder-container
-    :folder-repository folder-repository)))
+   (car (cocoa.entity.tag.repository:load-by-ids db (list tag-id)))
+   (make-instance 'cocoa.folder:folder-container :db db)))

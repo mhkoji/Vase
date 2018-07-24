@@ -16,6 +16,7 @@
 (defun make-content (id)
   (make-instance 'content :id id))
 
+
 @export
 (defun make-content/image (image-id)
   "Create a content from the given id. It is a caller's responsiblity to give a valid id"

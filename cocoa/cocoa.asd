@@ -7,15 +7,26 @@
     ((:module entity
       :pathname "entity"
       :components
-      ((:file "folder/folder")
-       (:file "folder/folder-repository")
-       (:file "folder/folder-content-repository")
+      ((:module folder
+        :pathname "folder"
+        :components
+        ((:file "folder")
+         (:file "repository")
+         (:file "content/content")
+         (:file "content/op")
+         (:file "content/repository")))
 
-       (:file "fs/image")
-       (:file "fs/image-persist")
+       (:module fs/image
+        :pathname "fs/image"
+        :components
+        ((:file "image")
+         (:file "repository")))
 
-       (:file "tag")
-       (:file "tag-persist")
+       (:module tag
+        :pathname "tag"
+        :components
+        ((:file "tag")
+         (:file "repository")))
 
        (:file "id")))
 
@@ -40,7 +51,7 @@
     :components
     ((:file "proton/proton")))
 
-   (:module src-db
+   (:module src/db
     :pathname "src/db"
     :components
     ((:file "sqlite3/sqlite3")
@@ -49,7 +60,7 @@
      (:file "sqlite3/image")
      (:file "sqlite3/tag")))
 
-   (:module src-di
+   (:module src/di
     :pathname "src/di"
     :components
     ((:file "context"))))
