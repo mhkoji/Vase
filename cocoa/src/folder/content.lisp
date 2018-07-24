@@ -46,5 +46,5 @@
     (let ((appending (cocoa.entity.folder:make-appending
                       :folder folder
                       :contents contents)))
-      (cocoa.entity.folder:update-contents folder-content-repository
-                                           appending))))
+      (cocoa.entity.folder:update-folder-contents
+       folder-content-repository appending))))

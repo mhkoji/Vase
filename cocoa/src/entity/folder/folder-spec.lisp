@@ -50,8 +50,9 @@
         (contents (list (make-content "c:5678"))))
     (save-folders folder-repository
                   (list folder))
-    (update-contents folder-content-repository
-                     (make-appending :folder folder :contents contents))
+    (update-folder-contents folder-content-repository
+                            (make-appending :folder folder
+                                            :contents contents))
     (let ((loaded-folder
            (car (load-folders-by-ids folder-repository
                                      (list (folder-id folder))))))

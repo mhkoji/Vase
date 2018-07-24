@@ -8,8 +8,8 @@
       :pathname "entity"
       :components
       ((:file "folder/folder")
-       (:file "folder/persist")
-       (:file "folder/persist-content")
+       (:file "folder/folder-repository")
+       (:file "folder/folder-content-repository")
 
        (:file "fs/image")
        (:file "fs/image-persist")

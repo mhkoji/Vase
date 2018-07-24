@@ -100,7 +100,7 @@
                               :folder folder
                               :contents contents))
                            folders)))))
-        (cocoa.entity.folder:update-contents
+        (cocoa.entity.folder:update-folder-contents
          folder-content-repository appending-bulk))
       (mapcar #'folder->resp folders))))
 
