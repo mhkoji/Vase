@@ -11,21 +11,25 @@
         :pathname "folder"
         :components
         ((:file "folder")
+         (:file "db")
          (:file "repository")
          (:file "content/content")
          (:file "content/op")
+         (:file "content/db")
          (:file "content/repository")))
 
        (:module fs/image
         :pathname "fs/image"
         :components
         ((:file "image")
+         (:file "db")
          (:file "repository")))
 
        (:module tag
         :pathname "tag"
         :components
         ((:file "tag")
+         (:file "db")
          (:file "repository")))
 
        (:file "id")))

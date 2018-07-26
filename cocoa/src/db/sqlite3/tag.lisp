@@ -1,24 +1,7 @@
 (defpackage :cocoa.db.tag.sqlite3
-  (:use :cl :cocoa.db.sqlite3)
-  (:import-from :cocoa.entity.tag.repository
-                :make-tag-row
-                :tag-row
-                :tag-row-tag-id
-                :tag-row-name
-                :make-content-row
-                :content-row
-                :content-row-id
-                :content-row-type
-
-                :tag-insert
-                :tag-delete
-                :tag-update
-                :tag-select/ids
-                :tag-select/range
-                :tag-content-insert
-                :tag-content-delete
-                :tag-content-select-tags
-                :tag-content-select-contents))
+  (:use :cl
+        :cocoa.db.sqlite3
+        :cocoa.entity.tag.db))
 (in-package :cocoa.db.tag.sqlite3)
 
 (defun plist->tag-row (plist)

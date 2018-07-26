@@ -1,26 +1,9 @@
 (defpackage :cocoa.db.sqlite3.folder
-  (:use :cl :cocoa.db.sqlite3)
-  (:import-from :cl-arrows :->>)
-  (:import-from :cocoa.entity.folder.repository
-                :folder-select
-                :folder-row
-                :folder-row-folder-id
-                :folder-row-name
-                :folder-row-modified-at
-                :folder-select-ids
-                :folder-search-ids
-                :folder-insert
-                :folder-delete
-                :folder-thumbnail-select
-                :thumbnail-row-folder-id
-                :thumbnail-row-thumbnail-id
-                :thumbnail-row
-                :folder-thumbnail-insert
-                :folder-thumbnail-delete)
-  (:import-from :cocoa.entity.folder.content.repository
-                :folder-content-insert
-                :folder-content-select-ids
-                :folder-content-delete))
+  (:use :cl
+        :cocoa.db.sqlite3
+        :cocoa.entity.folder.db
+        :cocoa.entity.folder.content.db)
+  (:import-from :cl-arrows :->>))
 (in-package :cocoa.db.sqlite3.folder)
 
 ;; insert

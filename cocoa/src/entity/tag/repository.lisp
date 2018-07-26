@@ -1,20 +1,10 @@
 (defpackage :cocoa.entity.tag.repository
-  (:use :cl :cocoa.entity.tag)
+  (:use :cl
+        :cocoa.entity.tag
+        :cocoa.entity.tag.db)
   (:import-from :cl-arrows :->>))
 (in-package :cocoa.entity.tag.repository)
 (cl-annot:enable-annot-syntax)
-
-(defstruct tag-row tag-id name)
-(export 'make-tag-row)
-(export 'tag-row)
-(export 'tag-row-tag-id)
-(export 'tag-row-name)
-
-(defstruct content-row id type)
-(export 'make-content-row)
-(export 'content-row)
-(export 'content-row-id)
-(export 'content-row-type)
 
 (defun content-row-content (row)
   (make-instance 'content
@@ -25,27 +15,6 @@
   (make-content-row
    :id (content-id content)
    :type (symbol-name (content-type content))))
-
-
-@export
-(defgeneric tag-insert (db name))
-@export
-(defgeneric tag-delete (db tag-id-list))
-@export
-(defgeneric tag-update (db tag-row))
-@export
-(defgeneric tag-select/ids (db ids))
-@export
-(defgeneric tag-select/range (db offset size))
-
-@export
-(defgeneric tag-content-insert (db content-row tag-id-list))
-@export
-(defgeneric tag-content-delete (db content-row tag-id-list))
-@export
-(defgeneric tag-content-select-tags (db content-row))
-@export
-(defgeneric tag-content-select-contents (db tag-id))
 
 (defclass tag ()
   ((db :initarg :db :reader tag-db)

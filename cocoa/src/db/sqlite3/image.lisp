@@ -1,17 +1,13 @@
 (defpackage :cocoa.db.sqlite3.fs.image
-  (:use :cl :cocoa.db.sqlite3)
+  (:use :cl
+        :cocoa.db.sqlite3
+        :cocoa.entity.fs.image.db)
   (:import-from :cl-arrows :->>)
   (:import-from :cocoa.entity.fs.image
                 :make-image
                 :image
                 :image-id
-                :image-path)
-  (:import-from :cocoa.entity.fs.image.repository
-                :image-insert
-                :image-delete
-                :image-select
-                :image-row-image-id
-                :image-row-path))
+                :image-path))
 (in-package :cocoa.db.sqlite3.fs.image)
 
 (defmethod image-insert ((db sqlite3-db) (images list))

@@ -1,22 +1,14 @@
 (defpackage :cocoa.entity.fs.image.repository
-  (:use :cl :cocoa.entity.fs.image))
+  (:use :cl
+        :cocoa.entity.fs.image
+        :cocoa.entity.fs.image.db))
 (in-package :cocoa.entity.fs.image.repository)
 (cl-annot:enable-annot-syntax)
 
 @export
-(defgeneric image-insert (db images))
-@export
-(defgeneric image-delete (db ids))
-@export
-(defgeneric image-select (db ids))
-@export
-(defgeneric image-row-image-id (image-row))
-@export
-(defgeneric image-row-path (image-path))
-
-@export
 (defun save-bulk (db images)
-  (image-insert db images))
+  (when images
+    (image-insert db images)))
 
 @export
 (defun delete-bulk (db ids)
