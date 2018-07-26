@@ -1,0 +1,23 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -s sb-cover -Q -- $0 "$@"
+|#
+(progn ;;init forms
+  (ros:ensure-asdf)
+  ;;#+quicklisp (ql:quickload '() :silent t)
+  )
+
+(defpackage :ros.script.coverage.3741576532
+  (:use :cl))
+(in-package :ros.script.coverage.3741576532)
+
+
+(declaim (optimize sb-cover:store-coverage-data))
+
+(defun main (&rest argv)
+  (declare (ignorable argv))
+  (asdf:oos 'asdf:load-op :cocoa-test :force t)
+  (asdf:test-system :cocoa-test)
+  (sb-cover:report (format nil "~A/coverage/" *default-pathname-defaults*)))
+;;; vim: set ft=lisp lisp:
