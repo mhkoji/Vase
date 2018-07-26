@@ -6,9 +6,16 @@ A simple image viewer written in Common Lisp and ClojureScript
 
 ## Set up
 
+1. Install imagemagick
+
 ```
-$ apt install imagemagic
+$ apt install imagemagick
 ```
+
+2. Install Leiningen
+
+
+3. Compile the ClojureScript sources of cocoa.
 
 ```
 $ cd /path/to/cocoa/cocoa-web
@@ -34,9 +41,9 @@ CL-USER> (ql:quickload :cocoa-web)
 
 ```
 CL-USER> (defvar *context*
-           (cocoa.di.context:make-context
+           (cocoa.dependency.injection:make-context
             :id-generator
-            (make-instance 'cocoa.id:sha256-3)
+            (make-instance 'cocoa.entity.id:sha256-3)
             :connection-factory
             (make-instance 'proton:sqlite3-factory
                            :db-path "/tmp/cocoa/db.sqlite3")

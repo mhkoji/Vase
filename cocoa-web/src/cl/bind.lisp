@@ -5,7 +5,7 @@
 ;;; 4. Send the output of the task in a formatted style
 (defpackage :cocoa.web.bind
   (:use :cl :cocoa.web.json :cocoa.web.html)
-  (:import-from :cocoa.di.context
+  (:import-from :cocoa.dependency.injection
                 :with-db)
   (:import-from :cl-arrows :->))
 (in-package :cocoa.web.bind)

@@ -1,6 +1,6 @@
-(defpackage :cocoa.di.context
+(defpackage :cocoa.dependency.injection
   (:use :cl))
-(in-package :cocoa.di.context)
+(in-package :cocoa.dependency.injection)
 (cl-annot:enable-annot-syntax)
 
 @export
@@ -34,7 +34,7 @@
 
 
 (defmethod connection->db ((conn proton:sqlite3))
-  (make-instance 'cocoa.db.sqlite3:sqlite3-db :connection conn))
+  (make-instance 'cocoa.dependency.db.sqlite3:sqlite3-db :connection conn))
 
-(defmethod initialize ((db cocoa.db.sqlite3:sqlite3-db))
-  (cocoa.db.sqlite3:create-tables db))
+(defmethod initialize ((db cocoa.dependency.db.sqlite3:sqlite3-db))
+  (cocoa.dependency.db.sqlite3:create-tables db))

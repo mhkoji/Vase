@@ -1,7 +1,7 @@
 (defpackage :cocoa.web
   (:use :cl
-        :cocoa.di.context
-        :cocoa.web.bind)
+        :cocoa.web.bind
+        :cocoa.dependency.injection)
   (:import-from :cl-arrows :-> :->>))
 (in-package :cocoa.web)
 (cl-annot:enable-annot-syntax)

@@ -1,6 +1,6 @@
-(defpackage :cocoa.db.sqlite3.fs.image
+(defpackage :cocoa.dependency.db.sqlite3.fs.image
   (:use :cl
-        :cocoa.db.sqlite3
+        :cocoa.dependency.db.sqlite3
         :cocoa.entity.fs.image.db)
   (:import-from :cl-arrows :->>)
   (:import-from :cocoa.entity.fs.image
@@ -8,7 +8,7 @@
                 :image
                 :image-id
                 :image-path))
-(in-package :cocoa.db.sqlite3.fs.image)
+(in-package :cocoa.dependency.db.sqlite3.fs.image)
 
 (defmethod image-insert ((db sqlite3-db) (images list))
   (->> (mapcar #'list

@@ -55,19 +55,15 @@
     :components
     ((:file "proton/proton")))
 
-   (:module src/db
-    :pathname "src/db"
+   (:module src/dependency
+    :pathname "src/dependency"
     :components
-    ((:file "sqlite3/sqlite3")
-     (:file "sqlite3/folder/folder")
-     (:file "sqlite3/folder/content")
-     (:file "sqlite3/image")
-     (:file "sqlite3/tag")))
-
-   (:module src/di
-    :pathname "src/di"
-    :components
-    ((:file "context"))))
+    ((:file "db/sqlite3/sqlite3")
+     (:file "db/sqlite3/folder/folder")
+     (:file "db/sqlite3/folder/content")
+     (:file "db/sqlite3/image")
+     (:file "db/sqlite3/tag")
+     (:file "injection"))))
 
   :depends-on (; For proton
                :cl-dbi

@@ -19,8 +19,8 @@
                       :folder folder
                       :contents contents)))
       (-> db
-        (cocoa.entity.folder.repository:save-bulk (list folder))
-        (cocoa.entity.folder.content.repository:update appending)))
+          (cocoa.entity.folder.repository:save-bulk (list folder))
+          (cocoa.entity.folder.content.repository:update appending)))
     (let ((loaded-folder
            (car (cocoa.entity.folder.repository:load-by-ids db
                  (list (folder-id folder))))))
