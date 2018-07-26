@@ -30,12 +30,51 @@
        (,test (string= (-> folder (getf :name))
                        "/path/f1"))
        (,test (string= (-> folder (getf :thumbnail) (getf :id))
-                       "f1/aaa:thumb")))
-     (let ((images (cocoa.folder.content:get-images "f1" :from 0 :size 10
-                                                    :db ,db)))
+                       "f1/aaa:thumb")))))
+
+@export
+(defmacro can-get-the-added-folder-images (db &key test)
+  `(progn
+     (cocoa.folder:add-bulk
+      (list (cocoa.folder:make-dir
+             :path "/path/f1"
+             :image-paths (list "/path/f1/aaa" "/path/f1/bbb")
+             :modified-at 100))
+      :db ,db
+      :id-generator (lambda (path)
+                      (subseq path (length "/path/")))
+      :make-thumbnail-file (lambda (path)
+                             (format nil "~A:thumb" path)))
+     (let ((images (cocoa.folder.content:get-images "f1"
+                    :from 0 :size 10 :db ,db)))
        (,test (= (length images) 2))
        (,test (string= (-> images (elt 0) (getf :id)) "f1/aaa"))
        (,test (string= (-> images (elt 1) (getf :id)) "f1/bbb")))))
+
+@export
+(defmacro can-list-the-overviews-of-added-folders (db &key test)
+  `(progn
+     (cocoa.folder:add-bulk
+      (list (cocoa.folder:make-dir
+             :path "/path/f1"
+             :image-paths (list "/path/f1/aaa")
+             :modified-at 100)
+            (cocoa.folder:make-dir
+             :path "/path/f2"
+             :image-paths (list "/path/f2/bbb")
+             :modified-at 200))
+      :db ,db
+      :id-generator (lambda (path)
+                      (subseq path (length "/path/")))
+      :make-thumbnail-file (lambda (path)
+                             (format nil "~A:thumb" path)))
+     (,test (equal (cocoa.folder:list-folder-overviews 0 10 :db ,db)
+                   '((:id "f2"
+                      :name "/path/f2"
+                      :thumbnail (:id "f2/bbb:thumb"))
+                     (:id "f1"
+                      :name "/path/f1"
+                      :thumbnail (:id "f1/aaa:thumb")))))))
 
 @export
 (defmacro can-attach-tags-to-a-folder (db &key test)

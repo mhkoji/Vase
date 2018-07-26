@@ -14,12 +14,24 @@
          db)))
 
   (with-sqlite3-db (db)
-    (is (cocoa.entity.folder.folder-spec:folder-can-contain-contents db))))
+    (is (cocoa.entity.folder.folder-spec:folder-can-contain-contents db)))
+  )
 
 (test test-applications
   (with-sqlite3-db (db)
-    (cocoa.folder.folder-spec:can-get-the-added-folder db :test is))
+    (cocoa.folder.folder-spec:can-get-the-added-folder
+     db :test is))
 
-    (with-sqlite3-db (db)
-    (cocoa.folder.folder-spec:can-attach-tags-to-a-folder db :test is)))
+  (with-sqlite3-db (db)
+    (cocoa.folder.folder-spec:can-get-the-added-folder-images
+     db :test is))
+
+  (with-sqlite3-db (db)
+    (cocoa.folder.folder-spec:can-attach-tags-to-a-folder
+     db :test is))
+
+  (with-sqlite3-db (db)
+    (cocoa.folder.folder-spec:can-list-the-overviews-of-added-folders
+     db :test is))
+  )
 
