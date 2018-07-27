@@ -6,7 +6,8 @@
     :components
     ((:file "entity/folder/db-spec")
      (:file "entity/folder/folder-spec")
-     (:file "folder/folder-spec")))
+     (:file "folder/folder-spec")
+     (:file "tag/tag-spec")))
 
    (:module test
     :pathname "test"

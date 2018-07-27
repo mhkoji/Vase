@@ -2,10 +2,8 @@
   (:use :cl)
   (:import-from :cl-arrows :->> :->))
 (in-package :cocoa.entity.tag)
-(cl-annot:enable-annot-syntax)
 
 ;;;; The definition of a content, to which tags are attached
-@export
 (defclass content ()
   ((id
     :initarg :id
@@ -14,22 +12,23 @@
     :initarg :type
     :type :keyword
     :reader content-type)))
-(export '(content-id content-type))
+(export '(content content-id content-type))
 
 ;;;; The definition of a tag
 ;;;; Generic functions are used becase some persistent system for the jobs of a tag should be hidden.
-@export
 (defgeneric tag-id (tag))
-@export
+(export 'tag-id)
+
 (defgeneric tag-name (tag))
-@export
+(export 'tag-name)
+
 (defgeneric tag-contents (tag))
+(export 'tag-contents)
 
 
-@export
 (defgeneric render-contents (container type content-ids))
+(export 'render-contents)
 
-@export
 (defun load-rendered-contents-by-tag (tag container)
   (let ((contents (tag-contents tag))
         (local-ids nil)
@@ -58,3 +57,4 @@
         (progn
           (setf (gethash local-id id->rendered) rendered-obj))))
     (mapcar (alexandria:rcurry #'gethash id->rendered) local-ids)))
+(export 'load-rendered-contents-by-tag)

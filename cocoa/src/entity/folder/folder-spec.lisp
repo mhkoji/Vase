@@ -4,7 +4,6 @@
         :cocoa.entity.folder.content)
   (:import-from :cl-arrows :->))
 (in-package :cocoa.entity.folder.folder-spec)
-(cl-annot:enable-annot-syntax)
 
 (defun folder-can-contain-contents (db)
   (let ((folder (make-folder

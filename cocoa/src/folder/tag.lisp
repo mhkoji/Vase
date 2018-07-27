@@ -1,5 +1,4 @@
 (in-package :cocoa.folder)
-(cl-annot:enable-annot-syntax)
 
 (defun tag->resp (tag)
   (list :id (cocoa.entity.tag:tag-id tag)
@@ -31,7 +30,6 @@
       (cocoa.entity.tag.repository:attach-tag tag content))))
 (export 'set-folder-tags)
 
-@export
 (defun get-folder-tags (folder-id &key db)
   (let ((content (as-tagged-content folder-id)))
     (->> (cocoa.entity.tag.repository:load-by-content db content)

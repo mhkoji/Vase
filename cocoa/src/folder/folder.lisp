@@ -2,7 +2,6 @@
   (:use :cl)
   (:import-from :cl-arrows :-> :->> :-<>))
 (in-package :cocoa.folder)
-(cl-annot:enable-annot-syntax)
 
 (defun thumbnail->resp (thumbnail)
   (list :id (cocoa.entity.folder:thumbnail->image-id thumbnail)))

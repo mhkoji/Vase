@@ -1,7 +1,6 @@
 (defpackage :cocoa.folder.content
   (:use :cl))
 (in-package :cocoa.folder.content)
-(cl-annot:enable-annot-syntax)
 
 (defmacro ensure-integer! (var default)
   `(progn

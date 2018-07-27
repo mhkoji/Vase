@@ -32,7 +32,20 @@
      db :test is))
 
   (with-sqlite3-db (db)
+    (cocoa.folder.folder-spec:can-change-tags-attached-a-folder
+     db :test is))
+
+  (with-sqlite3-db (db)
     (cocoa.folder.folder-spec:can-list-the-overviews-of-added-folders
+     db :test is))
+
+
+  (with-sqlite3-db (db)
+    (cocoa.tag.tag-spec:can-change-the-name-of-a-tag
+     db :test is))
+
+  (with-sqlite3-db (db)
+    (cocoa.tag.tag-spec:can-delete-a-tag
      db :test is))
   )
 

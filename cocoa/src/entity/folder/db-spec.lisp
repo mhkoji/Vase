@@ -4,7 +4,6 @@
         :cocoa.entity.folder.db)
   (:import-from :cl-arrows :->))
 (in-package :cocoa.entity.folder.db-spec)
-(cl-annot:enable-annot-syntax)
 
 (defun create-folder-rows (db from to)
   (loop for i from from to to

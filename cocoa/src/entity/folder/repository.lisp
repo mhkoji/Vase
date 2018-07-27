@@ -4,7 +4,6 @@
         :cocoa.entity.folder.db)
   (:import-from :cl-arrows :->))
 (in-package :cocoa.entity.folder.repository)
-(cl-annot:enable-annot-syntax)
 
 (defun load-by-ids (db ids)
   "Returns the folders with the given ids"

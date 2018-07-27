@@ -3,7 +3,6 @@
         :cocoa.entity.fs.image
         :cocoa.entity.fs.image.db))
 (in-package :cocoa.entity.fs.image.repository)
-(cl-annot:enable-annot-syntax)
 
 (defun save-bulk (db images)
   (when images

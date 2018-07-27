@@ -3,7 +3,6 @@
   (:use :cl)
   (:import-from :cl-arrows :-> :->>))
 (in-package :cocoa.entity.fs.image)
-(cl-annot:enable-annot-syntax)
 
 (defclass image ()
   ((id :initarg :id)
