@@ -23,6 +23,7 @@
           make-appending-bulk))
 
 
+#+nil
 (defstruct moving
   "The object that represents the action of moving contents from a folder to another folder"
   source target contents)

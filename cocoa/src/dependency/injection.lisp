@@ -3,8 +3,8 @@
 (in-package :cocoa.dependency.injection)
 (cl-annot:enable-annot-syntax)
 
-@export
 (defgeneric initialize (db))
+(export 'initialize)
 
 (defgeneric connection->db (conn))
 
@@ -13,7 +13,6 @@
 (export 'context-id-generator)
 (export 'context-thumbnail-root)
 
-@export
 (defmacro with-db ((db context &key domain) &body body)
   (let ((factory (gensym "FACTORY"))
         (callback (gensym "CALLBACK")))
@@ -23,14 +22,15 @@
        (let ((,factory (context-connection-factory ,context)))
          (proton:call/connection ,factory #',callback
                                  :database-name (or ,domain "cocoa"))))))
+(export 'with-db)
 
-@export
 (defun load-context (&optional path)
   (unless path
     (setq path (merge-pathnames ".cocoa.config.lisp"
                                 (user-homedir-pathname))))
   (when (cl-fad:file-exists-p path)
     (with-open-file (in path) (read in))))
+(export 'load-context)
 
 
 (defmethod connection->db ((conn proton:sqlite3))

@@ -6,7 +6,6 @@
 (in-package :cocoa.entity.folder.repository)
 (cl-annot:enable-annot-syntax)
 
-@export
 (defun load-by-ids (db ids)
   "Returns the folders with the given ids"
   (let ((folder-id->row (make-hash-table :test #'equal))
@@ -28,23 +27,24 @@
                  :thumbnail (gethash id folder-id->thumbnail)
                  :modified-at (folder-row-modified-at row))))
             ids)))
+(export 'load-by-ids)
 
-@export
 (defun load-by-range (db offset size)
   "Returns the folders within the range"
   (load-by-ids db (folder-select-ids db offset size)))
+(export 'load-by-range)
 
-@export
+#+nil
 (defun search-by-name (db keyword)
   "Returns the folders whose names contain the keyword"
   (load-by-ids db (folder-search-ids db keyword)))
 
-@export
 (defun delete-by-ids (db ids)
   "Delete the folders"
   (-> db
       (folder-thumbnail-delete ids)
       (folder-delete ids)))
+(export 'delete-by-ids)
 
 (defun folder-thumbnail-row (db folder)
   (thumbnail-row db
@@ -57,7 +57,6 @@
               (folder-name folder)
               (cocoa.entity.folder::folder-modified-at folder)))
 
-@export
 (defun save-bulk (db folders)
   (let ((folder-rows
          (mapcar (alexandria:curry #'folder-folder-row db)
@@ -72,8 +71,9 @@
         (folder-insert folder-rows)
         ;; Insert thumbnails
         (folder-thumbnail-insert thumbnail-rows))))
+(export 'save-bulk)
 
-@export
+#+nil
 (defun update (db folder)
   (-> db
       (folder-thumbnail-delete (list (folder-id folder)))

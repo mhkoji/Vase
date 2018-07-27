@@ -11,7 +11,6 @@
           folder-name
           folder-thumbnail))
 
-
 ;;;; A representation of the thumbnail of a folder
 @export
 (defgeneric thumbnail-id (thumbnail)

@@ -13,15 +13,15 @@
         :thumbnail (thumbnail->resp (cocoa.entity.folder:folder-thumbnail
                                      folder))))
 ;;;; Get
-@export
 (defun get-folder (id &key db)
   (cocoa.folder.util:accept-folder-id id)
   (->> (car (cocoa.entity.folder.repository:load-by-ids db (list id)))
        folder->resp))
+(export 'get-folder)
 
 
 ;;;; Update
-@export
+#+nil
 (defun update-thumbnail (folder-id image-id &key db)
   (cocoa.folder.util:accept-folder-id folder-id)
   (let ((folder (car (cocoa.entity.folder.repository:load-by-ids
@@ -31,9 +31,8 @@
           (cocoa.entity.folder:make-thumbnail/image image-id))
     (cocoa.entity.folder.repository:update db folder)))
 
-
 ;;;; Delete
-@export
+#+nil
 (defun delete-folder (folder-id &key db)
   (cocoa.folder.util:accept-folder-id folder-id)
   (let ((folder (car (cocoa.entity.folder.repository:load-by-ids
@@ -41,7 +40,7 @@
                       (list folder-id)))))
     (let ((deleting-bulk
            (cocoa.entity.folder.content.op:make-deleting-bulk
-            (list folder))))
+            :folders (list folder))))
       (cocoa.entity.folder.content.repository:update db deleting-bulk)))
   (cocoa.entity.folder.repository:delete-by-ids db (list folder-id)))
 
@@ -71,7 +70,6 @@
       (cocoa.entity.fs.image.repository:save-bulk db images))
     (mapcar #'cocoa.entity.folder.content:make-content/image image-ids)))
 
-@export
 (defun add-bulk (dirs &key db id-generator make-thumbnail-file)
   (labels ((dir-folder (dir)
              (cocoa.entity.folder:make-folder
@@ -106,7 +104,9 @@
           (cocoa.entity.folder.content.repository:update
            db appending-bulk)))
       (mapcar #'folder->resp folders))))
+(export 'add-bulk)
 
+#+nil
 (defun add (&key name thumbnail db id-generator)
   (let ((folder (cocoa.entity.folder:make-folder
                  :id (cocoa.entity.id:gen id-generator name)

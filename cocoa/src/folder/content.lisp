@@ -13,7 +13,6 @@
 (defun content->resp (content)
   (list :id (cocoa.entity.folder.content:content->image-id content)))
 
-@export
 (defun get-images (folder-id &key db from size)
   "The use case of listing images in a folder"
   ;@type! db !db
@@ -33,8 +32,9 @@
              (remove-if-not #'cocoa.entity.folder.content:content->image-id
                             contents)))
         (mapcar #'content->resp image-contents)))))
+(export 'get-images)
 
-@export
+#+nil
 (defun append-contents (folder-id contents &key db)
   (cocoa.folder.util:accept-folder-id folder-id)
   (let ((folder

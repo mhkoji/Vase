@@ -10,9 +10,9 @@
   (cocoa.folder.util:accept-folder-id folder-id)
   (make-instance 'cocoa.entity.tag:content :id folder-id :type :folder))
 
-@export
 (defclass folder-container ()
   ((db :initarg :db)))
+(export 'folder-container)
 
 (defmethod cocoa.entity.tag:render-contents ((container folder-container)
                                              (type (eql :folder))
@@ -21,7 +21,6 @@
     (->> (cocoa.entity.folder.repository:load-by-ids db content-ids)
          (mapcar #'folder->resp))))
 
-@export
 (defun set-folder-tags (folder-id tag-ids &key db)
   (let ((content (as-tagged-content folder-id)))
     (dolist (tag (cocoa.entity.tag.repository:load-by-content db
@@ -30,9 +29,11 @@
     (dolist (tag (cocoa.entity.tag.repository:load-by-ids db
                                                           tag-ids))
       (cocoa.entity.tag.repository:attach-tag tag content))))
+(export 'set-folder-tags)
 
 @export
 (defun get-folder-tags (folder-id &key db)
   (let ((content (as-tagged-content folder-id)))
     (->> (cocoa.entity.tag.repository:load-by-content db content)
          (mapcar #'tag->resp))))
+(export 'get-folder-tags)

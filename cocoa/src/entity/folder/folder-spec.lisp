@@ -6,7 +6,6 @@
 (in-package :cocoa.entity.folder.folder-spec)
 (cl-annot:enable-annot-syntax)
 
-@export
 (defun folder-can-contain-contents (db)
   (let ((folder (make-folder
                  :id "1234"
@@ -30,3 +29,4 @@
              (cocoa.entity.folder.content.repository:folder-contents
               db loaded-folder :from 0 :size (length contents))
              contents))))
+(export 'folder-can-contain-contents)

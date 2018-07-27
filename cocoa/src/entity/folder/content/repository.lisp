@@ -42,6 +42,7 @@
     (update db appending))
   db)
 
+#+nil
 (defmethod update (db (op moving))
   (let* ((content-ids
           (mapcar #'content-id (moving-contents op)))

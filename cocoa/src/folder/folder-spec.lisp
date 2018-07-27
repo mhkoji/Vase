@@ -7,7 +7,6 @@
 (defmethod cocoa.entity.id:gen ((generator function) (string string))
   (funcall generator string))
 
-@export
 (defmacro can-get-the-added-folder (db &key test)
   `(progn
      (cocoa.folder:add-bulk
@@ -31,8 +30,8 @@
                        "/path/f1"))
        (,test (string= (-> folder (getf :thumbnail) (getf :id))
                        "f1/aaa:thumb")))))
+(export 'can-get-the-added-folder)
 
-@export
 (defmacro can-get-the-added-folder-images (db &key test)
   `(progn
      (cocoa.folder:add-bulk
@@ -49,9 +48,11 @@
                     :from 0 :size 10 :db ,db)))
        (,test (= (length images) 2))
        (,test (string= (-> images (elt 0) (getf :id)) "f1/aaa"))
-       (,test (string= (-> images (elt 1) (getf :id)) "f1/bbb")))))
+       (,test (string= (-> images (elt 1) (getf :id)) "f1/bbb"))
+       (let ((path (cocoa.image:get-path "f1/aaa" :db ,db)))
+         (,test (string= path "/path/f1/aaa"))))))
+(export 'can-get-the-added-folder-images)
 
-@export
 (defmacro can-list-the-overviews-of-added-folders (db &key test)
   `(progn
      (cocoa.folder:add-bulk
@@ -75,8 +76,8 @@
                      (:id "f1"
                       :name "/path/f1"
                       :thumbnail (:id "f1/aaa:thumb")))))))
+(export 'can-list-the-overviews-of-added-folders)
 
-@export
 (defmacro can-attach-tags-to-a-folder (db &key test)
   `(progn
      (cocoa.tag:create "A tag" :db ,db)
@@ -112,3 +113,4 @@
                        "1"))
        (,test (string= (-> tags (elt 0) (getf :name))
                        "A tag")))))
+(export 'can-attach-tags-to-a-folder)

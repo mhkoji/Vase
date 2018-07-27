@@ -8,9 +8,9 @@ exec ros -s sb-cover -Q -- $0 "$@"
   ;;#+quicklisp (ql:quickload '() :silent t)
   )
 
-(defpackage :ros.script.coverage.3741576532
+(defpackage :ros.script.report-unit-test.3741576532
   (:use :cl))
-(in-package :ros.script.coverage.3741576532)
+(in-package :ros.script.report-unit-test.3741576532)
 
 
 (declaim (optimize sb-cover:store-coverage-data))
@@ -19,5 +19,5 @@ exec ros -s sb-cover -Q -- $0 "$@"
   (declare (ignorable argv))
   (asdf:oos 'asdf:load-op :cocoa-test :force t)
   (asdf:test-system :cocoa-test)
-  (sb-cover:report (format nil "~A/coverage/" *default-pathname-defaults*)))
+  (sb-cover:report (format nil "~A/report/" *default-pathname-defaults*)))
 ;;; vim: set ft=lisp lisp:

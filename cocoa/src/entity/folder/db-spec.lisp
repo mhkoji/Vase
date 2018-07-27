@@ -13,7 +13,6 @@
                             (format nil "name-~A" i)
                             nil)))
 
-@export
 (defmacro can-insert-then-select-the-inserted-rows (db &key test)
   (let ((g (gensym "DB")))
     `(let ((,g ,db))
@@ -29,8 +28,8 @@
                               (string= (folder-row-name row)
                                        (format nil "name-~A" i)))))
                 rows (list 0 1))))))
+(export 'can-insert-then-select-the-inserted-rows)
 
-@export
 (defun can-insert-then-delete-the-inserted-rows (db)
   ;; setup
   (setq db (folder-insert db (create-folder-rows db 0 3)))
@@ -40,3 +39,4 @@
          (folder-delete db (list "1" "2"))
          t)
        (equal (folder-select-ids db 0 4) (list "0" "3"))))
+(export 'can-insert-then-delete-the-inserted-rows)

@@ -15,6 +15,7 @@
 
   (with-sqlite3-db (db)
     (is (cocoa.entity.folder.folder-spec:folder-can-contain-contents db)))
+
   )
 
 (test test-applications

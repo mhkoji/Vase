@@ -9,14 +9,14 @@
   ((id :initarg :id)
    (path :initarg :path)))
 
-@export
 (defun image-id (image)
   (slot-value image 'id))
+(export 'image-id)
 
-@export
 (defun image-path (image)
   (slot-value image 'path))
+(export 'image-path)
 
-@export
 (defun make-image (id path)
   (make-instance 'image :id id :path path))
+(export 'make-image)
