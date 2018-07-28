@@ -1,33 +1,21 @@
 (asdf:defsystem :cocoa-test
   :serial t
+  :pathname "test"
   :components
-  ((:module src
-    :pathname "src"
+  ((:module scenario
+    :pathname "scenario"
     :components
-    ((:file "entity/folder/db-spec")
-     (:file "entity/folder/folder-spec")))
+    ((:file "entity/folder/folder")
+     (:file "entity/folder/db")
+     (:file "folder")
+     (:file "tag")))
 
-   (:module test
-    :pathname "test"
+   (:module testing
+    :pathname "testing"
     :components
+    ((:file "sqlite3")))
 
-    ((:module scenario
-      :pathname "scenario"
-      :components
-      ((:file "folder")
-       (:file "tag")))
-
-     (:module testing
-      :pathname "testing"
-      :components
-      ((:file "sqlite3")))
-
-     (:module fiveam
-      :pathname "fiveam"
-      :components
-      ((:file "suite")
-       (:file "unit")
-       (:file "scenario"))))))
+   (:file "fiveam"))
 
   :depends-on (:cocoa :fiveam)
 
