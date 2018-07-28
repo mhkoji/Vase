@@ -12,7 +12,7 @@
 (defun content->resp (content)
   (list :id (cocoa.entity.folder.content:content->image-id content)))
 
-(defun get-images (folder-id &key db from size)
+(defun get-images (db folder-id &key from size)
   "The use case of listing images in a folder"
   ;@type! db !db
   ;@type! folder-id !integer

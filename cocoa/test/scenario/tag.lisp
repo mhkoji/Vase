@@ -5,18 +5,18 @@
 
 (defmacro change-the-name-of-a-tag (db &key test)
   `(progn
-     (cocoa.tag:create "tag" :db ,db)
-     (cocoa.tag:change-name "1" "tag (updated)" :db ,db)
-     (let ((tags (cocoa.tag:list-by-range 0 10 :db ,db)))
+     (cocoa.tag:create ,db "tag")
+     (cocoa.tag:change-name ,db "1" :name "tag (updated)")
+     (let ((tags (cocoa.tag:list-by-range ,db 0 10)))
        (,test (equal tags '((:id "1" :name "tag (updated)")))))))
 (export 'change-the-name-of-a-tag)
 
 (defmacro delete-a-tag (db &key test)
   `(progn
-     (cocoa.tag:create "tag" :db ,db)
-     (let ((tags (cocoa.tag:list-by-range 0 10 :db ,db)))
+     (cocoa.tag:create ,db "tag")
+     (let ((tags (cocoa.tag:list-by-range ,db 0 10)))
        (,test (equal tags '((:id "1" :name "tag")))))
 
-     (cocoa.tag:delete-by-id "1" :db ,db)
-     (,test (null (cocoa.tag:list-by-range 0 10 :db ,db)))))
+     (cocoa.tag:delete-by-id ,db "1")
+     (,test (null (cocoa.tag:list-by-range ,db 0 10)))))
 (export 'delete-a-tag)

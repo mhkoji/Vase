@@ -16,7 +16,7 @@
 
 (defmacro get-the-added-folder (db &key test)
   `(progn
-     (cocoa.folder:add-bulk
+     (cocoa.folder:add-bulk ,db
       (list (cocoa.folder:make-dir
              :path "/path/f1"
              :image-paths (list "/path/f1/aaa" "/path/f1/bbb")
@@ -25,10 +25,9 @@
              :path "/path/f2"
              :image-paths (list "/path/f2/ccc" "/path/f1/ddd")
              :modified-at 200))
-      :db ,db
       :id-generator *id-generator*
       :make-thumbnail-file *make-thumbnail-file*)
-     (let ((folder (cocoa.folder:get-folder "f1" :db ,db)))
+     (let ((folder (cocoa.folder:get-folder ,db "f1")))
        (,test (string= (-> folder (getf :id))
                        "f1"))
        (,test (string= (-> folder (getf :name))
@@ -39,26 +38,25 @@
 
 (defmacro get-the-added-folder-images (db &key test)
   `(progn
-     (cocoa.folder:add-bulk
+     (cocoa.folder:add-bulk ,db
       (list (cocoa.folder:make-dir
              :path "/path/f1"
              :image-paths (list "/path/f1/aaa" "/path/f1/bbb")
              :modified-at 100))
-      :db ,db
       :id-generator *id-generator*
       :make-thumbnail-file *make-thumbnail-file*)
-     (let ((images (cocoa.folder.content:get-images "f1"
-                    :from 0 :size 10 :db ,db)))
+     (let ((images (cocoa.folder.content:get-images ,db "f1"
+                    :from 0 :size 10)))
        (,test (= (length images) 2))
        (,test (string= (-> images (elt 0) (getf :id)) "f1/aaa"))
        (,test (string= (-> images (elt 1) (getf :id)) "f1/bbb"))
-       (let ((path (cocoa.image:get-path "f1/aaa" :db ,db)))
+       (let ((path (cocoa.image:get-path ,db "f1/aaa")))
          (,test (string= path "/path/f1/aaa"))))))
 (export 'get-the-added-folder-images)
 
 (defmacro list-the-overviews-of-added-folders (db &key test)
   `(progn
-     (cocoa.folder:add-bulk
+     (cocoa.folder:add-bulk ,db
       (list (cocoa.folder:make-dir
              :path "/path/f1"
              :image-paths (list "/path/f1/aaa")
@@ -67,10 +65,9 @@
              :path "/path/f2"
              :image-paths (list "/path/f2/bbb")
              :modified-at 200))
-      :db ,db
       :id-generator *id-generator*
       :make-thumbnail-file *make-thumbnail-file*)
-     (,test (equal (cocoa.folder:list-folder-overviews 0 10 :db ,db)
+     (,test (equal (cocoa.folder:list-folder-overviews ,db 0 10)
                    '((:id "f2"
                       :name "/path/f2"
                       :thumbnail (:id "f2/bbb:thumb"))
@@ -81,9 +78,9 @@
 
 (defmacro attach-tags-to-a-folder (db &key test)
   `(progn
-     (cocoa.tag:create "A tag" :db ,db)
+     (cocoa.tag:create ,db "A tag")
 
-     (cocoa.folder:add-bulk
+     (cocoa.folder:add-bulk ,db
       (list (cocoa.folder:make-dir
              :path "/path/f1"
              :image-paths (list "/path/f1/aaa" "/path/f1/bbb")
@@ -92,13 +89,12 @@
              :path "/path/f2"
              :image-paths (list "/path/f2/ccc" "/path/f1/ddd")
              :modified-at 200))
-      :db ,db
       :id-generator *id-generator*
       :make-thumbnail-file *make-thumbnail-file*)
 
-     (cocoa.folder:set-folder-tags "f1" (list "1") :db ,db)
+     (cocoa.folder:set-folder-tags ,db "f1" (list "1"))
 
-     (let ((folders (cocoa.tag.contents:get-folders "1" :db ,db)))
+     (let ((folders (cocoa.tag.contents:get-folders ,db "1")))
        (,test (= (length folders) 1))
        (,test (string= (-> folders (elt 0) (getf :id))
                        "f1"))
@@ -106,7 +102,7 @@
                        "/path/f1"))
        (,test (string= (-> folders (elt 0) (getf :thumbnail) (getf :id))
                        "f1/aaa:thumb")))
-     (let ((tags (cocoa.folder:get-folder-tags "f1" :db ,db)))
+     (let ((tags (cocoa.folder:get-folder-tags ,db "f1")))
        (,test (= (length tags) 1))
        (,test (string= (-> tags (elt 0) (getf :id))
                        "1"))
@@ -116,24 +112,23 @@
 
 (defmacro change-tags-attached-a-folder (db &key test)
   `(progn
-     (cocoa.tag:create "A tag" :db ,db)
+     (cocoa.tag:create ,db "A tag")
 
-     (cocoa.folder:add-bulk
+     (cocoa.folder:add-bulk ,db
       (list (cocoa.folder:make-dir
              :path "/path/f1"
              :image-paths (list "/path/f1/aaa" "/path/f1/bbb")
              :modified-at 100))
-      :db ,db
       :id-generator *id-generator*
       :make-thumbnail-file *make-thumbnail-file*)
 
-     (cocoa.folder:set-folder-tags "f1" (list "1") :db ,db)
+     (cocoa.folder:set-folder-tags ,db "f1" (list "1"))
 
-     (cocoa.tag:create "Another tag" :db ,db)
+     (cocoa.tag:create ,db "Another tag")
 
-     (cocoa.folder:set-folder-tags "f1" (list "2") :db ,db)
+     (cocoa.folder:set-folder-tags ,db "f1" (list "2"))
 
-     (let ((folders (cocoa.tag.contents:get-folders "2" :db ,db)))
+     (let ((folders (cocoa.tag.contents:get-folders ,db "2")))
        (,test (= (length folders) 1))
        (,test (string= (-> folders (elt 0) (getf :id))
                        "f1"))
@@ -141,7 +136,7 @@
                        "/path/f1"))
        (,test (string= (-> folders (elt 0) (getf :thumbnail) (getf :id))
                        "f1/aaa:thumb")))
-     (let ((tags (cocoa.folder:get-folder-tags "f1" :db ,db)))
+     (let ((tags (cocoa.folder:get-folder-tags ,db "f1")))
        (,test (= (length tags) 1))
        (,test (string= (-> tags (elt 0) (getf :id))
                        "2"))

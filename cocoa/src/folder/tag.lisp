@@ -20,7 +20,7 @@
     (->> (cocoa.entity.folder.repository:load-by-ids db content-ids)
          (mapcar #'folder->resp))))
 
-(defun set-folder-tags (folder-id tag-ids &key db)
+(defun set-folder-tags (db folder-id tag-ids)
   (let ((content (as-tagged-content folder-id)))
     (dolist (tag (cocoa.entity.tag.repository:load-by-content db
                                                               content))
@@ -30,7 +30,7 @@
       (cocoa.entity.tag.repository:attach-tag tag content))))
 (export 'set-folder-tags)
 
-(defun get-folder-tags (folder-id &key db)
+(defun get-folder-tags (db folder-id)
   (let ((content (as-tagged-content folder-id)))
     (->> (cocoa.entity.tag.repository:load-by-content db content)
          (mapcar #'tag->resp))))

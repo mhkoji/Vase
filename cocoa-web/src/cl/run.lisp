@@ -33,6 +33,18 @@
                                                         source-file)
       thumbnail-file)))
 
+(defun retrieve-dirs (root-dir sort-file-paths)
+  (cocoa.util.stream:stream-to-list
+   (cocoa.util.stream:stream-map
+    (lambda (args)
+      (destructuring-bind (&key path file-paths) args
+        (cocoa.folder:make-dir
+         :path path
+         ;; Assume that all the files in each dir are an image.
+         :image-paths (funcall sort-file-paths file-paths)
+         :modified-at (file-write-date path))))
+    (cocoa.util.fs.retrieve:retrieve root-dir))))
+
 @export
 (defun add-folders (root-dir
                     &key (context (load-context))
@@ -41,19 +53,10 @@
   (with-db (db context)
     (when initialize-data-p
       (initialize db))
-    (cocoa.folder:add-bulk
-     (cocoa.util.stream:stream-to-list
-      (cocoa.util.stream:stream-map
-       (lambda (args)
-         (destructuring-bind (&key path file-paths) args
-           (cocoa.folder:make-dir
-            :path path
-            ;; Assume that all the files in each dir are an image.
-            :image-paths (funcall sort-file-paths file-paths)
-            :modified-at (file-write-date path))))
-       (cocoa.util.fs.retrieve:retrieve root-dir)))
-     :db db
-     :id-generator (context-id-generator context)
-     :make-thumbnail-file
-     (make-thumbnail-file-factory (context-thumbnail-root context))))
+    (let ((dirs (retrieve-dirs root-dir sort-file-paths)))
+      (cocoa.folder:add-bulk db dirs
+       :id-generator
+       (context-id-generator context)
+       :make-thumbnail-file
+       (make-thumbnail-file-factory (context-thumbnail-root context)))))
   (values))

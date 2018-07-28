@@ -8,23 +8,23 @@
   (list :id (cocoa.entity.tag:tag-id tag)
         :name (cocoa.entity.tag:tag-name tag)))
 
-(defun create (name &key db)
+(defun create (db name)
   (let ((tag (cocoa.entity.tag.repository:make db name)))
     (cocoa.entity.tag.repository:save db tag))
   (values))
 (export 'create)
 
-(defun list-by-range (from size &key db)
+(defun list-by-range (db from size)
   (->> (cocoa.entity.tag.repository:load-by-range db from size)
        (mapcar #'tag->dto)))
 (export 'list-by-range)
 
-(defun delete-by-id (tag-id &key db)
+(defun delete-by-id (db tag-id)
   (cocoa.entity.tag.repository:delete-bulk db (list tag-id))
   (values))
 (export 'delete-by-id)
 
-(defun change-name (tag-id name &key db)
+(defun change-name (db tag-id &key name)
   (when-let ((tag (car (cocoa.entity.tag.repository:load-by-ids
                         db
                         (list tag-id)))))

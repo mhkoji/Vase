@@ -63,13 +63,13 @@
               :out (lambda (xs) (make-json-response
                                  (array-of #'folder xs)))) app
     (with-db (db context)
-      (cocoa.folder:list-folder-overviews from size :db db)))
+      (cocoa.folder:list-folder-overviews db from size)))
   (do-route! ("/api/folder/:id"
               :method :get
               :in ((folder-id :param :id))
               :out (lambda (f) (make-json-response (folder f)))) app
     (with-db (db context)
-      (cocoa.folder:get-folder folder-id :db db)))
+      (cocoa.folder:get-folder db folder-id)))
   (do-route! ("/api/folder/:id/images"
               :method :get
               :in ((folder-id :param :id)
@@ -78,43 +78,43 @@
               :out (lambda (xs) (make-json-response
                                  (array-of #'image xs)))) app
     (with-db (db context)
-      (cocoa.folder.content:get-images folder-id :from from :size size
-                                       :db db)))
+      (cocoa.folder.content:get-images db folder-id :from from :size size)))
+
   (do-route! ("/api/folder/:id/tags"
               :method :get
               :in ((folder-id :param :id))
               :out (lambda (xs) (make-json-response
                                  (array-of #'tag xs)))) app
     (with-db (db context)
-      (cocoa.folder:get-folder-tags folder-id :db db)))
+      (cocoa.folder:get-folder-tags db folder-id)))
   (do-route! ("/api/folder/:id/tags"
               :method :post
               :in ((folder-id :param :id)
                    (tag-ids :query "tag_ids"))
               :out #'make-json-response) app
     (with-db (db context)
-      (cocoa.folder:set-folder-tags folder-id tag-ids :db db)))
+      (cocoa.folder:set-folder-tags db folder-id tag-ids)))
 
   (do-route! ("/api/tags"
               :method :get
               :out (lambda (xs) (make-json-response
                                  (array-of #'tag xs)))) app
     (with-db (db context)
-      (cocoa.tag:list-by-range 0 50 :db db)))
+      (cocoa.tag:list-by-range db 0 50)))
 
   (do-route! ("/api/tags"
               :method :post
               :in ((name :query "name"))
               :out #'make-json-response) app
     (with-db (db context)
-      (cocoa.tag:create name :db db)))
+      (cocoa.tag:create db name)))
 
   (do-route! ("/api/tag/:id"
               :method :delete
               :in ((tag-id :param :id))
               :out #'make-json-response) app
     (with-db (db context)
-      (cocoa.tag:delete-by-id tag-id :db db)))
+      (cocoa.tag:delete-by-id db tag-id)))
 
   (do-route! ("/api/tag/:id/folders"
               :method :get
@@ -122,21 +122,21 @@
               :out (lambda (xs) (make-json-response
                                  (array-of #'folder xs)))) app
     (with-db (db context)
-      (cocoa.tag.contents:get-folders tag-id :db db)))
+      (cocoa.tag.contents:get-folders db tag-id)))
   (do-route! ("/api/tag/:id"
               :method :put
               :in ((tag-id :param :id)
                    (name :query "name"))
               :out #'make-json-response) app
     (with-db (db context)
-      (cocoa.tag:change-name tag-id name :db db)))
+      (cocoa.tag:change-name db tag-id :name name)))
 
   (do-route! ("/_i/:id"
               :method :get
               :in ((image-id :param :id))
               :out #'make-file-response) app
     (with-db (db context)
-      (cocoa.image:get-path image-id :db db)))
+      (cocoa.image:get-path db image-id)))
   app)
 
 @export
