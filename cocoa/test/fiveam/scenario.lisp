@@ -12,7 +12,6 @@
                       (,symbol db :test is))))
                symbols)))
 
-#+nil
 (def-tests
     cocoa.test.scenario.folder:get-the-added-folder
     cocoa.test.scenario.folder:get-the-added-folder-images
@@ -21,30 +20,3 @@
     cocoa.test.scenario.folder:list-the-overviews-of-added-folders
     cocoa.test.scenario.tag:change-the-name-of-a-tag
     cocoa.test.scenario.tag:delete-a-tag)
-
-
-(TEST TEST-SCENARIO
-  (WITH-SQLITE3-DB (DB)
-    (COCOA.TEST.SCENARIO.FOLDER:GET-THE-ADDED-FOLDER DB :TEST
-                                                     IS))
-  (WITH-SQLITE3-DB (DB)
-    (COCOA.TEST.SCENARIO.FOLDER:GET-THE-ADDED-FOLDER-IMAGES DB
-                                                            :TEST
-                                                             IS))
-  (WITH-SQLITE3-DB (DB)
-    (COCOA.TEST.SCENARIO.FOLDER:ATTACH-TAGS-TO-A-FOLDER DB
-                                                        :TEST
-                                                        IS))
-  (WITH-SQLITE3-DB (DB)
-    (COCOA.TEST.SCENARIO.FOLDER:CHANGE-TAGS-ATTACHED-A-FOLDER
-     DB :TEST IS))
-
-  (WITH-SQLITE3-DB (DB)
-    (COCOA.TEST.SCENARIO.FOLDER:LIST-THE-OVERVIEWS-OF-ADDED-FOLDERS
-     DB :TEST IS))
-
-  (WITH-SQLITE3-DB (DB)
-    (COCOA.TEST.SCENARIO.TAG:CHANGE-THE-NAME-OF-A-TAG DB :TEST
-                                                      IS))
-
-  (WITH-SQLITE3-DB (DB) (COCOA.TEST.SCENARIO.TAG:DELETE-A-TAG DB :TEST IS)))
