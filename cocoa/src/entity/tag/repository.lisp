@@ -72,10 +72,11 @@
 (export 'load-by-content)
 
 (defun delete-bulk (db ids)
+  ;; Delete the contents attached with tags
   (dolist (tag (load-by-ids db ids))
     (let ((tag-ids (list (tag-id tag))))
       (dolist (content (tag-contents tag))
         (let ((content-row (content-content-row content)))
           (setq db (tag-content-delete db content-row tag-ids))))))
-  db)
+  (tag-delete db ids))
 (export 'delete-bulk)

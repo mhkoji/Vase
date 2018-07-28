@@ -1,6 +1,6 @@
-(defpackage :cocoa.db.testing.sqlite3
+(defpackage :cocoa.test.testing.sqlite3
   (:use :cl))
-(in-package :cocoa.db.testing.sqlite3)
+(in-package :cocoa.test.testing.sqlite3)
 (cl-annot:enable-annot-syntax)
 
 (defmacro with-sqlite3-db ((db) &rest body)

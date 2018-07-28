@@ -5,18 +5,31 @@
     :pathname "src"
     :components
     ((:file "entity/folder/db-spec")
-     (:file "entity/folder/folder-spec")
-     (:file "folder/folder-spec")
-     (:file "tag/tag-spec")))
+     (:file "entity/folder/folder-spec")))
 
    (:module test
     :pathname "test"
     :components
-    ((:file "testing/fiveam")
-     (:file "testing/sqlite3")
-     (:file "test"))))
+
+    ((:module scenario
+      :pathname "scenario"
+      :components
+      ((:file "folder")
+       (:file "tag")))
+
+     (:module testing
+      :pathname "testing"
+      :components
+      ((:file "sqlite3")))
+
+     (:module fiveam
+      :pathname "fiveam"
+      :components
+      ((:file "suite")
+       (:file "unit")
+       (:file "scenario"))))))
 
   :depends-on (:cocoa :fiveam)
 
   :perform (asdf:test-op (o s)
-    (asdf-utils:symbol-call :fiveam :run! :cocoa)))
+    (funcall (intern (symbol-name :run!) :fiveam) :cocoa)))
