@@ -18,14 +18,13 @@
             (thumbnail (make-thumbnail (thumbnail-row-thumbnail-id row))))
         (setf (gethash folder-id folder-id->thumbnail) thumbnail)))
 
-    (mapcar (lambda (id)
-              (let ((row (gethash id folder-id->row)))
-                (make-folder
-                 :id id
-                 :name (folder-row-name row)
-                 :thumbnail (gethash id folder-id->thumbnail)
-                 :modified-at (folder-row-modified-at row))))
-            ids)))
+    (loop for id in ids
+          for row = (gethash id folder-id->row)
+      when row collect (make-folder
+                        :id id
+                        :name (folder-row-name row)
+                        :thumbnail (gethash id folder-id->thumbnail)
+                        :modified-at (folder-row-modified-at row)))))
 (export 'load-by-ids)
 
 (defun load-by-range (db offset size)

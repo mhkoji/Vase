@@ -21,12 +21,14 @@
 (defmethod tag-delete ((db sqlite3-db) (ids list))
   (query db
          (join "DELETE FROM tags WHERE tag_id IN (" (placeholder ids) ")")
-         ids))
+         ids)
+  db)
 
 (defmethod tag-update ((db sqlite3-db) (row tag-row))
   (query db
          "UPDATE tags SET name = (?) WHERE tag_id = (?)"
-         (list (tag-row-name row) (tag-row-tag-id row))))
+         (list (tag-row-name row) (tag-row-tag-id row)))
+  db)
 
 (defmethod tag-select/range ((db sqlite3-db) offset size)
   (mapcar #'plist->tag-row
@@ -65,7 +67,8 @@
                "  content_type = (?)"
                "AND"
                "  tag_id in (" (placeholder tag-ids) ")")
-         (list* (content-row-id row) (content-row-type row) tag-ids)))
+         (list* (content-row-id row) (content-row-type row) tag-ids))
+  db)
 
 (defmethod tag-content-select-tags ((db sqlite3-db)
                                     (row content-row))

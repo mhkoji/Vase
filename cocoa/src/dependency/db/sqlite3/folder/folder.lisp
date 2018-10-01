@@ -51,7 +51,7 @@
                     :%name (getf plist :|name|)
                     :%modified-at (getf plist :|modified_at|)))))))
 
-  (defmethod folder-select-ids ((db sqlite3-db) offset size)
+(defmethod folder-select-ids ((db sqlite3-db) offset size)
   (mapcar #'second
           (query db
                  (join " SELECT"

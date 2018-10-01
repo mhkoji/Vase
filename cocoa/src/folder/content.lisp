@@ -19,7 +19,7 @@
   ;@type! from integer 0
   ;@type! size integer 100
   (ensure-integer! from 0)
-  (ensure-integer! size 100)
+  (ensure-integer! size 500)
   (cocoa.folder.util:accept-folder-id folder-id)
   (let ((folder (car (cocoa.entity.folder.repository:load-by-ids
                       db

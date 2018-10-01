@@ -21,7 +21,7 @@
              (bind-html!))
          :port port)))
 
-(defun make-thumbnail-file-factory (thumbnail-root)
+(defun make-thumbnail-file-fn (thumbnail-root)
   (lambda (source-file)
     (log:debug "Creating thumbnail for: ~A" source-file)
     (let ((thumbnail-file
@@ -57,6 +57,6 @@
       (cocoa.folder:add-bulk db dirs
        :id-generator
        (context-id-generator context)
-       :make-thumbnail-file
-       (make-thumbnail-file-factory (context-thumbnail-root context)))))
+       :make-thumbnail-file-fn
+       (make-thumbnail-file-fn (context-thumbnail-root context)))))
   (values))

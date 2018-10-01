@@ -4,14 +4,13 @@
         :cocoa.entity.fs.image.db))
 (in-package :cocoa.entity.fs.image.repository)
 
-(defun save-bulk (db images)
-  (when images
-    (image-insert db images)))
-(export 'save-bulk)
+(defun add-bulk (db images)
+  (dolist (image images)
+    (image-insert db (list image))))
+(export 'add-bulk)
 
-#+nil
-(defun delete-bulk (db ids)
-  (image-delete db ids))
+(defun delete-bulk (db image-ids)
+  (image-delete db image-ids))
 (export 'delete-bulk)
 
 (defun image-row-image (image-row)

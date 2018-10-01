@@ -10,7 +10,7 @@
   (lambda (path)
     (subseq path (length "/path/"))))
 
-(defvar *make-thumbnail-file*
+(defvar *make-thumbnail-file-fn*
   (lambda (path)
     (format nil "~A:thumb" path)))
 
@@ -26,7 +26,7 @@
              :image-paths (list "/path/f2/ccc" "/path/f1/ddd")
              :modified-at 200))
       :id-generator *id-generator*
-      :make-thumbnail-file *make-thumbnail-file*)
+      :make-thumbnail-file-fn *make-thumbnail-file-fn*)
      (let ((folder (cocoa.folder:get-folder ,db "f1")))
        (,test (string= (-> folder (getf :id))
                        "f1"))
@@ -44,7 +44,7 @@
              :image-paths (list "/path/f1/aaa" "/path/f1/bbb")
              :modified-at 100))
       :id-generator *id-generator*
-      :make-thumbnail-file *make-thumbnail-file*)
+      :make-thumbnail-file-fn *make-thumbnail-file-fn*)
      (let ((images (cocoa.folder.content:get-images ,db "f1"
                     :from 0 :size 10)))
        (,test (= (length images) 2))
@@ -66,7 +66,7 @@
              :image-paths (list "/path/f2/bbb")
              :modified-at 200))
       :id-generator *id-generator*
-      :make-thumbnail-file *make-thumbnail-file*)
+      :make-thumbnail-file-fn *make-thumbnail-file-fn*)
      (,test (equal (cocoa.folder:list-folder-overviews ,db 0 10)
                    '((:id "f2"
                       :name "/path/f2"
@@ -90,7 +90,7 @@
              :image-paths (list "/path/f2/ccc" "/path/f1/ddd")
              :modified-at 200))
       :id-generator *id-generator*
-      :make-thumbnail-file *make-thumbnail-file*)
+      :make-thumbnail-file-fn *make-thumbnail-file-fn*)
 
      (cocoa.folder:set-folder-tags ,db "f1" (list "1"))
 
@@ -120,7 +120,7 @@
              :image-paths (list "/path/f1/aaa" "/path/f1/bbb")
              :modified-at 100))
       :id-generator *id-generator*
-      :make-thumbnail-file *make-thumbnail-file*)
+      :make-thumbnail-file-fn *make-thumbnail-file-fn*)
 
      (cocoa.folder:set-folder-tags ,db "f1" (list "1"))
 
