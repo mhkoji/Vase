@@ -65,7 +65,6 @@
 (export 'make-dir)
 
 
-
 (defun create-image (id-generator path)
   (let ((image-id (cocoa.entity.id:gen id-generator path)))
     (cocoa.entity.fs.image:make-image image-id path)))
@@ -91,36 +90,45 @@
       (cocoa.entity.fs.image.repository:add-bulk db images)
       (mapcar #'cocoa.entity.folder.content:make-content/image image-ids))))
 
+
 (defun add-bulk (db dirs &key id-generator make-thumbnail-file-fn)
-  (labels ((dir-folder (dir)
-             (cocoa.entity.folder:make-folder
-              :id (cocoa.entity.id:gen id-generator (dir-path dir))
-              :name (dir-path dir)
-              :thumbnail (add-dir-thumbnail db dir
-                          :id-generator id-generator
-                          :make-thumbnail-file-fn make-thumbnail-file-fn)
-              :modified-at (dir-modified-at dir))))
-    ;; Create folders
-    (let ((folders (mapcar #'dir-folder dirs)))
-      ;; Delete existing folders if any
-      (delete-bulk db (mapcar #'cocoa.entity.folder:folder-id folders))
-      ;; Save folders
-      (cocoa.entity.folder.repository:save-bulk db folders)
-      ;; Append new contents
-      (let ((appendings
-             (loop for dir in dirs
-                   for folder in folders
-                   for contents = (add-dir-contents db dir
-                                   :id-generator id-generator)
-                   collect (cocoa.entity.folder.content.op:make-appending
-                            :folder folder
-                            :contents contents))))
-        (let ((appending-bulk
-               (cocoa.entity.folder.content.op:make-appending-bulk
-                :appendings appendings)))
-          (cocoa.entity.folder.content.repository:update
-           db appending-bulk)))
-      (mapcar #'folder->resp folders))))
+  (let* ((folder-id-list
+          (mapcar (lambda (dir)
+                    (cocoa.entity.id:gen id-generator (dir-path dir)))
+                  dirs))
+         (folder-thumbnail-list
+          (mapcar (lambda (dir)
+                    (add-dir-thumbnail db dir
+                     :id-generator id-generator
+                     :make-thumbnail-file-fn make-thumbnail-file-fn))
+                  dirs))
+         (folder-contents-list
+          (mapcar (lambda (dir)
+                    (add-dir-contents db dir :id-generator id-generator))
+                  dirs))
+         (folders
+          (mapcar (lambda (dir folder-id thumbnail)
+                    (cocoa.entity.folder:make-folder
+                     :id folder-id
+                     :name (dir-path dir)
+                     :thumbnail thumbnail
+                     :modified-at (dir-modified-at dir)))
+                  dirs folder-id-list folder-thumbnail-list))
+         (appendings
+          (mapcar (lambda (folder contents)
+                    (cocoa.entity.folder.content.op:make-appending
+                     :folder folder :contents contents))
+                  folders folder-contents-list))
+         (appending-bulk
+          (cocoa.entity.folder.content.op:make-appending-bulk
+           :appendings appendings)))
+    (-> db
+        ;; Delete existing folders if any
+        (delete-bulk folder-id-list)
+        ;; Save folders
+        (cocoa.entity.folder.repository:save-bulk folders)
+        ;; Save contents
+        (cocoa.entity.folder.content.repository:update appending-bulk))))
 (export 'add-bulk)
 
 #+nil
