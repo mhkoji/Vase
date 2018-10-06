@@ -26,7 +26,7 @@
 (defn image->thumbnail-state [folder-id image]
   (let [{:keys [image-id url]} image]
     {:id image-id
-     :link (url/read-folder-by-spread folder-id image-id)
+     :link (url/read-folder-by-single folder-id image-id)
      :thumbnail-url url}))
 
 (defn store-header-state [store]
