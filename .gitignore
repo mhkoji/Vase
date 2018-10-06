@@ -1,5 +1,5 @@
-cocoa-web/resources/compiled
-cocoa-web/target
+vase-web/resources/compiled
+vase-web/target
 *~
 node_modules
 
