@@ -54,13 +54,6 @@
      (:file "image")
      (:file "tag")))
 
-   (:module util
-    :pathname "util"
-    :components
-    ((:file "stream")
-     (:file "fs/thumbnail")
-     (:file "fs/retrieve")))
-
    (:file "vase"))
 
   :depends-on (; For proton

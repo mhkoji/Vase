@@ -1,5 +1,5 @@
-vase-web/resources/compiled
-vase-web/target
+vase-spa/resources/compiled
+vase-spa/target
 *~
 node_modules
 

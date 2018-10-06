@@ -1,0 +1,43 @@
+body {
+  font-family: "メイリオ", sans-serif;
+}
+
+.vase-component-singleimageviewer-right
+.vase-component-doubleimageviewer-right {
+  display: inline;
+}
+
+.vase-component-singleimageviewer-image {
+  box-sizing: border-box;
+  overflow: hidden;
+  position: absolute;
+}
+
+.vase-component-singleviewer-image img {
+  width: 100%;
+}
+
+.vase-component-standardviewer-thumbnails {
+  width: 160px;
+  height: 100%;
+  border-left: 2px solid #cbcbcb;
+  float:right;
+  overflow-y: auto;
+  position: relative;
+  box-sizing: border-box;
+  z-index: 2;
+  position: relative;
+}
+
+.vase-component-standardviewer-thumbnail {
+  padding: 4px 4px 4px 4px;
+}
+
+.vase-component-standardviewer-thumbnail img {
+  width: 150px;
+  height: auto;
+}
+
+.vase-component-standardviewer-thumbnail-highlighted {
+  background-color: #428bca;
+}

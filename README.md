@@ -18,7 +18,7 @@ $ apt install imagemagick
 3. Compile the ClojureScript sources of vase.
 
 ```
-$ cd /path/to/vase/vase-web
+$ cd /path/to/vase/vase-spa
 $ make
 ```
 
@@ -34,16 +34,16 @@ $ mkdir /tmp/vase/thumbnails
 2. Load the lisp files using vase.asd
 
 ```
-CL-USER> (ql:quickload :vase-web)
+CL-USER> (ql:quickload :vase-spa)
 ```
 
 3. Create a context
 
 ```
 CL-USER> (defvar *context*
-           (vase.dependency.injection:make-context
+           (vase:make-context
             :id-generator
-            (make-instance 'vase.entity.id:sha256-3)
+            (make-instance 'vase.entities.id:sha256-3)
             :connection-factory
             (make-instance 'proton:sqlite3-factory
                            :db-path "/tmp/vase/db.sqlite3")
@@ -53,13 +53,14 @@ CL-USER> (defvar *context*
 4. Run the server with the context
 
 ```
-CL-USER> (vase.web:run :context *context*)
+CL-USER> (vase.spa:run :context *context*)
 ```
 
 5. Add the sample folders
 
 ```
-CL-USER> (vase.web:add-folders "./resources/contents/images/" :context *context*) 
+CL-USER> (ql:quickload :vase-cli)
+CL-USER> (vase.cli.add-folders:execute "./resources/contents/images/" :context *context*) 
 ```
 
 Then, access http://localhost:18888/folders
