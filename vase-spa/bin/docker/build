@@ -1,0 +1,5 @@
+#!/bin/bash
+
+BASE_DIR=$(cd $(dirname $BASH_SOURCE); pwd)../../../
+
+docker build -t vase-spa -f vase-spa/bin/docker/Dockerfile .

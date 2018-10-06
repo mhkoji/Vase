@@ -1,0 +1,7 @@
+#!/bin/bash
+
+SCRIPT_DIR=$(cd $(dirname $BASH_SOURCE); pwd)
+
+ros run\
+    -l $SCRIPT_DIR/load.lisp\
+    -e "(sb-ext:save-lisp-and-die \"vase-spa.sbcl.core\")"

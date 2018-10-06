@@ -1,0 +1,7 @@
+#!/bin/bash
+
+SCRIPT_DIR=$(cd $(dirname $BASH_SOURCE); pwd)
+
+sbcl --load $SCRIPT_DIR/load.lisp\
+     --eval "(sb-ext:save-lisp-and-die \"vase-spa.sbcl.core\")"
+
