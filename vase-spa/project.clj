@@ -13,16 +13,17 @@
             [lein-cljsbuild "1.1.7"]]
   :npm {:dependencies [[source-map-support "0.4.0"]]}
   :target-path "target"
-  :cljsbuild {
-    :builds [{:id "dev"
-              :source-paths ["src/cljs/vase/"]
-              :compiler {:output-to "resources/compiled/cljs/bundle.js"
-                         :output-dir "resources/compiled/cljs/out"
-                         :asset-path "/resources/compiled/cljs/out"
-                         :optimizations :none
-                         :main vase.presenter.browser.core
-                         :pretty-print true}}
-             {:id "release"
-              :source-paths ["src/cljs/vase/"]
-              :compiler {:output-to "resources/compiled/cljs/bundle.js"
-                         :optimizations :advanced}}]})
+  :cljsbuild
+  {:builds
+   {:dev
+    {:source-paths ["src/cljs/vase/"]
+     :compiler {:output-to "resources/compiled/cljs/bundle.js"
+                :output-dir "resources/compiled/cljs/out"
+                :asset-path "/resources/compiled/cljs/out"
+                :optimizations :none
+                :main vase.gui.browser.main
+                :pretty-print true}}
+    :prod
+    {:source-paths ["src/cljs/vase/"]
+     :compiler {:output-to "resources/compiled/cljs/bundle.js"
+                :optimizations :advanced}}}})
