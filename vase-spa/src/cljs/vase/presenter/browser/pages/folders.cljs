@@ -12,22 +12,22 @@
 (defn loading []
   [:div "Loading..."])
 
-(defn page [{:keys [store]}]
+(defn page [{:keys [header-state tag-state body-state]}]
   [:div
    ;; header
-   [header (read-folders/store-header-state store)]
+   [header header-state)]
    [:main {:class "pt-3 px-4"}
     [:h1 {:class "h2"} "Folders"]
     ;; modal (in document)
-    (when-let [tag (read-folders/store-tag-state store)]
-      [modal-editing-tag tag])
+    (when tag-state
+      [modal-editing-tag tag-state])
     ;; folders
-    (if-let [body (read-folders/store-body-state store)]
+    (if body-state
       [:main {:class "pt-3 px-4"}
        [pager (-> body :nav)]
        [cards (-> body :folders)]
        [pager (-> body :nav)]]
-      [loading])]])
+      [loading])])
 
 
 (defn create-store [update-store!]
@@ -41,7 +41,13 @@
 
 (defn create-renderer [elem]
   (fn [store]
-    (r/render [page {:store store}] elem)))
+    (r/render [page {:header-state
+                     (read-folders/store-header-state stores)
+                     :body-state
+                     (read-folders/store-body-state store)
+                     :tag-state
+                     (read-folders/store-tag-state store)}]
+              elem)))
 
 (defn show [elem _]
   (render-iter {:create create-store :render (create-renderer elem)}))

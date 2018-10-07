@@ -8,6 +8,9 @@
       (pipe (chan 1 (map (fn [xs]
                            (map (fn [x] (req/to-folder x)) xs)))))))
 
+(defn ^:export $list-by-range [from size callback]
+  (go (callback (clj->js (<! (list-by-range from size))))))
+
 (defn list-by-tag [tag-id]
   (-> (req/req GET (str "/tag/" tag-id "/folders"))
       (pipe (chan 1 (map (fn [xs]
