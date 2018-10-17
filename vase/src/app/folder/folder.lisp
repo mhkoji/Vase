@@ -102,10 +102,6 @@
                      :id-generator id-generator
                      :make-thumbnail-file-fn make-thumbnail-file-fn))
                   dirs))
-         (folder-contents-list
-          (mapcar (lambda (dir)
-                    (add-dir-contents db dir :id-generator id-generator))
-                  dirs))
          (folders
           (mapcar (lambda (dir folder-id thumbnail)
                     (vase.entities.folder:make-folder
@@ -113,22 +109,26 @@
                      :name (dir-path dir)
                      :thumbnail thumbnail
                      :modified-at (dir-modified-at dir)))
-                  dirs folder-id-list folder-thumbnail-list))
-         (appendings
-          (mapcar (lambda (folder contents)
-                    (vase.entities.folder.content.op:make-appending
-                     :folder folder :contents contents))
-                  folders folder-contents-list))
-         (appending-bulk
-          (vase.entities.folder.content.op:make-appending-bulk
-           :appendings appendings)))
+                  dirs folder-id-list folder-thumbnail-list)))
     (-> db
         ;; Delete existing folders if any
         (delete-bulk folder-id-list)
         ;; Save folders
-        (vase.entities.folder.repository:save-bulk folders)
-        ;; Save contents
-        (vase.entities.folder.content.repository:update appending-bulk))))
+        (vase.entities.folder.repository:save-bulk folders))
+    (let* ((folder-contents-list
+            (mapcar (lambda (dir)
+                      (add-dir-contents db dir :id-generator id-generator))
+                    dirs))
+           (appendings
+            (mapcar (lambda (folder contents)
+                      (vase.entities.folder.content.op:make-appending
+                       :folder folder :contents contents))
+                    folders folder-contents-list))
+           (appending-bulk
+            (vase.entities.folder.content.op:make-appending-bulk
+             :appendings appendings)))
+      ;; Save contents
+      (vase.entities.folder.content.repository:update db appending-bulk))))
 (export 'add-bulk)
 
 #+nil
