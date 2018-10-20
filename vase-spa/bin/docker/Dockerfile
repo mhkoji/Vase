@@ -65,7 +65,7 @@ RUN /root/quicklisp/local-projects/vase-spa/bin/lisp-image/build-sbcl\
 
 # Make the resources for the app
 RUN cd /root/quicklisp/local-projects/vase-spa\
-  && make release\
+  && make prod\
   && cp -r resources /app
 
 EXPOSE 11111

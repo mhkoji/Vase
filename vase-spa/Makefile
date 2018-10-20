@@ -2,6 +2,6 @@ dev:
 	rm -f resources/compiled/cljs/bundle.js
 	lein cljsbuild once dev
 
-release:
+prod:
 	rm -f resources/compiled/cljs/bundle.js
-	lein cljsbuild once release
+	lein cljsbuild once prod
