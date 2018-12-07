@@ -37,30 +37,30 @@ $ mkdir /tmp/vase/thumbnails
 CL-USER> (ql:quickload :vase-spa)
 ```
 
-3. Create a context
+3. Create a configure
 
 ```
-CL-USER> (defvar *context*
-           (vase:make-context
+CL-USER> (defvar *conf*
+           (vase.contexts.configure:make-configure
             :id-generator
-            (make-instance 'vase.entities.id:sha256-3)
+            (make-instance 'vase.id:sha256-3)
             :connection-factory
             (make-instance 'proton:sqlite3-factory
                            :db-path "/tmp/vase/db.sqlite3")
             :thumbnail-root "/tmp/vase/thumbnails/"))
 ```
 
-4. Run the server with the context
+4. Run the server with the configure
 
 ```
-CL-USER> (vase.spa:run :context *context*)
+CL-USER> (vase.spa:run :conf *conf*)
 ```
 
 5. Add the sample folders
 
 ```
 CL-USER> (ql:quickload :vase-cli)
-CL-USER> (vase.cli.add-folders:execute "./resources/contents/images/" :context *context*) 
+CL-USER> (vase.cli:add-folders "./resources/contents/images/" :conf *conf* :initialize-data-p t)
 ```
 
 Then, access http://localhost:18888/folders

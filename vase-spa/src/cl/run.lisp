@@ -1,5 +1,5 @@
 (defpackage :vase.spa
-  (:use :cl :vase :vase.spa.bind)
+  (:use :cl :vase.spa.bind)
   (:import-from :cl-arrows :-> :->>))
 (in-package :vase.spa)
 (cl-annot:enable-annot-syntax)
@@ -8,13 +8,13 @@
 
 @export
 (defun run (&key (port 18888)
-                 (context (load-context)))
+                 (conf (vase.contexts.configure:load-configure)))
   (when *handler*
     (clack:stop *handler*))
   (setq *handler*
         (clack:clackup
          (-> (make-instance 'ningle:<app>)
              (bind-resources! (namestring *default-pathname-defaults*))
-             (bind-api! :context context)
+             (bind-api! :conf conf)
              (bind-html!))
          :port port)))

@@ -1,44 +1,46 @@
-(defpackage :vase.db.tag.sqlite3
+(defpackage :vase.db.sqlite3.tag
   (:use :cl
         :vase.db.sqlite3
-        :vase.entities.tag.db))
-(in-package :vase.db.tag.sqlite3)
+        :vase.db.tag)
+  (:shadowing-import-from :vase.db.tag :delete))
+(in-package :vase.db.sqlite3.tag)
 
-(defun plist->tag-row (plist)
-  (make-tag-row :tag-id
-                (format nil "~A"  (getf plist :|tag_id|))
-                :name (getf plist :|name|)))
+(defun plist->row (plist)
+  (make-row
+   :tag-id (format nil "~A"  (getf plist :|tag_id|))
+   :name (getf plist :|name|)))
 
 (defun plist->content-row (plist)
-  (make-content-row :id (getf plist :|content_id|)
-                    :type (getf plist :|content_type|)))
+  (make-content-row
+   :id (getf plist :|content_id|)
+   :type (getf plist :|content_type|)))
 
-(defmethod tag-insert ((db sqlite3-db) (name string))
+(defmethod insert ((db sqlite3-db) (name string))
   (query db "INSERT INTO tags (name) VALUES (?)" (list name))
   (let ((id (cadar (query db "SELECT last_insert_rowid()"))))
-    (plist->tag-row (list :|name| name :|tag_id| id))))
+    (plist->row (list :|name| name :|tag_id| id))))
 
-(defmethod tag-delete ((db sqlite3-db) (ids list))
+(defmethod delete ((db sqlite3-db) (ids list))
   (query db
          (join "DELETE FROM tags WHERE tag_id IN (" (placeholder ids) ")")
          ids)
   db)
 
-(defmethod tag-update ((db sqlite3-db) (row tag-row))
+(defmethod update ((db sqlite3-db) (row row))
   (query db
          "UPDATE tags SET name = (?) WHERE tag_id = (?)"
-         (list (tag-row-name row) (tag-row-tag-id row)))
+         (list (row-name row) (row-tag-id row)))
   db)
 
-(defmethod tag-select/range ((db sqlite3-db) offset size)
-  (mapcar #'plist->tag-row
+(defmethod select-by-range ((db sqlite3-db) offset size)
+  (mapcar #'plist->row
    (query db
           "SELECT tag_id, name FROM tags LIMIT ?,?"
           (list offset size))))
 
-(defmethod tag-select/ids ((db sqlite3-db) (ids list))
+(defmethod select-by-ids ((db sqlite3-db) (ids list))
   (when ids
-    (mapcar #'plist->tag-row
+    (mapcar #'plist->row
      (query db
             (join "SELECT"
                   "  tag_id, name"
@@ -48,15 +50,15 @@
                   "  tag_id IN (" (placeholder ids) ")")
             ids))))
 
-(defmethod tag-content-insert ((db sqlite3-db)
-                               (row content-row) (tag-ids list))
+(defmethod content/insert ((db sqlite3-db)
+                           (row content-row) (tag-ids list))
   (insert-bulk db "tag_contents" '("tag_id" "content_id" "content_type")
    (mapcar (lambda (tag-id)
              (list tag-id (content-row-id row) (content-row-type row)))
            tag-ids)))
 
-(defmethod tag-content-delete ((db sqlite3-db)
-                               (row content-row) (tag-ids list))
+(defmethod content/delete ((db sqlite3-db)
+                           (row content-row) (tag-ids list))
   (query db
          (join "DELETE"
                "FROM"
@@ -70,23 +72,7 @@
          (list* (content-row-id row) (content-row-type row) tag-ids))
   db)
 
-(defmethod tag-content-select-tags ((db sqlite3-db)
-                                    (row content-row))
-  (mapcar #'plist->tag-row
-   (query db
-          (join "SELECT"
-                "  tags.tag_id, tags.name"
-                "FROM ( tags INNER JOIN tag_contents"
-                "  ON"
-                "    tags.tag_id = tag_contents.tag_id"
-                ")"
-                "WHERE"
-                "  tag_contents.content_id = (?)"
-                "AND"
-                "  tag_contents.content_type = (?)")
-          (list (content-row-id row) (content-row-type row)))))
-
-(defmethod tag-content-select-contents ((db sqlite3-db) tag-id)
+(defmethod content/select ((db sqlite3-db) tag-id)
   (mapcar #'plist->content-row
    (query db
           (join "SELECT"
@@ -101,3 +87,18 @@
                 "ORDER BY"
                 "  tag_contents.id DESC")
           (list tag-id))))
+
+(defmethod content/select-tags ((db sqlite3-db) (row content-row))
+  (mapcar #'plist->row
+   (query db
+          (join "SELECT"
+                "  tags.tag_id, tags.name"
+                "FROM ( tags INNER JOIN tag_contents"
+                "  ON"
+                "    tags.tag_id = tag_contents.tag_id"
+                ")"
+                "WHERE"
+                "  tag_contents.content_id = (?)"
+                "AND"
+                "  tag_contents.content_type = (?)")
+          (list (content-row-id row) (content-row-type row)))))

@@ -1,13 +1,21 @@
 (asdf:defsystem :vase-cli
   :serial t
+  :pathname "cl"
   :components
-  ((:module add-folders
-    :pathname "add-folders"
+  ((:file "stream")
+
+   (:module :fs
+    :pathname "fs"
     :components
-    ((:file "stream")
-     (:file "fs/thumbnail")
-     (:file "fs/retrieve")
-     (:file "add-folders"))))
+    ((:file "packages")
+     (:file "thumbnail")
+     (:file "retrieve")))
+
+   (:module :cli
+    :pathname "cli"
+    :components
+    ((:file "add-folders")
+     (:file "cli"))))
 
   :depends-on (:vase
 

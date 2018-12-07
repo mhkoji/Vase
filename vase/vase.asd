@@ -2,59 +2,47 @@
   :serial t
   :pathname "src"
   :components
-  ((:module entities
-    :pathname "entities"
-    :components
-    ((:module folder
-      :pathname "folder"
-      :components
-      ((:file "folder")
-       (:file "db")
-       (:file "repository")
-       (:file "content/content")
-       (:file "content/op")
-       (:file "content/db")
-       (:file "content/repository")))
+  ((:file "id")
 
-     (:module fs/image
-      :pathname "fs/image"
-      :components
-      ((:file "image")
-       (:file "db")
-       (:file "repository")))
+   (:file "folder/thumbnail/repos")
+   (:file "db/folder/folder")
+   (:file "db/folder/thumbnail")
+   (:file "folder/db")
 
-     (:module tag
-      :pathname "tag"
-      :components
-      ((:file "tag")
-       (:file "db")
-       (:file "repository")))
+   (:file "folder/content/repos")
+   (:file "db/folder/content")
+   (:file "folder/content/db")
 
-     (:file "id")))
+   (:file "folder/folder")
 
-   (:module app
-    :pathname "app"
-    :components
-    ((:file "image")
-     (:file "folder/util")
-     (:file "folder/folder")
-     (:file "folder/overview")
-     (:file "folder/content")
-     (:file "folder/tag")
-     (:file "tag/tag")
-     (:file "tag/contents")))
+   (:file "db/image")
+   (:file "image")
 
-   (:module db/sqlite3
+   (:file "folder/thumbnail/image")
+   (:file "folder/content/entities")
+
+   (:file "db/tag")
+   (:file "tag/contents/repos")
+   (:file "tag/db")
+   (:file "tag/tag")
+   (:file "tag/contents/contents")
+
+   (:module :db/sqlite3
     :pathname "db/sqlite3"
     :components
     ((:file "proton")
      (:file "sqlite3")
      (:file "folder/folder")
+     (:file "folder/thumbnail")
      (:file "folder/content")
      (:file "image")
      (:file "tag")))
 
-   (:file "vase"))
+   (:module :contexts
+    :pathname "contexts"
+    :components
+    ((:file "configure")
+     (:file "contexts"))))
 
   :depends-on (; For proton
                :cl-dbi

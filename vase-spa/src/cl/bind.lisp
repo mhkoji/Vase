@@ -5,8 +5,6 @@
 ;;; 4. Send the output of the task in a formatted style
 (defpackage :vase.spa.bind
   (:use :cl :vase.spa.json :vase.spa.html)
-  (:import-from :vase
-                :with-db)
   (:import-from :cl-arrows :->))
 (in-package :vase.spa.bind)
 (cl-annot:enable-annot-syntax)
@@ -19,7 +17,7 @@
   (jsown:to-json
    (jsown:new-js
      ("success" (if success :t :f))
-     ("result"  result))))
+     ("result"  (vase.spa.json:convert result)))))
 
 (defun make-file-response (path)
   (funcall (lack.app.file:make-app :file path :root "/") nil))
@@ -47,97 +45,87 @@
                  clauses)
      ,@body))
 
-(defmacro do-route! ((path &key method in out) app &body body)
+(defmacro do-route! (((path &rest in)
+                      &key (method :get)
+                           (out 'make-json-response)) app &body body)
   `(setf (ningle:route ,app ,path :method ,method)
          (lambda (params)
            (declare (ignorable params))
            (with-error-wrapped
              (with-inputs ,in params
-               (funcall ,(or out #'identity) (progn ,@body)))))))
+               (funcall #',out (progn ,@body)))))))
+
 @export
-(defun bind-api! (app &key context)
-  (do-route! ("/api/folders"
-              :method :get
-              :in ((from :query "from")
-                   (size :query "size"))
-              :out (lambda (xs) (make-json-response
-                                 (array-of #'folder xs)))) app
-    (with-db (db context)
-      (vase.app.folder:list-folder-overviews db from size)))
-  (do-route! ("/api/folder/:id"
-              :method :get
-              :in ((folder-id :param :id))
-              :out (lambda (f) (make-json-response (folder f)))) app
-    (with-db (db context)
-      (vase.app.folder:get-folder db folder-id)))
-  (do-route! ("/api/folder/:id/images"
-              :method :get
-              :in ((folder-id :param :id)
-                   (from :query "from")
-                   (size :query "size"))
-              :out (lambda (xs) (make-json-response
-                                 (array-of #'image xs)))) app
-    (with-db (db context)
-      (vase.app.folder.content:get-images db folder-id
-       :from from :size size)))
+(defun bind-api! (app &key conf)
+  (do-route! (("/api/folders" (from :query "from")
+                              (size :query "size"))) app
+    (vase.contexts:with-folder ((repos factory) conf)
+      (declare (ignore factory))
+      (vase.folder:bulk-load-by-range repos from size)))
+  (do-route! (("/api/folder/:id" (folder-id :param :id))) app
+    (vase.contexts:with-folder ((repos factory) conf)
+      (declare (ignore factory))
+      (vase.folder:load-by-id repos folder-id)))
+  (do-route! (("/api/folder/:id/images" (folder-id :param :id)
+                                        (from :query "from")
+                                        (size :query "size"))) app
+    (vase.contexts:with-folder ((repos factory) conf)
+      (declare (ignore factory))
+      (let ((folder (vase.folder:load-by-id repos folder-id)))
+        (let ((contents (vase.folder:folder-contents folder
+                         :from from
+                         :size size)))
+          (remove-if-not (lambda (c) (typep c 'vase.image:image))
+                         contents)))))
+  (do-route! (("/api/folder/:id/tags" (folder-id :param :id))) app
+    (let ((folder
+           (vase.contexts:with-folder ((repos factory) conf)
+             (declare (ignore factory))
+             (vase.folder:load-by-id repos folder-id))))
+      (vase.contexts:with-tag ((repos) conf)
+        (let ((content (vase.tag.contents:from-folder folder)))
+          (vase.tag:bulk-load-by-content repos content)))))
+  (do-route! (("/api/folder/:id/tags" (folder-id :param :id)
+                                      (tag-ids :query "tag_ids"))
+              :method :post) app
+    (let ((content
+           (vase.tag.contents:from-folder
+            (vase.contexts:with-folder ((repos factory) conf)
+              (declare (ignore factory))
+              (vase.folder:load-by-id repos folder-id)))))
+      (vase.contexts:with-tag ((repos) conf)
+        (vase.tag:set-tags repos content tag-ids))))
 
-  (do-route! ("/api/folder/:id/tags"
-              :method :get
-              :in ((folder-id :param :id))
-              :out (lambda (xs) (make-json-response
-                                 (array-of #'tag xs)))) app
-    (with-db (db context)
-      (vase.app.folder:get-folder-tags db folder-id)))
-  (do-route! ("/api/folder/:id/tags"
-              :method :post
-              :in ((folder-id :param :id)
-                   (tag-ids :query "tag_ids"))
-              :out #'make-json-response) app
-    (with-db (db context)
-      (vase.app.folder:set-folder-tags db folder-id tag-ids)))
+  (do-route! (("/api/tags")) app
+    (vase.contexts:with-tag ((repos) conf)
+      (vase.tag:bulk-load-by-range repos 0 50)))
+  (do-route! (("/api/tags" (name :query "name"))
+              :method :post) app
+    (vase.contexts:with-tag ((repos) conf)
+      (vase.tag:save repos name)))
 
-  (do-route! ("/api/tags"
-              :method :get
-              :out (lambda (xs) (make-json-response
-                                 (array-of #'tag xs)))) app
-    (with-db (db context)
-      (vase.app.tag:list-by-range db 0 50)))
+  (do-route! (("/api/tag/:id" (tag-id :param :id))
+              :method :delete) app
+    (vase.contexts:with-tag ((repos) conf)
+      (vase.tag:bulk-delete repos (list tag-id))))
+  (do-route! (("/api/tag/:id/folders" (tag-id :param :id))) app
+    (vase.contexts:with-tag ((repos) conf)
+      (let ((tag (car (vase.tag:bulk-load-by-ids repos (list tag-id)))))
+        (vase.tag:tag-contents tag))))
+  (do-route! (("/api/tag/:id" (tag-id :param :id)
+                              (name :query "name"))
+              :method :put) app
+    (vase.contexts:with-tag ((repos) conf)
+      (let ((tag (car (vase.tag:bulk-load-by-ids repos (list tag-id)))))
+        (setf (vase.tag:tag-name tag) name)
+        (vase.tag:update tag))))
 
-  (do-route! ("/api/tags"
-              :method :post
-              :in ((name :query "name"))
-              :out #'make-json-response) app
-    (with-db (db context)
-      (vase.app.tag:create db name)))
-
-  (do-route! ("/api/tag/:id"
-              :method :delete
-              :in ((tag-id :param :id))
-              :out #'make-json-response) app
-    (with-db (db context)
-      (vase.app.tag:delete-by-id db tag-id)))
-
-  (do-route! ("/api/tag/:id/folders"
-              :method :get
-              :in ((tag-id :param :id))
-              :out (lambda (xs) (make-json-response
-                                 (array-of #'folder xs)))) app
-    (with-db (db context)
-      (vase.app.tag.contents:get-folders db tag-id)))
-  (do-route! ("/api/tag/:id"
-              :method :put
-              :in ((tag-id :param :id)
-                   (name :query "name"))
-              :out #'make-json-response) app
-    (with-db (db context)
-      (vase.app.tag:change-name db tag-id :name name)))
-
-  (do-route! ("/_i/:id"
-              :method :get
-              :in ((image-id :param :id))
-              :out #'make-file-response) app
-    (with-db (db context)
-      (vase.app.image:get-path db image-id)))
+  (do-route! (("/_i/:id" (image-id :param :id))
+              :out make-file-response) app
+    (vase.contexts:with-image ((repos factory) conf)
+      (declare (ignore factory))
+      (vase.image:image-path
+       (car (vase.image:bulk-load-by-ids repos (list image-id))))))
   app)
 
 @export
