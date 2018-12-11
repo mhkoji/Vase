@@ -4,4 +4,3 @@
 (in-package :vase.tag.contents.repos)
 
 (defgeneric bulk-load (repos type content-ids))
-

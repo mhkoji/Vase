@@ -1,4 +1,4 @@
-(defpackage :vase.db.folder
+(defpackage :vase.folder.repos.db.folder
   (:use :cl)
   (:shadow :delete)
   (:export :make-row
@@ -10,15 +10,12 @@
            :search-ids
            :insert
            :delete))
-(in-package :vase.db.folder)
+(in-package :vase.folder.repos.db.folder)
 
 ;;; A primitive language to access the db
-(defgeneric make-row (db folder-id name modified-at))
-(defgeneric row-folder-id (folder-row))
-(defgeneric row-name (folder-row))
-(defgeneric row-modified-at (folder-row))
+(defstruct row folder-id name modified-at)
 (defgeneric select (db ids))
 (defgeneric select-ids (db offset size))
 (defgeneric search-ids (db keyword))
-(defgeneric insert (db folder-rows))
-(defgeneric delete (db folder-id-list))
+(defgeneric insert (db rows))
+(defgeneric delete (db ids))

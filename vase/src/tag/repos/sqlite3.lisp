@@ -1,9 +1,9 @@
-(defpackage :vase.db.sqlite3.tag
+(defpackage :vase.tag.repos.sqlite3
   (:use :cl
         :vase.db.sqlite3
-        :vase.db.tag)
-  (:shadowing-import-from :vase.db.tag :delete))
-(in-package :vase.db.sqlite3.tag)
+        :vase.tag.repos.db)
+  (:shadowing-import-from :vase.tag.repos.db :delete))
+(in-package :vase.tag.repos.sqlite3)
 
 (defun plist->row (plist)
   (make-row

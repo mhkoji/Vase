@@ -4,26 +4,27 @@
   :components
   ((:file "id")
 
+   (:file "folder/repos/db/folder")
+   (:file "folder/repos/db/thumbnail")
    (:file "folder/thumbnail/repos")
-   (:file "db/folder/folder")
-   (:file "db/folder/thumbnail")
-   (:file "folder/db")
+   (:file "folder/repos/repos")
 
-   (:file "folder/content/repos")
-   (:file "db/folder/content")
-   (:file "folder/content/db")
+   (:file "folder/content/repos/db")
+   (:file "folder/content/entities/repos")
+   (:file "folder/content/repos/repos")
 
    (:file "folder/folder")
 
-   (:file "db/image")
-   (:file "image")
+   (:file "image/repos/db")
+   (:file "image/repos/repos")
+   (:file "image/image")
 
    (:file "folder/thumbnail/image")
-   (:file "folder/content/entities")
+   (:file "folder/content/entities/entities")
 
-   (:file "db/tag")
+   (:file "tag/repos/db")
+   (:file "tag/repos/repos")
    (:file "tag/contents/repos")
-   (:file "tag/db")
    (:file "tag/tag")
    (:file "tag/contents/contents")
 
@@ -31,18 +32,19 @@
     :pathname "db/sqlite3"
     :components
     ((:file "proton")
-     (:file "sqlite3")
-     (:file "folder/folder")
-     (:file "folder/thumbnail")
-     (:file "folder/content")
-     (:file "image")
-     (:file "tag")))
+     (:file "sqlite3")))
 
-   (:module :contexts
-    :pathname "contexts"
+   (:file "folder/repos/sqlite3/folder")
+   (:file "folder/repos/sqlite3/thumbnail")
+   (:file "folder/content/repos/sqlite3")
+   (:file "image/repos/sqlite3")
+   (:file "tag/repos/sqlite3")
+
+   (:module :context
+    :pathname "context"
     :components
     ((:file "configure")
-     (:file "contexts"))))
+     (:file "context"))))
 
   :depends-on (; For proton
                :cl-dbi

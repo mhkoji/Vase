@@ -1,4 +1,4 @@
-(defpackage :vase.db.tag
+(defpackage :vase.tag.repos.db
   (:use :cl)
   (:shadow :delete)
   (:export :make-row
@@ -18,7 +18,7 @@
            :content/delete
            :content/select
            :content/select-tags))
-(in-package :vase.db.tag)
+(in-package :vase.tag.repos.db)
 
 (defstruct row tag-id name)
 (defgeneric insert (db name))

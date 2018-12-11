@@ -4,15 +4,15 @@
 (in-package :vase.cli)
 
 (defun add-folders (root-dir
-                    &key (conf (vase.contexts.configure:load-configure))
+                    &key (conf (vase.context.configure:load-configure))
                          (sort-paths-fn #'identity)
                          (initialize-data-p nil))
   (when initialize-data-p
-    (vase.contexts.configure:with-db (db conf)
-      (vase.contexts.configure:initialize-db db)))
+    (vase.context.configure:with-db (db conf)
+      (vase.context.configure:initialize-db db)))
   (labels ((make-thumbnail-path (source-file)
              (format nil "~Athumbnail$~A"
-                     (vase.contexts.configure:configure-thumbnail-root
+                     (vase.context.configure:configure-thumbnail-root
                       conf)
                      (cl-ppcre:regex-replace-all "/" source-file "$"))))
     (vase.cli.add-folders:execute conf root-dir

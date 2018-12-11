@@ -7,19 +7,9 @@
            :content
            :content-id
            :content-type
-           :update
-           :save
-           :repository
-           :make-repository
-           :bulk-load-by-ids
-           :bulk-load-by-range
-           :bulk-load-by-content
-           :bulk-delete
-           :attach-tag
-           :detach-tag
-           :create-tag
-           :set-tags)
-  (:import-from :vase.tag.db
+           :set-content-tags)
+  (:import-from :vase.tag.repos
+                :tag
                 :tag-id
                 :tag-name
                 :content-id
@@ -40,63 +30,37 @@
   (funcall (get-id c) c))
 
 
-(defclass tag (vase.tag.db:tag)
-  ((db
-    :initarg :db
-    :reader tag-db)
-   (content-repos
-    :initarg :content-repos
-    :reader tag-content-repos)))
+(defun tag-contents (tag db content-repos)
+  (let ((local-ids nil)
+        (type->local-ids (make-hash-table))
+        (local-id->content-id (make-hash-table :test #'equal))
+        (local-id->content (make-hash-table :test #'equal)))
+    (loop for local-id from 0
+          for abstract-content in (vase.tag.repos:bulk-load-contents db tag)
+          do (let ((type (content-type abstract-content))
+                   (content-id (content-id abstract-content)))
+               (push local-id local-ids)
+               (push local-id (gethash type type->local-ids))
+               (setf (gethash local-id local-id->content-id) content-id)))
+    (loop for type being the hash-keys of type->local-ids
+          for local-ids = (gethash type type->local-ids)
+          for content-ids = (mapcar (lambda (local-id)
+                                      (gethash local-id
+                                               local-id->content-id))
+                                    local-ids)
+          for contents = (vase.tag.contents.repos:bulk-load content-repos
+                                                            type
+                                                            content-ids)
+          do (loop for local-id in local-ids
+                   for content in contents
+                   do (setf (gethash local-id local-id->content) content)))
+    (mapcar (lambda (local-id) (gethash local-id local-id->content))
+            local-ids)))
 
-(defun tag-contents (tag)
-  (vase.tag.db:tag-contents (tag-db tag) (tag-content-repos tag) tag))
 
-(defun update (tag)
-  (vase.tag.db:update (tag-db tag) tag)
+(defun set-content-tags (db content tags)
+  (dolist (tag (vase.tag.repos:bulk-load-by-content db content))
+    (vase.tag.repos:detach-tag db tag content))
+  (dolist (tag tags)
+    (vase.tag.repos:attach-tag db tag content))
   (values))
-
-
-(defstruct repository db content-repos)
-
-(defun save (repos name)
-  (let ((row (vase.tag.db:save (repository-db repos) name)))
-    (change-class row 'tag
-                  :db (repository-db repos)
-                  :content-repos (repository-content-repos repos))))
-
-(defun bulk-load-by-ids (repos ids)
-  (let ((db (repository-db repos))
-        (content-repos (repository-content-repos repos)))
-    (let ((make-instance (lambda (&rest args)
-                           (apply #'make-instance 'tag
-                                  :db db
-                                  :content-repos content-repos
-                                  args))))
-      (vase.tag.db:bulk-load-by-ids db make-instance ids))))
-
-(defun bulk-load-by-range (repos offset size)
-  (let ((db (repository-db repos)))
-    (let ((ids (vase.tag.db:list-ids-by-range db offset size)))
-      (bulk-load-by-ids repos ids))))
-
-(defun bulk-load-by-content (repos content)
-  (let ((db (repository-db repos)))
-    (let ((ids (vase.tag.db:list-ids-by-content db content)))
-      (bulk-load-by-ids repos ids))))
-
-(defun bulk-delete (repos ids)
-  (vase.tag.db:bulk-delete (repository-db repos) ids)
-  (values))
-
-
-(defun attach-tag (tag content)
-  (vase.tag.db:attach-tag (tag-db tag) tag content))
-
-(defun detach-tag (tag content)
-  (vase.tag.db:detach-tag (tag-db tag) tag content))
-
-(defun set-tags (repos content ids)
-  (dolist (tag (bulk-load-by-content repos content))
-    (detach-tag tag content))
-  (dolist (tag (bulk-load-by-ids repos ids))
-    (attach-tag tag content)))
