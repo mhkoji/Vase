@@ -8,7 +8,7 @@
 
 @export
 (defun run (&key (port 18888)
-                 (conf (vase.contexts.configure:load-configure)))
+                 (conf (vase.context.configure:load-configure)))
   (when *handler*
     (clack:stop *handler*))
   (setq *handler*

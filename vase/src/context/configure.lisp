@@ -1,4 +1,4 @@
-(defpackage :vase.contexts.configure
+(defpackage :vase.context.configure
   (:use :cl)
   (:export :make-configure
            :configure-id-generator
@@ -6,7 +6,7 @@
            :with-db
            :initialize-db
            :load-configure))
-(in-package :vase.contexts.configure)
+(in-package :vase.context.configure)
 
 (defgeneric initialize-db (db))
 

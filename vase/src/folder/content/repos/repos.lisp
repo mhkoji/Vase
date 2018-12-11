@@ -1,29 +1,24 @@
-(defpackage :vase.folder.content.db
+(defpackage :vase.folder.content.repos
   (:use :cl)
-  (:export :content
+  (:export :folder-id
            :content-type
            :content-entity-id
+
            :make-appending
            :bulk-append
+           :make-repository
            :bulk-load
            :bulk-delete))
-(in-package :vase.folder.content.db)
+(in-package :vase.folder.content.repos)
 
-(defclass content ()
-  ((type :initarg :type
-         :type keyword
-         :reader content-type)
-   (get-entity-id :initarg :get-entity-id
-                  :reader get-entity-id)))
+(defgeneric folder-id (f))
 
-(defun content-entity-id (c)
-  (funcall (get-entity-id c) c))
-
+(defgeneric content-type (c))
+(defgeneric content-entity-id (c))
 
 (defun content-id (content)
   (let ((type (string-downcase
-               (symbol-name
-                (content-type content))))
+               (symbol-name (content-type content))))
         (entity-id (content-entity-id content)))
     (format nil "~A:~A" type entity-id)))
 
@@ -37,13 +32,13 @@
 
 
 (defstruct appending
-  folder-id contents)
+  folder contents)
 
 (defun bulk-append (db appendings)
   (dolist (appending appendings)
-    (vase.db.folder.content:insert
+    (vase.folder.content.repos.db:insert
      db
-     (appending-folder-id appending)
+     (folder-id (appending-folder appending))
      (mapcar #'content-id (appending-contents appending)))))
 
 
@@ -54,10 +49,12 @@
     (subseq seq start end)))
 
 
-(defun bulk-load (db content-repos folder-id &key from size)
-  (let ((all-content-ids (vase.db.folder.content:select-content-ids
-                          db
-                          folder-id)))
+(defstruct repository db entity-repos)
+
+(defun bulk-load (repos folder &key from size)
+  (let ((all-content-ids (vase.folder.content.repos.db:select-content-ids
+                          (repository-db repos)
+                          (folder-id folder))))
     (let ((content-ids (safe-subseq all-content-ids from size))
           (content-id->content (make-hash-table :test #'equal)))
       (let ((type->entity-ids (make-hash-table :test #'equal)))
@@ -71,15 +68,16 @@
                        (setf (gethash content-id content-id->content)
                              content)))))
           (maphash (lambda (type entity-ids)
-                     (add-contents (vase.folder.content.repos:bulk-load
-                                    content-repos
-                                    type
-                                    entity-ids)))
+                     (add-contents
+                      (vase.folder.content.entities.repos:bulk-load
+                       (repository-entity-repos repos)
+                       type
+                       entity-ids)))
                    type->entity-ids)))
       (mapcar (lambda (content-id)
                 (gethash content-id content-id->content))
               content-ids))))
 
 
-(defun bulk-delete (db folder-ids)
-  (vase.db.folder.content:delete db folder-ids))
+(defun bulk-delete (db folders)
+  (vase.folder.content.repos.db:delete db (mapcar #'folder-id folder-ids)))

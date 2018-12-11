@@ -1,22 +1,10 @@
-(defpackage :vase.db.sqlite3.folder.thumbnail
+(defpackage :vase.folder.repos.sqlite3.thumbnail
   (:use :cl
-        :vase.db.sqlite3
-        :vase.db.folder.thumbnail)
-  (:shadowing-import-from :vase.db.folder.thumbnail :delete)
+        :vase.folder.repos.db.thumbnail
+        :vase.db.sqlite3)
+  (:shadowing-import-from :vase.folder.repos.db.thumbnail :delete)
   (:import-from :cl-arrows :->>))
-(in-package :vase.db.sqlite3.folder.thumbnail)
-
-(defclass row ()
-  ((folder-id
-    :initarg :folder-id
-    :reader row-folder-id)
-   (thumbnail-id
-    :initarg :thumbnail-id
-    :reader row-thumbnail-id)))
-
-(defmethod make-row ((db sqlite3-db) folder-id thumbnail-id)
-  (make-instance 'row :folder-id folder-id :thumbnail-id thumbnail-id))
-
+(in-package :vase.folder.repos.sqlite3.thumbnail)
 
 (defmethod insert ((db sqlite3-db) (rows list))
   (->> (mapcar #'list
@@ -38,7 +26,7 @@
                 " " +folder-id+ " in (" (placeholder ids) ")")
           ids)
          (mapcar (lambda (plist)
-                   (make-instance 'row
+                   (make-row
                     :folder-id (getf plist :|folder_id|)
                     :thumbnail-id (getf plist :|thumbnail_id|)))))))
 

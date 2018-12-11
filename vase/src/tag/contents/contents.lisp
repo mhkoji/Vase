@@ -17,6 +17,7 @@
                 :get-id #'vase.folder:folder-id))
 
 
-(defmethod bulk-load ((repos vase.folder:repository)
+(defmethod bulk-load ((repos vase.folder.repos:repository)
                       (type (eql :folder)) (content-ids list))
-  (mapcar #'from-folder (vase.folder:bulk-load-by-ids repos content-ids)))
+  (mapcar #'from-folder
+          (vase.folder.repos:bulk-load-by-ids repos content-ids)))

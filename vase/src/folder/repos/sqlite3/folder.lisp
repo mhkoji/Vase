@@ -1,29 +1,12 @@
-(defpackage :vase.db.sqlite3.folder
+(defpackage :vase.folder.sqlite3.folder
   (:use :cl
-        :vase.db.sqlite3
-        :vase.db.folder)
-  (:shadowing-import-from :vase.db.folder :delete)
+        :vase.folder.repos.db.folder
+        :vase.db.sqlite3)
+  (:shadowing-import-from :vase.folder.repos.db.folder :delete)
   (:import-from :cl-arrows :->>))
-(in-package :vase.db.sqlite3.folder)
+(in-package :vase.folder.sqlite3.folder)
 
 ;; insert
-(defclass row ()
-  ((folder-id
-    :initarg :folder-id
-    :reader row-folder-id)
-   (name
-    :initarg :name
-    :reader row-name)
-   (modified-at
-    :initarg :modified-at
-    :reader row-modified-at)))
-
-(defmethod make-row ((db sqlite3-db) folder-id name modified-at)
-  (make-instance 'row
-                 :folder-id folder-id
-                 :name name
-                 :modified-at modified-at))
-
 (defmethod insert ((db sqlite3-db) (rows list))
   (->> (mapcar #'list
                (mapcar #'row-folder-id rows)
@@ -46,7 +29,7 @@
                 " " +folder-id+ " in (" (placeholder ids) ")")
           ids)
          (mapcar (lambda (plist)
-                   (make-instance 'row
+                   (make-row
                     :folder-id (getf plist :|folder_id|)
                     :name (getf plist :|name|)
                     :modified-at (getf plist :|modified_at|)))))))

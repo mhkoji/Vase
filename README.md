@@ -41,7 +41,7 @@ CL-USER> (ql:quickload :vase-spa)
 
 ```
 CL-USER> (defvar *conf*
-           (vase.contexts.configure:make-configure
+           (vase.context.configure:make-configure
             :id-generator
             (make-instance 'vase.id:sha256-3)
             :connection-factory

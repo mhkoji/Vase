@@ -16,9 +16,11 @@
                 :get-id #'vase.image:image-id))
 
 
-(defmethod bulk-load ((repos vase.image:repository) (thumbnail-ids list))
+(defmethod bulk-load ((repos vase.image.repos:repository)
+                      (thumbnail-ids list))
   (mapcar #'from-image
-          (vase.image:bulk-load-by-ids repos thumbnail-ids)))
+          (vase.image.repos:bulk-load-by-ids repos thumbnail-ids)))
 
-(defmethod bulk-delete ((repos vase.image:repository) (thumbnail-ids list))
-  (vase.image:bulk-delete repos thumbnail-ids))
+(defmethod bulk-delete ((repos vase.image.repos:repository)
+                        (thumbnail-ids list))
+  (vase.image.repos:bulk-delete repos thumbnail-ids))
