@@ -8,7 +8,6 @@
            :update
            :attach-tag
            :detach-tag
-           :create-tag
            :save
            :bulk-load-by-ids
            :bulk-load-by-range

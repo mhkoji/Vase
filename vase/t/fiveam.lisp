@@ -14,24 +14,29 @@
 (def-suite :vase)
 (in-suite* :vase)
 
+(defmethod vase.id:gen ((generator function) (string string))
+  (funcall generator string))
+
+(defmethod vase.folder.thumbnail.repos:bulk-load ((f function) thumbnail-ids)
+  (funcall f thumbnail-ids))
+
+
 ;(in-suite* :cocoa.entities.folder :in :cocoa)
 (def-tests
-    vase.t.scenario.entities.folder.db:insert-then-select-the-inserted-rows
-    vase.t.scenario.entities.folder.db:insert-then-delete-the-inserted-rows
-    vase.t.scenario.entities.folder:contains-contents
+    vase.t.scenario.folder.repos.db:insert-then-select-the-inserted-rows
+    vase.t.scenario.folder.repos.db:insert-then-delete-the-inserted-rows
+    vase.t.scenario.folder.content.repos:append-contents-then-bulk-load
     )
 
 ;(in-suite* :cocoa.folder :in :cocoa)
 (def-tests
-    vase.t.scenario.folder:get-the-added-folder
-    vase.t.scenario.folder:get-the-added-folder-images
-    vase.t.scenario.folder:attach-tags-to-a-folder
-    vase.t.scenario.folder:change-tags-attached-a-folder
-    vase.t.scenario.folder:list-the-overviews-of-added-folders
+    vase.t.scenario.folder:load-the-added-folder
     )
 
 ;(in-suite* :cocoa.tag :in :cocoa)
 (def-tests
     vase.t.scenario.tag:change-the-name-of-a-tag
     vase.t.scenario.tag:delete-a-tag
+    vase.t.scenario.tag:attach-tags-to-a-folder
+    vase.t.scenario.tag:change-tags-attached-a-folder
     )

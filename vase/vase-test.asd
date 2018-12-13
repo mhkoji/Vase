@@ -2,18 +2,18 @@
   :serial t
   :pathname "t"
   :components
-  ((:module scenario
+  ((:module :scenario
     :pathname "scenario"
     :components
-    ((:module entities
-      :pathname "entities"
+    ((:module :folder
+      :pathname "folder"
       :components
-      ((:file "folder/folder")
-       (:file "folder/db")))
-     (:file "folder")
+      ((:file "repos/db")
+       (:file "content/repos")
+       (:file "folder")))
      (:file "tag")))
 
-   (:module testing
+   (:module :testing
     :pathname "testing"
     :components
     ((:file "sqlite3")))
