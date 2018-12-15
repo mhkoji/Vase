@@ -16,6 +16,7 @@
 (defgeneric content-type (c))
 (defgeneric content-entity-id (c))
 
+
 (defun content-id (content)
   (let ((type (string-downcase
                (symbol-name (content-type content))))
@@ -48,16 +49,13 @@
     (subseq seq start end)))
 
 
-(defstruct repository db entity-repos)
-
 (defun load-content-ids (db folder &key from size)
   (let ((all-content-ids (vase.folder.content.repos.db:select-content-ids
                           db (folder-id folder))))
     (safe-subseq all-content-ids from size)))
 
-(defun bulk-load (repos folder &key from size)
-  (let ((content-ids (load-content-ids (repository-db repos)
-                                       folder
+(defun bulk-load (db content-repos folder &key from size)
+  (let ((content-ids (load-content-ids db folder
                                        :from from
                                        :size size))
         (content-id->content (make-hash-table :test #'equal)))
@@ -68,10 +66,9 @@
           (push entity-id (gethash type type->entity-ids))))
       (maphash
        (lambda (type entity-ids)
-         (let ((contents (vase.folder.content.entities.repos:bulk-load
-                          (repository-entity-repos repos)
-                          type
-                          entity-ids)))
+         (let ((contents (vase.folder.content:bulk-load content-repos
+                                                        type
+                                                        entity-ids)))
            (dolist (content contents)
              (let ((content-id (content-id content)))
                (setf (gethash content-id content-id->content) content)))))

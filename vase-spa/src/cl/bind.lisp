@@ -73,8 +73,8 @@
     (with-context (c) conf
       (let ((folder (vase.folder.repos:load-by-id (folder-repos c)
                                                   folder-id)))
-        (let ((contents (vase.folder.content.repos:bulk-load
-                         (folder-content-repos c) folder
+        (let ((contents (vase.folder:folder-contents
+                         folder (db c) (image-repos c)
                          :from from
                          :size size)))
           (remove-if-not (lambda (c) (typep c 'vase.image:image))

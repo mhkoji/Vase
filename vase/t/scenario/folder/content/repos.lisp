@@ -16,9 +16,7 @@
     :initarg :entity-id
     :reader content-entity-id)))
 
-(defmethod vase.folder.content.entities.repos:bulk-load ((f function)
-                                                         type
-                                                         entity-ids)
+(defmethod vase.folder.content:bulk-load ((f function) type entity-ids)
   (funcall f type entity-ids))
 
 
@@ -31,12 +29,11 @@
      (bulk-append ,db (list (make-appending :folder folder
                                             :contents contents)))
      (let ((folder-contents
-            (bulk-load (make-repository
-                        :db ,db
-                        :entity-repos (lambda (type entity-ids)
-                                        (,test (eql type :c))
-                                        (,test (equal entity-ids '("5678")))
-                                        contents))
+            (bulk-load ,db
+                       (lambda (type entity-ids)
+                         (,test (eql type :c))
+                         (,test (equal entity-ids '("5678")))
+                         contents)
                        folder
                        :from 0
                        :size 1)))

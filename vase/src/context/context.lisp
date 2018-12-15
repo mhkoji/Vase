@@ -38,11 +38,6 @@
    :db (context-db context)
    :thumbnail-repos (image-repos context)))
 
-(defun folder-content-repos (context)
-  (vase.folder.content.repos:make-repository
-   :db (db context)
-   :entity-repos (image-repos context)))
-
 
 (defun tag-content-repos (context)
   (folder-repos context))

@@ -1,13 +1,7 @@
-(defpackage :vase.folder.content.entities
-  (:use :cl)
-  (:export :image
-           :from-image)
-  (:import-from :vase.folder.content.entities.repos
-                :bulk-load))
-(in-package :vase.folder.content.entities)
+(in-package :vase.folder.content)
 
-(defclass image (vase.folder:content
-                 vase.image:image) ())
+;;; Image content
+(defclass image (content vase.image:image) ())
 
 (defun from-image (image)
   (assert (typep image 'vase.image:image))

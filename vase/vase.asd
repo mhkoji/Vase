@@ -9,9 +9,10 @@
    (:file "folder/thumbnail/repos")
    (:file "folder/repos/repos")
 
+   (:file "folder/content/content")
    (:file "folder/content/repos/db")
-   (:file "folder/content/entities/repos")
    (:file "folder/content/repos/repos")
+
 
    (:file "folder/folder")
 
@@ -20,7 +21,7 @@
    (:file "image/image")
 
    (:file "folder/thumbnail/image")
-   (:file "folder/content/entities/entities")
+   (:file "folder/content/image")
 
    (:file "tag/repos/db")
    (:file "tag/repos/repos")
