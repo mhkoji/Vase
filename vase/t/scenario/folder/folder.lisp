@@ -11,17 +11,17 @@
 
 (defmacro load-the-added-folder (db &key test)
   `(let ((thumbnail (make-thumbnail "/f1/aaa:thumb")))
-     (vase.folder:bulk-add
-      (lambda (str)
-        (format nil "id:~A" str))
-      ,db
-      (list (make-source :name "f1"
-                         :thumbnail thumbnail
-                         :modified-at 100)
-            (make-source :name "f2"
-                         :thumbnail (make-thumbnail "/f2/bbb:thumb")
-                         :modified-at 200)))
-     (let ((folder (vase.folder.repos:load-by-id
+     (bulk-save ,db
+                (bulk-create
+                 (lambda (str) (format nil "id:~A" str))
+                 (list (make-source :name "f1"
+                                    :thumbnail thumbnail
+                                    :modified-at 100)
+                       (make-source :name "f2"
+                                    :thumbnail
+                                    (make-thumbnail "/f2/bbb:thumb")
+                                    :modified-at 200))))
+     (let ((folder (vase.folder:load-by-id
                     (vase.folder.repos:make-repository
                      :db ,db
                      :thumbnail-repos

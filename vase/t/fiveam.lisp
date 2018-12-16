@@ -17,7 +17,7 @@
 (defmethod vase.id:gen ((generator function) (string string))
   (funcall generator string))
 
-(defmethod vase.folder.thumbnail.repos:bulk-load ((f function) thumbnail-ids)
+(defmethod vase.folder.thumbnail:bulk-load ((f function) thumbnail-ids)
   (funcall f thumbnail-ids))
 
 

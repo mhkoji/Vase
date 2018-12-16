@@ -11,7 +11,10 @@
 
                 :bulk-load
                 :bulk-load-by-folder)
-  (:export :folder-id))
+  (:export :folder-id
+           :bulk-append
+           :make-appending
+           :bulk-load-by-folder))
 (in-package :vase.folder.content.repos)
 
 (defgeneric folder-id (f))

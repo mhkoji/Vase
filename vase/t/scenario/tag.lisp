@@ -37,10 +37,9 @@
   `(let ((tag (vase.tag.repos:save ,db "tag"))
          (thumbnail (make-thumbnail "/f1/aaa:thumb")))
      (let ((folders
-            (vase.folder:bulk-add
+            (vase.folder:bulk-create
              (lambda (str)
                (format nil "id:~A" str))
-             ,db
              (list (vase.folder:make-source
                     :name "f1"
                     :thumbnail thumbnail
@@ -49,6 +48,7 @@
                     :name "f2"
                     :thumbnail (make-thumbnail "/f2/bbb:thumb")
                     :modified-at 200)))))
+       (vase.folder:bulk-save ,db folders)
 
        (let ((content (vase.tag.contents:from-folder (car folders))))
          (vase.tag.repos:attach-tag ,db tag content)
@@ -80,14 +80,14 @@
   `(let ((tag (vase.tag.repos:save ,db "tag"))
          (thumbnail (make-thumbnail "/f1/aaa:thumb")))
      (let ((folders
-            (vase.folder:bulk-add
+            (vase.folder:bulk-create
              (lambda (str)
                (format nil "id:~A" str))
-             ,db
              (list (vase.folder:make-source
                     :name "f1"
                     :thumbnail thumbnail
                     :modified-at 100)))))
+       (vase.folder:bulk-save ,db folders)
 
        (let ((content (vase.tag.contents:from-folder (car folders))))
          (vase.tag:set-content-tags ,db content (list tag))
