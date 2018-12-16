@@ -3,13 +3,13 @@
 ;;; 2. Prepare objects used for executing the controller task
 ;;; 3. Execute the task with the input and prepared objects
 ;;; 4. Send the output of the task in a formatted style
-(defpackage :vase.spa.bind
+(defpackage :vase.webapp.bind
   (:use :cl
-        :vase.spa.json
-        :vase.spa.html
+        :vase.webapp.json
+        :vase.webapp.html
         :vase.context)
   (:import-from :cl-arrows :->))
-(in-package :vase.spa.bind)
+(in-package :vase.webapp.bind)
 (cl-annot:enable-annot-syntax)
 
 (defun make-json-response (result &optional (success t))
@@ -20,7 +20,7 @@
   (jsown:to-json
    (jsown:new-js
      ("success" (if success :t :f))
-     ("result"  (vase.spa.json:convert result)))))
+     ("result"  (vase.webapp.json:convert result)))))
 
 (defun make-file-response (path)
   (funcall (lack.app.file:make-app :file path :root "/") nil))

@@ -1,4 +1,4 @@
-(asdf:defsystem :vase-spa
+(asdf:defsystem :vase-webapp
   :pathname #P"src/cl/"
   :serial t
   :components

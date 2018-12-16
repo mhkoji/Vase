@@ -1,6 +1,6 @@
-(defpackage :vase.spa.html
+(defpackage :vase.webapp.html
   (:use :cl))
-(in-package :vase.spa.html)
+(in-package :vase.webapp.html)
 (cl-annot:enable-annot-syntax)
 
 @export

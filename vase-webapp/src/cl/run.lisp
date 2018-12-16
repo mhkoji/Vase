@@ -1,7 +1,7 @@
-(defpackage :vase.spa
-  (:use :cl :vase.spa.bind)
+(defpackage :vase.webapp
+  (:use :cl :vase.webapp.bind)
   (:import-from :cl-arrows :-> :->>))
-(in-package :vase.spa)
+(in-package :vase.webapp)
 (cl-annot:enable-annot-syntax)
 
 (defvar *handler* nil)

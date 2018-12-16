@@ -1,7 +1,7 @@
-(defpackage :vase.spa.json
+(defpackage :vase.webapp.json
   (:use :cl)
   (:export :convert))
-(in-package :vase.spa.json)
+(in-package :vase.webapp.json)
 
 (defgeneric convert (obj))
 

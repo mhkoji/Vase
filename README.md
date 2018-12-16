@@ -18,7 +18,7 @@ $ apt install imagemagick
 3. Compile the ClojureScript sources of vase.
 
 ```
-$ cd /path/to/vase/vase-spa
+$ cd /path/to/vase/vase-webapp
 $ make
 ```
 
@@ -34,7 +34,7 @@ $ mkdir /tmp/vase/thumbnails
 2. Load the lisp files using vase.asd
 
 ```
-CL-USER> (ql:quickload :vase-spa)
+CL-USER> (ql:quickload :vase-webapp)
 ```
 
 3. Create a configure
@@ -53,7 +53,7 @@ CL-USER> (defvar *conf*
 4. Run the server with the configure
 
 ```
-CL-USER> (vase.spa:run :conf *conf*)
+CL-USER> (vase.webapp:run :conf *conf*)
 ```
 
 5. Add the sample folders
