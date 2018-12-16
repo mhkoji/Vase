@@ -3,11 +3,10 @@
   (:export :image
            :image-id
            :image-path
-           :make-factory
-           :bulk-create
+
            :repository
-           :bulk-save
            :make-repository
+           :bulk-save
            :bulk-load-by-ids
            :bulk-delete))
 (in-package :vase.image.repos)

@@ -3,11 +3,22 @@
   (:export :image
            :image-id
            :image-path
-           :bulk-create)
+           :bulk-create
+
+           :repository
+           :bulk-save
+           :bulk-load-by-ids
+           :bulk-delete)
   (:import-from :vase.image.repos
                 :image
                 :image-id
-                :image-path))
+                :image-path
+
+                :repository
+                :make-repository
+                :bulk-save
+                :bulk-load-by-ids
+                :bulk-delete))
 (in-package :vase.image)
 
 (defun bulk-create (id-generator paths)

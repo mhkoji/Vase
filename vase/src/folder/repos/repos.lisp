@@ -5,15 +5,17 @@
            :folder-name
            :folder-thumbnail
            :folder-modified-at
-           :thumbnail-id
+
+           :bulk-save
+           :bulk-delete
+
            :repository
            :make-repository
+
            :bulk-load-by-range
            :bulk-load-by-search
            :bulk-load-by-ids
-           :bulk-save
-           :load-by-id
-           :bulk-delete))
+           :load-by-id))
 (in-package :vase.folder.repos)
 
 (defclass folder ()
@@ -30,8 +32,6 @@
     :initarg :modified-at
     :reader folder-modified-at)))
 
-(defgeneric thumbnail-id (th))
-
 
 (defun folder->folder-row (folder)
   (vase.folder.repos.db.folder:make-row
@@ -42,7 +42,9 @@
 (defun folder->thumbnail-row (folder)
   (vase.folder.repos.db.thumbnail:make-row
    :folder-id (folder-id folder)
-   :thumbnail-id (thumbnail-id (folder-thumbnail folder))))
+   :thumbnail-id (vase.folder.thumbnail:thumbnail-id (folder-thumbnail
+                                                      folder))))
+
 
 (defun bulk-save (db folders)
   (let ((folder-rows (mapcar #'folder->folder-row folders))
@@ -72,12 +74,13 @@
     (let ((rows (vase.folder.repos.db.thumbnail:select db folder-ids)))
       (let ((thumbnail-id->thumbnail (make-hash-table :test #'equal))
             (thumbnails
-             (vase.folder.thumbnail.repos:bulk-load
+             (vase.folder.thumbnail:bulk-load
               thumbnail-repos
               (mapcar #'vase.folder.repos.db.thumbnail:row-thumbnail-id
                       rows))))
         (dolist (thumbnail thumbnails)
-          (setf (gethash (thumbnail-id thumbnail) thumbnail-id->thumbnail)
+          (setf (gethash (vase.folder.thumbnail:thumbnail-id thumbnail)
+                         thumbnail-id->thumbnail)
                 thumbnail))
         (dolist (row rows)
           (let ((folder-id (vase.folder.repos.db.thumbnail:row-folder-id row))
@@ -99,15 +102,17 @@
 
 
 (defun bulk-load-by-range (repos offset size)
-  (let ((ids (vase.folder.repos.db.folder:select-ids (repository-db repos)
-                                                     offset
-                                                     size)))
+  (let ((ids (vase.folder.repos.db.folder:select-ids
+              (repository-db repos)
+              offset
+              size)))
     (bulk-load-by-ids repos ids)))
 
 
 (defun bulk-load-by-search (repos name)
-  (let ((ids (vase.folder.repos.db.folder:search-ids (repository-db repos)
-                                                     name)))
+  (let ((ids (vase.folder.repos.db.folder:search-ids
+              (repository-db repos)
+              name)))
     (bulk-load-by-ids repos ids)))
 
 (defun load-by-id (repos id)

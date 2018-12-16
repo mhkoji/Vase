@@ -4,15 +4,14 @@
   :components
   ((:file "id")
 
+   (:file "folder/thumbnail/thumbnail")
    (:file "folder/repos/db/folder")
    (:file "folder/repos/db/thumbnail")
-   (:file "folder/thumbnail/repos")
    (:file "folder/repos/repos")
 
    (:file "folder/content/content")
    (:file "folder/content/repos/db")
    (:file "folder/content/repos/repos")
-
 
    (:file "folder/folder")
 

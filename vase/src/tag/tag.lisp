@@ -4,16 +4,34 @@
            :tag-id
            :tag-name
            :tag-contents
+
            :content
            :content-id
            :content-type
-           :set-content-tags)
+           :set-content-tags
+
+           :save
+           :update
+           :bulk-load-by-ids
+           :bulk-load-by-range
+           :bulk-load-by-content
+           :bulk-load-contents
+           :bulk-delete)
   (:import-from :vase.tag.repos
                 :tag
                 :tag-id
                 :tag-name
+
                 :content-id
-                :content-type))
+                :content-type
+
+                :save
+                :update
+                :bulk-load-by-ids
+                :bulk-load-by-range
+                :bulk-load-by-content
+                :bulk-load-contents
+                :bulk-delete))
 (in-package :vase.tag)
 
 ;;;; The definition of a content, to which tags are attached

@@ -63,16 +63,16 @@
   (do-route! (("/api/folders" (from :query "from")
                               (size :query "size"))) app
     (with-context (c) conf
-      (vase.folder.repos:bulk-load-by-range (folder-repos c) from size)))
+      (vase.folder:bulk-load-by-range (folder-repos c) from size)))
   (do-route! (("/api/folder/:id" (folder-id :param :id))) app
     (with-context (c) conf
-      (vase.folder.repos:load-by-id (folder-repos c) folder-id)))
+      (vase.folder:load-by-id (folder-repos c) folder-id)))
   (do-route! (("/api/folder/:id/images" (folder-id :param :id)
                                         (from :query "from")
                                         (size :query "size"))) app
     (with-context (c) conf
-      (let ((folder (vase.folder.repos:load-by-id (folder-repos c)
-                                                  folder-id)))
+      (let ((folder (vase.folder:load-by-id (folder-repos c)
+                                            folder-id)))
         (let ((contents (vase.folder:folder-contents
                          folder (db c) (image-repos c)
                          :from from
@@ -82,36 +82,35 @@
   (do-route! (("/api/folder/:id/tags" (folder-id :param :id))) app
     (with-context (c) conf
       (let ((content (vase.tag.contents:from-folder
-                      (vase.folder.repos:load-by-id (folder-repos c)
-                                                    folder-id))))
-        (vase.tag.repos:bulk-load-by-content (db c) content))))
+                      (vase.folder:load-by-id (folder-repos c)
+                                              folder-id))))
+        (vase.tag:bulk-load-by-content (db c) content))))
   (do-route! (("/api/folder/:id/tags" (folder-id :param :id)
                                       (tag-ids :query "tag_ids"))
               :method :post) app
     (with-context (c) conf
-      (vase.tag:set-content-tags
-       (db c)
-       (vase.tag.contents:from-folder
-        (vase.folder.repos:load-by-id
-         (folder-repos c)
-         folder-id))
-       (vase.tag.repos:bulk-load-by-ids (db c) tag-ids))))
+      (let ((db (db c)))
+        (let ((tags (vase.tag:bulk-load-by-ids db tag-ids))
+              (content (vase.tag.contents:from-folder
+                        (vase.folder:load-by-id (folder-repos c)
+                                                folder-id))))
+        (vase.tag:set-content-tags db content tags)))))
 
   (do-route! (("/api/tags")) app
     (with-context (c) conf
-      (vase.tag.repos:bulk-load-by-range (db c) 0 50)))
+      (vase.tag:bulk-load-by-range (db c) 0 50)))
   (do-route! (("/api/tags" (name :query "name"))
               :method :post) app
     (with-context (c) conf
-      (vase.tag.repos:save (db c) name)))
+      (vase.tag:save (db c) name)))
 
   (do-route! (("/api/tag/:id" (tag-id :param :id))
               :method :delete) app
     (with-context (c) conf
-      (vase.tag.repos:bulk-delete (db c) (list tag-id))))
+      (vase.tag:bulk-delete (db c) (list tag-id))))
   (do-route! (("/api/tag/:id/folders" (tag-id :param :id))) app
     (with-context (c) conf
-      (let ((tag (car (vase.tag.repos:bulk-load-by-ids
+      (let ((tag (car (vase.tag:bulk-load-by-ids
                        (db c)
                        (list tag-id)))))
         (vase.tag:tag-contents tag (db c) (tag-content-repos c)))))
@@ -119,19 +118,18 @@
                               (name :query "name"))
               :method :put) app
     (with-context (c) conf
-      (let ((tag (car (vase.tag.repos:bulk-load-by-ids
+      (let ((tag (car (vase.tag:bulk-load-by-ids
                        (db c)
                        (list tag-id)))))
         (setf (vase.tag:tag-name tag) name)
-        (vase.tag.repos:update (db c) tag))))
+        (vase.tag:update (db c) tag))))
 
   (do-route! (("/_i/:id" (image-id :param :id))
               :out make-file-response) app
     (with-context (c) conf
       (vase.image:image-path
-       (car (vase.image.repos:bulk-load-by-ids
-             (image-repos c)
-             (list image-id))))))
+       (car (vase.image:bulk-load-by-ids (image-repos c)
+                                         (list image-id))))))
   app)
 
 @export

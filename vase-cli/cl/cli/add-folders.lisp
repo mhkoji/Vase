@@ -7,7 +7,7 @@
 
 (defun add-images (id-generator image-repository paths)
   (let ((images (vase.image:bulk-create id-generator paths)))
-    (vase.image.repos:bulk-save image-repository images)
+    (vase.image:bulk-save image-repository images)
     images))
 
 (defun make-source-from-dir (dir &key id-generator
@@ -25,12 +25,11 @@
          :modified-at (vase.cli.fs:dir-modified-at dir))))))
 
 (defun make-appending-for (folder dir &key id-generator image-repository)
-  (vase.folder.content.repos:make-appending
-   :folder folder
-   :contents (mapcar #'vase.folder.content.entities:from-image
-                     (add-images id-generator
-                                 image-repository
-                                 (vase.cli.fs:dir-file-paths dir)))))
+  (let ((contents (mapcar #'vase.folder.content:from-image
+                          (add-images id-generator
+                                      image-repository
+                                      (vase.cli.fs:dir-file-paths dir)))))
+    (vase.folder.content:make-appending :folder folder :contents contents)))
 
 (defun execute (conf root-dir &key sort-paths-fn thumbnail-file-fn)
   (vase.context:with-context (context) conf
@@ -45,13 +44,17 @@
                                   :image-repository image-repos
                                   :thumbnail-file-fn thumbnail-file-fn))
                                dirs)))
-          ;; Save folders
-          (let ((folders (vase.folder:bulk-add id-gen db sources)))
+          (let ((folders (vase.folder:bulk-create id-gen sources)))
+            ;; Delete existing folders if any
+            (vase.folder:bulk-delete db (mapcar #'vase.folder:folder-id
+                                                folders))
+            ;; Save folders
+            (vase.folder:bulk-save db folders)
             (let ((appendings (mapcar (lambda (folder dir)
                                         (make-appending-for folder dir
                                          :id-generator id-gen
                                          :image-repository image-repos))
                                       folders dirs)))
               ;; Save folder contents
-              (vase.folder.content.repos:bulk-append db appendings)))))))
+              (vase.folder.content:bulk-append db appendings)))))))
   (values))
