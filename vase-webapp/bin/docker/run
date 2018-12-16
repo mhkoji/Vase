@@ -1,6 +1,6 @@
 #!/bin/bash
 
 sbcl\
-    --core /app/vase-spa.sbcl.core\
-    --load /root/quicklisp/local-projects/vase-spa/bin/sbcl-main.lisp\
-    /root/quicklisp/local-projects/vase-spa/etc/context.lisp
+    --core /app/vase-webapp.sbcl.core\
+    --load /root/quicklisp/local-projects/vase-webapp/bin/sbcl-main.lisp\
+    /root/quicklisp/local-projects/vase-webapp/etc/context.lisp

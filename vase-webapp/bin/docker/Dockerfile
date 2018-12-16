@@ -55,16 +55,16 @@ RUN sbcl --eval "(progn\
 
 
 COPY vase /root/quicklisp/local-projects/vase
-COPY vase-spa /root/quicklisp/local-projects/vase-spa
+COPY vase-webapp /root/quicklisp/local-projects/vase-webapp
 
 # Make the lisp image for the app
 WORKDIR /app
 
-RUN /root/quicklisp/local-projects/vase-spa/bin/lisp-image/build-sbcl\
-  && cp /root/quicklisp/local-projects/vase-spa/bin/docker/run ./
+RUN /root/quicklisp/local-projects/vase-webapp/bin/lisp-image/build-sbcl\
+  && cp /root/quicklisp/local-projects/vase-webapp/bin/docker/run ./
 
 # Make the resources for the app
-RUN cd /root/quicklisp/local-projects/vase-spa\
+RUN cd /root/quicklisp/local-projects/vase-webapp\
   && make prod\
   && cp -r resources /app
 
