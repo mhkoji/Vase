@@ -122,7 +122,8 @@
                        (db c)
                        (list tag-id)))))
         (setf (vase.tag:tag-name tag) name)
-        (vase.tag:update (db c) tag))))
+        (vase.tag:update (db c) tag)))
+    (values))
 
   (do-route! (("/_i/:id" (image-id :param :id))
               :out make-file-response) app
