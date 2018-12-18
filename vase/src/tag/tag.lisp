@@ -34,19 +34,6 @@
                 :bulk-delete))
 (in-package :vase.tag)
 
-;;;; The definition of a content, to which tags are attached
-(defclass content ()
-  ((get-id
-    :initarg :get-id
-    :reader get-id)
-   (type
-    :initarg :type
-    :type :keyword
-    :reader content-type)))
-
-(defmethod content-id ((c content))
-  (funcall (get-id c) c))
-
 (defun content-tags (content db)
   (vase.tag.repos:bulk-load-by-content db content))
 

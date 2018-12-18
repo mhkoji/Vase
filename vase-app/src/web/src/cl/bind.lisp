@@ -85,18 +85,16 @@
       (with-accessors ((db container-db)
                        (folder-repos container-folder-repository)) c
         (let ((folder (vase.folder:load-by-id folder-repos folder-id)))
-          (let ((content (vase.tag.contents:from-folder folder)))
-            (vase.tag:content-tags content db))))))
+          (vase.tag:content-tags folder db)))))
   (do-route! (("/api/folder/:id/tags" (folder-id :param :id)
                                       (tag-ids :query "tag_ids"))
               :method :post) app
     (with-container (c conf)
       (with-accessors ((db container-db)
                        (folder-repos container-folder-repository)) c
-        (let ((folder (vase.folder:load-by-id folder-repos folder-id)))
-          (let ((tags (vase.tag:bulk-load-by-ids db tag-ids))
-                (content (vase.tag.contents:from-folder folder)))
-            (vase.tag:set-content-tags db content tags))))))
+        (let ((tags (vase.tag:bulk-load-by-ids db tag-ids))
+              (folder (vase.folder:load-by-id folder-repos folder-id)))
+          (vase.tag:set-content-tags db folder tags)))))
 
   (do-route! (("/api/tags")) app
     (with-container (c conf)
