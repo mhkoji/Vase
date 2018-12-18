@@ -1,7 +1,6 @@
 (defpackage :vase.folder.content
   (:use :cl)
-  (:export :content
-           :content-type
+  (:export :content-type
            :content-entity-id
 
            :bulk-delete
@@ -9,21 +8,11 @@
            :bulk-append
 
            :bulk-load
-           :bulk-load-by-folder
-
-           :image
-           :from-image))
+           :bulk-load-by-folder))
 (in-package :vase.folder.content)
 
-(defclass content ()
-  ((type :initarg :type
-         :type keyword
-         :reader content-type)
-   (get-entity-id :initarg :get-entity-id
-                  :reader get-entity-id)))
+(defgeneric content-type (c))
 
-(defun content-entity-id (c)
-  (funcall (get-entity-id c) c))
-
+(defgeneric content-entity-id (c))
 
 (defgeneric bulk-load (repos type entity-ids))

@@ -2,7 +2,6 @@
   (:use :cl)
   (:export :thumbnail-id
 
-           :content
            :content-type
            :content-entity-id
 
@@ -24,7 +23,6 @@
            :make-source
            :bulk-create)
   (:import-from :vase.folder.content
-                :content
                 :content-type
                 :content-entity-id)
   (:import-from :vase.folder.thumbnail
