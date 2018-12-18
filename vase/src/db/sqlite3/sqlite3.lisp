@@ -1,5 +1,5 @@
 (defpackage :vase.db.sqlite3
-  (:use :cl))
+  (:use :cl :vase.db))
 (in-package :vase.db.sqlite3)
 (cl-annot:enable-annot-syntax)
 
@@ -105,3 +105,9 @@
               content_type varchar(256) NOT NULL
               );")
   )
+
+(defmethod connection->db ((conn proton:sqlite3))
+  (make-instance 'sqlite3-db :connection conn))
+
+(defmethod initialize-db ((db sqlite3-db))
+  (create-tables db))

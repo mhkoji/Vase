@@ -8,13 +8,13 @@
            :content
            :content-id
            :content-type
+           :content-tags
            :set-content-tags
 
            :save
            :update
            :bulk-load-by-ids
            :bulk-load-by-range
-           :bulk-load-by-content
            :bulk-load-contents
            :bulk-delete)
   (:import-from :vase.tag.repos
@@ -47,6 +47,16 @@
 (defmethod content-id ((c content))
   (funcall (get-id c) c))
 
+(defun content-tags (content db)
+  (vase.tag.repos:bulk-load-by-content db content))
+
+(defun set-content-tags (db content tags)
+  (dolist (tag (vase.tag.repos:bulk-load-by-content db content))
+    (vase.tag.repos:detach-tag db tag content))
+  (dolist (tag tags)
+    (vase.tag.repos:attach-tag db tag content))
+  (values))
+
 
 (defun tag-contents (tag db content-repos)
   (let ((local-ids nil)
@@ -75,10 +85,3 @@
     (mapcar (lambda (local-id) (gethash local-id local-id->content))
             local-ids)))
 
-
-(defun set-content-tags (db content tags)
-  (dolist (tag (vase.tag.repos:bulk-load-by-content db content))
-    (vase.tag.repos:detach-tag db tag content))
-  (dolist (tag tags)
-    (vase.tag.repos:attach-tag db tag content))
-  (values))

@@ -1,11 +1,11 @@
-(defpackage :vase.cli.fs.retrieve
-  (:use :cl :vase.cli.stream)
-  (:import-from :vase.cli.fs
+(defpackage :vase.app.cli.fs.retrieve
+  (:use :cl :vase.app.cli.stream)
+  (:import-from :vase.app.cli.fs
                 :dir-path
                 :dir-file-paths
                 :dir-modified-at
                 :retrieve))
-(in-package :vase.cli.fs.retrieve)
+(in-package :vase.app.cli.fs.retrieve)
 
 (defun files-and-subdirectories (dir)
   (let ((files nil)

@@ -1,9 +1,8 @@
-(defpackage :vase.webapp.html
-  (:use :cl))
-(in-package :vase.webapp.html)
-(cl-annot:enable-annot-syntax)
+(defpackage :vase.app.web.html
+  (:use :cl)
+  (:export :main-html))
+(in-package :vase.app.web.html)
 
-@export
 (defun main-html (js-src)
   (cl-who:with-html-output-to-string (s nil :prologue t)
     (:head

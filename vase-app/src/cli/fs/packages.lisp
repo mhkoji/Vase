@@ -1,4 +1,4 @@
-(defpackage :vase.cli.fs
+(defpackage :vase.app.cli.fs
   (:use :cl)
   (:export :dir-path
            :dir-file-paths

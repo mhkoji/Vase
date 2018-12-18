@@ -28,23 +28,18 @@
    (:file "tag/tag")
    (:file "tag/contents/contents")
 
-   (:module :db/sqlite3
-    :pathname "db/sqlite3"
+   (:module :db
+    :pathname "db"
     :components
-    ((:file "proton")
-     (:file "sqlite3")))
+    ((:file "db")
+     (:file "sqlite3/proton")
+     (:file "sqlite3/sqlite3")))
 
    (:file "folder/repos/sqlite3/folder")
    (:file "folder/repos/sqlite3/thumbnail")
    (:file "folder/content/repos/sqlite3")
    (:file "image/repos/sqlite3")
-   (:file "tag/repos/sqlite3")
-
-   (:module :context
-    :pathname "context"
-    :components
-    ((:file "configure")
-     (:file "context"))))
+   (:file "tag/repos/sqlite3"))
 
   :depends-on (; For proton
                :cl-dbi

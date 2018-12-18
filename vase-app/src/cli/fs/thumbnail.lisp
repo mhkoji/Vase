@@ -1,8 +1,8 @@
-(defpackage :vase.cli.fs.thumbnail
+(defpackage :vase.app.cli.fs.thumbnail
   (:use :cl)
-  (:import-from :vase.cli.fs
+  (:import-from :vase.app.cli.fs
                 :ensure-thumbnail-exists))
-(in-package :vase.cli.fs.thumbnail)
+(in-package :vase.app.cli.fs.thumbnail)
 
 ;; thumbnail
 (defun resize-image (target source x y)

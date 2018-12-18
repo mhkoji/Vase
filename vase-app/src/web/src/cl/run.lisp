@@ -1,14 +1,15 @@
-(defpackage :vase.webapp
-  (:use :cl :vase.webapp.bind)
-  (:import-from :cl-arrows :-> :->>))
-(in-package :vase.webapp)
-(cl-annot:enable-annot-syntax)
+(defpackage :vase.app.web
+  (:use :cl :vase.app.web.bind)
+  (:export :run)
+  (:import-from :cl-arrows :->)
+  (:import-from :vase.app.container
+                :load-configure))
+(in-package :vase.app.web)
 
 (defvar *handler* nil)
 
-@export
 (defun run (&key (port 18888)
-                 (conf (vase.context.configure:load-configure)))
+                 (conf (load-configure)))
   (when *handler*
     (clack:stop *handler*))
   (setq *handler*

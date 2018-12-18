@@ -3,14 +3,15 @@
 ;;; 2. Prepare objects used for executing the controller task
 ;;; 3. Execute the task with the input and prepared objects
 ;;; 4. Send the output of the task in a formatted style
-(defpackage :vase.webapp.bind
+(defpackage :vase.app.web.bind
   (:use :cl
-        :vase.webapp.json
-        :vase.webapp.html
-        :vase.context)
-  (:import-from :cl-arrows :->))
-(in-package :vase.webapp.bind)
-(cl-annot:enable-annot-syntax)
+        :vase.app.web.json
+        :vase.app.web.html
+        :vase.app.container)
+  (:export :bind-api!
+           :bind-html!
+           :bind-resources!))
+(in-package :vase.app.web.bind)
 
 (defun make-json-response (result &optional (success t))
   (let ((resp ningle:*response*))
@@ -20,7 +21,7 @@
   (jsown:to-json
    (jsown:new-js
      ("success" (if success :t :f))
-     ("result"  (vase.webapp.json:convert result)))))
+     ("result"  (vase.app.web.json:convert result)))))
 
 (defun make-file-response (path)
   (funcall (lack.app.file:make-app :file path :root "/") nil))
@@ -58,82 +59,85 @@
              (with-inputs ,in params
                (funcall #',out (progn ,@body)))))))
 
-@export
 (defun bind-api! (app &key conf)
   (do-route! (("/api/folders" (from :query "from")
                               (size :query "size"))) app
-    (with-context (c) conf
-      (vase.folder:bulk-load-by-range (folder-repos c) from size)))
+    (with-container (c conf)
+      (with-accessors ((folder-repos container-folder-repository)) c
+        (vase.folder:bulk-load-by-range folder-repos from size))))
   (do-route! (("/api/folder/:id" (folder-id :param :id))) app
-    (with-context (c) conf
-      (vase.folder:load-by-id (folder-repos c) folder-id)))
+    (with-container (c conf)
+      (with-accessors ((folder-repos container-folder-repository)) c
+        (vase.folder:load-by-id folder-repos folder-id))))
   (do-route! (("/api/folder/:id/images" (folder-id :param :id)
                                         (from :query "from")
                                         (size :query "size"))) app
-    (with-context (c) conf
-      (let ((folder (vase.folder:load-by-id (folder-repos c)
-                                            folder-id)))
-        (let ((contents (vase.folder:folder-contents
-                         folder (db c) (image-repos c)
-                         :from from
-                         :size size)))
-          (remove-if-not (lambda (c) (typep c 'vase.image:image))
-                         contents)))))
+    (with-container (c conf)
+      (with-accessors ((db container-db)
+                       (image-repos container-image-repository)
+                       (folder-repos container-folder-repository)) c
+        (let ((folder (vase.folder:load-by-id folder-repos folder-id)))
+          (vase.folder:folder-contents folder db image-repos
+                                       :from from
+                                       :size size)))))
   (do-route! (("/api/folder/:id/tags" (folder-id :param :id))) app
-    (with-context (c) conf
-      (let ((content (vase.tag.contents:from-folder
-                      (vase.folder:load-by-id (folder-repos c)
-                                              folder-id))))
-        (vase.tag:bulk-load-by-content (db c) content))))
+    (with-container (c conf)
+      (with-accessors ((db container-db)
+                       (folder-repos container-folder-repository)) c
+        (let ((folder (vase.folder:load-by-id folder-repos folder-id)))
+          (let ((content (vase.tag.contents:from-folder folder)))
+            (vase.tag:content-tags content db))))))
   (do-route! (("/api/folder/:id/tags" (folder-id :param :id)
                                       (tag-ids :query "tag_ids"))
               :method :post) app
-    (with-context (c) conf
-      (let ((db (db c)))
-        (let ((tags (vase.tag:bulk-load-by-ids db tag-ids))
-              (content (vase.tag.contents:from-folder
-                        (vase.folder:load-by-id (folder-repos c)
-                                                folder-id))))
-        (vase.tag:set-content-tags db content tags)))))
+    (with-container (c conf)
+      (with-accessors ((db container-db)
+                       (folder-repos container-folder-repository)) c
+        (let ((folder (vase.folder:load-by-id folder-repos folder-id)))
+          (let ((tags (vase.tag:bulk-load-by-ids db tag-ids))
+                (content (vase.tag.contents:from-folder folder)))
+            (vase.tag:set-content-tags db content tags))))))
 
   (do-route! (("/api/tags")) app
-    (with-context (c) conf
-      (vase.tag:bulk-load-by-range (db c) 0 50)))
+    (with-container (c conf)
+      (with-accessors ((db container-db)) c
+        (vase.tag:bulk-load-by-range db 0 50))))
   (do-route! (("/api/tags" (name :query "name"))
               :method :post) app
-    (with-context (c) conf
-      (vase.tag:save (db c) name)))
+    (with-container (c conf)
+      (with-accessors ((db container-db)) c
+        (vase.tag:save db name))))
 
   (do-route! (("/api/tag/:id" (tag-id :param :id))
               :method :delete) app
-    (with-context (c) conf
-      (vase.tag:bulk-delete (db c) (list tag-id))))
+    (with-container (c conf)
+      (with-accessors ((db container-db)) c
+        (vase.tag:bulk-delete db (list tag-id)))))
   (do-route! (("/api/tag/:id/folders" (tag-id :param :id))) app
-    (with-context (c) conf
-      (let ((tag (car (vase.tag:bulk-load-by-ids
-                       (db c)
-                       (list tag-id)))))
-        (vase.tag:tag-contents tag (db c) (tag-content-repos c)))))
+    (with-container (c conf)
+      (with-accessors ((db container-db)
+                       (folder-repos container-folder-repository)) c
+        (let ((tag (car (vase.tag:bulk-load-by-ids db (list tag-id)))))
+          (vase.tag:tag-contents tag db folder-repos)))))
   (do-route! (("/api/tag/:id" (tag-id :param :id)
                               (name :query "name"))
               :method :put) app
-    (with-context (c) conf
-      (let ((tag (car (vase.tag:bulk-load-by-ids
-                       (db c)
-                       (list tag-id)))))
-        (setf (vase.tag:tag-name tag) name)
-        (vase.tag:update (db c) tag)))
+    (with-container (c conf)
+      (with-accessors ((db container-db)) c
+        (let ((tag (car (vase.tag:bulk-load-by-ids db (list tag-id)))))
+          (setf (vase.tag:tag-name tag) name)
+          (vase.tag:update db tag))))
     (values))
 
   (do-route! (("/_i/:id" (image-id :param :id))
               :out make-file-response) app
-    (with-context (c) conf
-      (vase.image:image-path
-       (car (vase.image:bulk-load-by-ids (image-repos c)
-                                         (list image-id))))))
+    (with-container (c conf)
+      (with-accessors ((image-repos container-image-repository)) c
+        (let ((image (car (vase.image:bulk-load-by-ids image-repos
+                                                       (list image-id)))))
+          (vase.image:image-path image)))))
   app)
 
-@export
 (defun bind-html! (app)
   (setf (ningle:route app "/.*" :method :get :regexp t)
         (lambda (params)
@@ -141,7 +145,6 @@
           (main-html "/resources/compiled/cljs/bundle.js")))
   app)
 
-@export
 (defun bind-resources! (app root)
   (setf (ningle:route app "/resources/*.*" :method :get)
         (lambda (params)

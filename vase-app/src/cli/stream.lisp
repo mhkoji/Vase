@@ -1,4 +1,4 @@
-(defpackage :vase.cli.stream
+(defpackage :vase.app.cli.stream
   (:use :cl)
   (:export :stream-cons
            :stream-car
@@ -11,7 +11,7 @@
            :stream-map
            :stream-flat-map
            :do-stream))
-(in-package :vase.cli.stream)
+(in-package :vase.app.cli.stream)
 
 (defmacro stream-cons (x y)
   ;; TODO: cache results
