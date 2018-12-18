@@ -11,7 +11,6 @@
                       (,symbol db :test is))))
                symbols)))
 
-(def-suite :vase)
 (in-suite* :vase)
 
 (defmethod vase.id:gen ((generator function) (string string))
@@ -21,19 +20,16 @@
   (funcall f thumbnail-ids))
 
 
-;(in-suite* :cocoa.entities.folder :in :cocoa)
 (def-tests
     vase.t.scenario.folder.repos.db:insert-then-select-the-inserted-rows
     vase.t.scenario.folder.repos.db:insert-then-delete-the-inserted-rows
     vase.t.scenario.folder.content.repos:append-contents-then-bulk-load
     )
 
-;(in-suite* :cocoa.folder :in :cocoa)
 (def-tests
     vase.t.scenario.folder:load-the-added-folder
     )
 
-;(in-suite* :cocoa.tag :in :cocoa)
 (def-tests
     vase.t.scenario.tag:change-the-name-of-a-tag
     vase.t.scenario.tag:delete-a-tag

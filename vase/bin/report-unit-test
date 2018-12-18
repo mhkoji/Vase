@@ -17,7 +17,7 @@ exec ros -s sb-cover -Q -- $0 "$@"
 
 (defun main (&rest argv)
   (declare (ignorable argv))
-  (asdf:oos 'asdf:load-op :cocoa-test :force t)
-  (asdf:test-system :cocoa-test)
+  (asdf:oos 'asdf:load-op :vase-test :force t)
+  (asdf:test-system :vase-test)
   (sb-cover:report (format nil "~A/report/" *default-pathname-defaults*)))
 ;;; vim: set ft=lisp lisp:
