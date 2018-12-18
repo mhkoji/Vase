@@ -1,7 +1,6 @@
 (defpackage :vase.folder
   (:use :cl)
-  (:export :thumbnail
-           :thumbnail-id
+  (:export :thumbnail-id
 
            :content
            :content-type
@@ -29,7 +28,6 @@
                 :content-type
                 :content-entity-id)
   (:import-from :vase.folder.thumbnail
-                :thumbnail
                 :thumbnail-id
                 :bulk-load)
   (:import-from :vase.folder.repos
