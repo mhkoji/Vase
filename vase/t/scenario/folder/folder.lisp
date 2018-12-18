@@ -3,11 +3,13 @@
   (:import-from :cl-arrows :->))
 (in-package :vase.t.scenario.folder)
 
+(defclass thumbnail ()
+  ((id
+    :initarg :id
+    :reader vase.folder:thumbnail-id)))
+
 (defun make-thumbnail (thumbnail-id)
-  (make-instance 'thumbnail
-   :get-id (lambda (this)
-             (declare (ignore this))
-             thumbnail-id)))
+  (make-instance 'thumbnail :id thumbnail-id))
 
 (defmacro load-the-added-folder (db &key test)
   `(let ((thumbnail (make-thumbnail "/f1/aaa:thumb")))

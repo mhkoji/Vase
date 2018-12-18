@@ -3,11 +3,13 @@
   (:import-from :cl-arrows :->))
 (in-package :vase.t.scenario.tag)
 
+(defclass thumbnail ()
+  ((id
+    :initarg :id
+    :reader vase.folder:thumbnail-id)))
+
 (defun make-thumbnail (thumbnail-id)
-  (make-instance 'vase.folder:thumbnail
-   :get-id (lambda (this)
-             (declare (ignore this))
-             thumbnail-id)))
+  (make-instance 'thumbnail :id thumbnail-id))
 
 
 (defmacro change-the-name-of-a-tag (db &key test)
@@ -50,7 +52,7 @@
                     :modified-at 200)))))
        (vase.folder:bulk-save ,db folders)
 
-       (let ((content (vase.tag.contents:from-folder (car folders))))
+       (let ((content (car folders)))
          (vase.tag.repos:attach-tag ,db tag content)
 
          (let ((folder-repos
@@ -89,7 +91,7 @@
                     :modified-at 100)))))
        (vase.folder:bulk-save ,db folders)
 
-       (let ((content (vase.tag.contents:from-folder (car folders))))
+       (let ((content (car folders)))
          (vase.tag:set-content-tags ,db content (list tag))
 
          (let ((new-tag (vase.tag.repos:save ,db "New tag")))
