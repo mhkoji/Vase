@@ -41,7 +41,7 @@ CL-USER> (ql:quickload :vase-webapp)
 
 ```
 CL-USER> (defvar *conf*
-           (vase.context.configure:make-configure
+           (vase.app.container:make-configure
             :id-generator
             (make-instance 'vase.id:sha256-3)
             :connection-factory
@@ -53,14 +53,14 @@ CL-USER> (defvar *conf*
 4. Run the server with the configure
 
 ```
-CL-USER> (vase.webapp:run :conf *conf*)
+CL-USER> (vase.app.web:run :conf *conf*)
 ```
 
 5. Add the sample folders
 
 ```
-CL-USER> (ql:quickload :vase-cli)
-CL-USER> (vase.cli:add-folders "./resources/contents/images/" :conf *conf* :initialize-data-p t)
+CL-USER> (ql:quickload :vase-app-cli)
+CL-USER> (vase.app.cli:add-folders "./resources/contents/images/" :conf *conf* :initialize-data-p t)
 ```
 
 Then, access http://localhost:18888/folders

@@ -3,4 +3,4 @@
 sbcl\
     --core /app/vase-webapp.sbcl.core\
     --load /root/quicklisp/local-projects/vase-webapp/bin/sbcl-main.lisp\
-    /root/quicklisp/local-projects/vase-webapp/etc/context.lisp
+    /root/quicklisp/local-projects/vase-webapp/etc/configure.lisp

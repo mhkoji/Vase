@@ -21,14 +21,13 @@
                                     (list thumbnail-path)))))
         (vase.folder:make-source
          :name (vase.app.cli.fs:dir-path dir)
-         :thumbnail (vase.folder.thumbnail:from-image image)
+         :thumbnail image
          :modified-at (vase.app.cli.fs:dir-modified-at dir))))))
 
 (defun make-appending-for (folder dir &key id-generator image-repository)
-  (let ((contents (mapcar #'vase.folder.content:from-image
-                          (add-images id-generator
-                                      image-repository
-                                      (vase.app.cli.fs:dir-file-paths dir)))))
+  (let ((contents (add-images id-generator
+                              image-repository
+                              (vase.app.cli.fs:dir-file-paths dir))))
     (vase.folder.content:make-appending :folder folder :contents contents)))
 
 (defun execute (root-dir &key db

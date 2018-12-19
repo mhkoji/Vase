@@ -106,8 +106,10 @@
               );")
   )
 
+
+(defmethod initialize ((db sqlite3-db))
+  (create-tables db))
+
+
 (defmethod connection->db ((conn proton:sqlite3))
   (make-instance 'sqlite3-db :connection conn))
-
-(defmethod initialize-db ((db sqlite3-db))
-  (create-tables db))

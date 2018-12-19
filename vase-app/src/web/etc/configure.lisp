@@ -1,4 +1,4 @@
-#.(vase.context.configure:make-configure
+#.(vase.app.container:make-configure
    :id-generator
    (make-instance 'vase.id:sha256)
 
