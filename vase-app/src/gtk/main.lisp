@@ -9,6 +9,7 @@
         :pango
         :cairo
         :vase.app.container)
+  (:import-from :cl-arrows :->)
   (:export :main))
 (in-package :vase.app.gtk)
 
@@ -17,8 +18,8 @@
     (let ((window (make-instance 'gtk-window
                    :type :toplevel
                    :title "Vase"
-                   :default-width 500
-                   :default-height 500)))
+                   :default-width 600
+                   :default-height 800)))
       (g-signal-connect window "destroy"
                         (lambda (widget)
                           (declare (ignore widget))
@@ -44,11 +45,12 @@
                                             :orientation :vertical
                                             :border-width 8)))
                   (dolist (image images)
-                    (let* ((pixbuf (gdk-pixbuf-new-from-file
-                                    (vase.image:image-path image)))
+                    (let* ((pixbuf
+                            (-> (gdk-pixbuf-new-from-file
+                                 (vase.image:image-path image))
+                                (gdk-pixbuf-scale-simple 480 640 :hyper)))
                            (image (gtk-image-new-from-pixbuf pixbuf)))
                       (gtk-container-add vgrid image)))
-
                   (gtk-container-add scrolled vgrid))))))
         (gtk-container-add window scrolled))
 
