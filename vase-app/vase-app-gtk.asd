@@ -2,7 +2,12 @@
   :serial t
   :pathname "src"
   :components
-  ((:file "main"))
+  ((:file "container")
+
+   (:module :gtk
+    :pathname "gtk"
+    :components
+    ((:file "main"))))
   :depends-on (:vase
 
                :cl-cffi-gtk))
