@@ -23,26 +23,33 @@
                         (lambda (widget)
                           (declare (ignore widget))
                           (leave-gtk-main)))
+      (let ((scrolled (make-instance 'gtk-scrolled-window
+                                     :border-width 12
+                                     :hscrollbar-policy :automatic
+                                     :vscrollbar-policy :always)))
 
-      (with-container (c conf)
-        (with-accessors ((db container-db)
-                         (image-repos container-image-repository)
-                         (folder-repos container-folder-repository)) c
-          (let ((f (car (vase.folder:bulk-load-by-range
-                         folder-repos
-                         0
-                         10))))
-            (let ((images (vase.folder:folder-contents f db image-repos
-                                                       :from 0
-                                                       :size 5)))
-              (let ((vgrid (make-instance 'gtk-grid
-                                          :orientation :vertical
-                                          :border-width 8)))
-                (dolist (image images)
-                  (let* ((pixbuf (gdk-pixbuf-new-from-file
-                                  (vase.image:image-path image)))
-                         (image (gtk-image-new-from-pixbuf pixbuf)))
-                    (gtk-container-add vgrid image)))
-                (gtk-container-add window vgrid))))))
+        (with-container (c conf)
+          (with-accessors ((db container-db)
+                           (image-repos container-image-repository)
+                           (folder-repos container-folder-repository)) c
+            (let ((f (car (vase.folder:bulk-load-by-range
+                           folder-repos
+                           0
+                           10))))
+              (let ((images (vase.folder:folder-contents
+                             f db image-repos
+                             :from 0
+                             :size 5)))
+                (let ((vgrid (make-instance 'gtk-grid
+                                            :orientation :vertical
+                                            :border-width 8)))
+                  (dolist (image images)
+                    (let* ((pixbuf (gdk-pixbuf-new-from-file
+                                    (vase.image:image-path image)))
+                           (image (gtk-image-new-from-pixbuf pixbuf)))
+                      (gtk-container-add vgrid image)))
+
+                  (gtk-container-add scrolled vgrid))))))
+        (gtk-container-add window scrolled))
 
       (gtk-widget-show-all window))))
