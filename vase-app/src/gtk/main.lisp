@@ -41,7 +41,7 @@
     (load-folders state show-folders)))
 
 
-(defun render-folders (folders)
+(defun render-folders (folders on-click-open)
   (let ((vgrid (make-instance 'gtk-grid
                               :orientation :vertical
                               :border-width 8)))
@@ -63,11 +63,12 @@
                                 :use-markup t
                                 :label (vase.folder:folder-name f))))
             (gtk-container-add folder-vgrid folder-name-label))
-          (let ((open-folder-button
-                 (gtk-button-new-with-label "Open")))
+          (let ((folder f)
+                (open-folder-button (gtk-button-new-with-label "Open")))
             (g-signal-connect open-folder-button "clicked"
              (lambda (w)
-               (declare (ignore w))))
+               (declare (ignore w))
+               (funcall on-click-open folder)))
             (gtk-container-add folder-vgrid open-folder-button))
           (gtk-container-add frame folder-vgrid))
         (gtk-container-add vgrid frame)))
@@ -79,6 +80,29 @@
       (gtk-container-add scrolled vgrid)
       scrolled)))
 
+
+(defun render-folder-contents (conf folder)
+  (let ((vgrid (make-instance 'gtk-grid
+                              :orientation :vertical
+                              :border-width 8)))
+    (with-container (c conf)
+      (let ((images (vase.folder:folder-contents
+                     folder
+                     (container-db c)
+                     (container-image-repository c)
+                     :from 0 :size 20)))
+        (push images ls)
+        (dolist (image images)
+          (let ((gtk-image (gtk-image-new-from-pixbuf
+                            (gdk-pixbuf-new-from-file
+                             (vase.image:image-path image)))))
+            (gtk-container-add vgrid gtk-image)))))
+    (let ((scrolled (make-instance 'gtk-scrolled-window
+                                   :border-width 12
+                                   :hscrollbar-policy :automatic
+                                   :vscrollbar-policy :always)))
+      (gtk-container-add scrolled vgrid)
+      scrolled)))
 
 (defun main (&key (conf (vase.app.container:load-configure)))
   (within-main-loop
@@ -98,33 +122,43 @@
                                   :n-rows 20
                                   :homogeneous t))
             (folders-widget nil))
-        (load-folders state
-         (lambda (folders)
-           (setq folders-widget (render-folders folders))
-           (gtk-table-attach table folders-widget 0 1 0 18)))
 
-        (let ((prev-button (gtk-button-new-with-label "<"))
-              (next-button (gtk-button-new-with-label ">"))
-              (button-box (make-instance 'gtk-box
-                                         :orientation :horizontal
-                                         :spacing 12
-                                         :border-width 12)))
-          (labels ((re-show-folders (folders)
-                     (gtk-widget-destroy folders-widget)
-                     (setq folders-widget (render-folders folders))
-                     (gtk-table-attach table folders-widget 0 1 0 18)
-                     (gtk-widget-show-all folders-widget)))
-            (gtk-box-pack-start button-box prev-button)
-            (gtk-box-pack-start button-box next-button)
-            (g-signal-connect prev-button "clicked"
-             (lambda (w)
-               (declare (ignore w))
-               (load-prev-folders state #'re-show-folders)))
-            (g-signal-connect next-button "clicked"
-             (lambda (w)
-               (declare (ignore w))
-               (load-next-folders state #'re-show-folders)))
-            (gtk-table-attach table button-box 0 1 18 20)))
+        (labels ((on-click-open (f)
+                   (gtk-widget-destroy table)
+                   (let ((contents-widget
+                          (render-folder-contents conf f)))
+                     (gtk-container-add window contents-widget)
+                     (gtk-widget-show-all contents-widget))))
+
+          (load-folders state
+           (lambda (folders)
+             (setq folders-widget
+                   (render-folders folders #'on-click-open))
+             (gtk-table-attach table folders-widget 0 1 0 18)))
+
+          (let ((prev-button (gtk-button-new-with-label "<"))
+                (next-button (gtk-button-new-with-label ">"))
+                (button-box (make-instance 'gtk-box
+                                           :orientation :horizontal
+                                           :spacing 12
+                                           :border-width 12)))
+            (labels ((re-show-folders (folders)
+                       (gtk-widget-destroy folders-widget)
+                       (setq folders-widget
+                             (render-folders folders #'on-click-open))
+                       (gtk-table-attach table folders-widget 0 1 0 18)
+                       (gtk-widget-show-all folders-widget)))
+              (gtk-box-pack-start button-box prev-button)
+              (gtk-box-pack-start button-box next-button)
+              (g-signal-connect prev-button "clicked"
+               (lambda (w)
+                 (declare (ignore w))
+                 (load-prev-folders state #'re-show-folders)))
+              (g-signal-connect next-button "clicked"
+               (lambda (w)
+                 (declare (ignore w))
+                 (load-next-folders state #'re-show-folders)))
+              (gtk-table-attach table button-box 0 1 18 20))))
 
         (gtk-container-add window table))
 
