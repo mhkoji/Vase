@@ -3,12 +3,7 @@
   (:export :content-type
            :content-entity-id
 
-           :bulk-delete
-           :make-appending
-           :bulk-append
-
-           :bulk-load
-           :bulk-load-by-folder))
+           :bulk-load))
 (in-package :vase.folder.content)
 
 (defgeneric content-type (c))

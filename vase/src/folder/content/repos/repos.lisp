@@ -3,22 +3,15 @@
   (:import-from :vase.folder.content
                 :content-type
                 :content-entity-id
-
-                :bulk-delete
-
-                :make-appending
-                :bulk-append
-
-                :bulk-load
-                :bulk-load-by-folder)
+                :bulk-load)
   (:export :folder-id
+           :bulk-delete
            :bulk-append
            :make-appending
            :bulk-load-by-folder))
 (in-package :vase.folder.content.repos)
 
 (defgeneric folder-id (f))
-
 
 (defun bulk-delete (db folders)
   (vase.folder.content.repos.db:delete db (mapcar #'folder-id folder-ids)))

@@ -11,6 +11,9 @@
            :folder-thumbnail
            :folder-contents
 
+           :contents-appending
+           :bulk-append-contents
+
            :bulk-save
            :bulk-delete
 
@@ -53,9 +56,16 @@
 
 
 (defun folder-contents (folder db content-repos &key from size)
-  (vase.folder.content:bulk-load-by-folder content-repos db folder
-                                           :from from
-                                           :size size))
+  (vase.folder.content.repos:bulk-load-by-folder content-repos db folder
+                                                 :from from
+                                                 :size size))
+
+(defun contents-appending (folder contents)
+  (vase.folder.content.repos:make-appending :folder folder
+                                            :contents contents))
+
+(defun bulk-append-contents (db appendings)
+  (vase.folder.content.repos:bulk-append db appendings))
 
 
 (defstruct source name thumbnail modified-at)

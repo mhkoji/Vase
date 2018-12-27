@@ -24,12 +24,6 @@
          :thumbnail image
          :modified-at (vase.app.cli.fs:dir-modified-at dir))))))
 
-(defun make-appending-for (folder dir &key id-generator image-repository)
-  (let ((contents (add-images id-generator
-                              image-repository
-                              (vase.app.cli.fs:dir-file-paths dir))))
-    (vase.folder.content:make-appending :folder folder :contents contents)))
-
 (defun execute (root-dir &key db
                               id-generator
                               image-repository
@@ -48,11 +42,14 @@
         (vase.folder:bulk-delete db (mapcar #'vase.folder:folder-id folders))
         ;; Save folders
         (vase.folder:bulk-save db folders)
-        (let ((appendings (mapcar (lambda (folder dir)
-                                    (make-appending-for folder dir
-                                     :id-generator id-generator
-                                     :image-repository image-repository))
-                                  folders dirs)))
-          ;; Save folder contents
-          (vase.folder.content:bulk-append db appendings)))))
+        ;; Save folder contents
+        (let ((appendings
+               (mapcar (lambda (folder dir)
+                         (vase.folder:contents-appending
+                          folder
+                          (add-images id-generator
+                                      image-repository
+                                      (vase.app.cli.fs:dir-file-paths dir))))
+                       folders dirs)))
+          (vase.folder:bulk-append-contents db appendings)))))
   (values))
