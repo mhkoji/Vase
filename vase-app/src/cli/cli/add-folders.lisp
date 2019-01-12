@@ -30,7 +30,7 @@
                               sort-paths-fn
                               thumbnail-file-fn)
   (let ((dirs (stream-to-list (vase.app.cli.fs:retrieve root-dir
-                                                    sort-paths-fn))))
+                                                        sort-paths-fn))))
     (let ((sources (mapcar (lambda (d)
                              (make-source-from-dir d
                               :id-generator id-generator

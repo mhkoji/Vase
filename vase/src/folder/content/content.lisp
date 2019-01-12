@@ -1,13 +1,20 @@
 (defpackage :vase.folder.content
   (:use :cl)
-  (:export :content-type
+  (:export :folder-id
+           :content-type
            :content-entity-id
 
-           :bulk-load))
+           :bulk-delete
+           :bulk-append
+           :make-appending
+           :bulk-load
+           :bulk-load-by-folder))
 (in-package :vase.folder.content)
+
+(defgeneric folder-id (f))
 
 (defgeneric content-type (c))
 
 (defgeneric content-entity-id (c))
 
-(defgeneric bulk-load (repos type entity-ids))
+(defgeneric bulk-load (entity-repos type entity-ids))

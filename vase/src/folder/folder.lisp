@@ -9,7 +9,9 @@
            :folder-id
            :folder-name
            :folder-thumbnail
+
            :folder-contents
+           :make-content-repository
 
            :contents-appending
            :bulk-append-contents
@@ -18,6 +20,7 @@
            :bulk-delete
 
            :repository
+           :make-repository
            :bulk-load-by-range
            :bulk-load-by-search
            :bulk-load-by-ids
@@ -30,43 +33,22 @@
                 :content-entity-id)
   (:import-from :vase.folder.thumbnail
                 :thumbnail-id
-                :bulk-load)
-  (:import-from :vase.folder.repos
-                 :folder
-                 :folder-id
-                 :folder-name
-                 :folder-thumbnail
-                 :folder-modified-at
-
-                 :bulk-save
-                 :bulk-delete
-
-                 :repository
-                 :make-repository
-
-                 :bulk-load-by-range
-                 :bulk-load-by-search
-                 :bulk-load-by-ids
-                 :load-by-id))
+                :bulk-load))
 (in-package :vase.folder)
 
-;;; Content
-(defmethod vase.folder.content.repos:folder-id ((f folder))
-  (folder-id f))
-
-
-(defun folder-contents (folder db content-repos &key from size)
-  (vase.folder.content.repos:bulk-load-by-folder content-repos db folder
-                                                 :from from
-                                                 :size size))
-
-(defun contents-appending (folder contents)
-  (vase.folder.content.repos:make-appending :folder folder
-                                            :contents contents))
-
-(defun bulk-append-contents (db appendings)
-  (vase.folder.content.repos:bulk-append db appendings))
-
+(defclass folder ()
+  ((id
+    :initarg :id
+    :reader folder-id)
+   (name
+    :initarg :name
+    :reader folder-name)
+   (thumbnail
+    :initarg :thumbnail
+    :reader folder-thumbnail)
+   (modified-at
+    :initarg :modified-at
+    :reader folder-modified-at)))
 
 (defstruct source name thumbnail modified-at)
 
@@ -81,3 +63,25 @@
                              :thumbnail (source-thumbnail s)
                              :modified-at (source-modified-at s)))
             folder-ids sources)))
+
+
+;;; Content
+(defmethod vase.folder.content:folder-id ((f folder))
+  (folder-id f))
+
+(defstruct content-repository db entity-repos)
+
+(defun folder-contents (folder content-repos &key from size)
+  (vase.folder.content:bulk-load-by-folder
+   (content-repository-entity-repos content-repos)
+   (content-repository-db content-repos)
+   folder
+   :from from
+   :size size))
+
+(defun contents-appending (folder contents)
+  (vase.folder.content:make-appending :folder folder
+                                      :contents contents))
+
+(defun bulk-append-contents (db appendings)
+  (vase.folder.content:bulk-append db appendings))

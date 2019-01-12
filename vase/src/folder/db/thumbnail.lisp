@@ -1,4 +1,4 @@
-(defpackage :vase.folder.repos.db.thumbnail
+(defpackage :vase.folder.db.thumbnail
   (:use :cl)
   (:shadow :delete)
   (:export :make-row
@@ -7,7 +7,7 @@
            :select
            :insert
            :delete))
-(in-package :vase.folder.repos.db.thumbnail)
+(in-package :vase.folder.db.thumbnail)
 
 (defstruct row folder-id thumbnail-id)
 (defgeneric select (db folder-id-list))

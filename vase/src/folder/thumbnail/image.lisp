@@ -5,8 +5,8 @@
 
 (defmethod bulk-load ((repos vase.image:repository)
                       (thumbnail-ids list))
-  (vase.image.repos:bulk-load-by-ids repos thumbnail-ids))
+  (vase.image:bulk-load-by-ids repos thumbnail-ids))
 
-(defmethod bulk-delete ((repos vase.image.repos:repository)
+(defmethod bulk-delete ((repos vase.image:repository)
                         (thumbnail-ids list))
-  (vase.image.repos:bulk-delete repos thumbnail-ids))
+  (vase.image:bulk-delete repos thumbnail-ids))

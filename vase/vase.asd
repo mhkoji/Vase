@@ -5,28 +5,29 @@
   ((:file "id")
 
    (:file "folder/thumbnail/thumbnail")
-   (:file "folder/repos/db/folder")
-   (:file "folder/repos/db/thumbnail")
-   (:file "folder/repos/repos")
 
    (:file "folder/content/content")
-   (:file "folder/content/repos/db")
-   (:file "folder/content/repos/repos")
+   (:file "folder/content/db/db")
+   (:file "folder/content/repos")
 
    (:file "folder/folder")
+   (:file "folder/db/folder")
+   (:file "folder/db/thumbnail")
+   (:file "folder/repos")
 
-   (:file "image/repos/db")
-   (:file "image/repos/repos")
    (:file "image/image")
+   (:file "image/db/db")
+   (:file "image/repos")
 
    (:file "folder/thumbnail/image")
-   (:file "folder/content/image")
 
-   (:file "tag/repos/db")
-   (:file "tag/repos/repos")
-   (:file "tag/contents/repos")
-   (:file "tag/tag")
    (:file "tag/contents/contents")
+   (:file "tag/tag")
+   (:file "tag/db/db")
+   (:file "tag/repos")
+
+   (:file "tag/contents/concrete")
+   (:file "folder/content/concrete")
 
    (:module :db
     :pathname "db"
@@ -35,11 +36,11 @@
      (:file "sqlite3/proton")
      (:file "sqlite3/sqlite3")))
 
-   (:file "folder/repos/sqlite3/folder")
-   (:file "folder/repos/sqlite3/thumbnail")
-   (:file "folder/content/repos/sqlite3")
-   (:file "image/repos/sqlite3")
-   (:file "tag/repos/sqlite3"))
+   (:file "folder/db/sqlite3/folder")
+   (:file "folder/db/sqlite3/thumbnail")
+   (:file "folder/content/db/sqlite3")
+   (:file "image/db/sqlite3")
+   (:file "tag/db/sqlite3"))
 
   :depends-on (; For proton
                :cl-dbi

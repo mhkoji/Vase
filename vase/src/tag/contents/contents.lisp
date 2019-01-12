@@ -1,18 +1,12 @@
 (defpackage :vase.tag.contents
   (:use :cl)
-  (:import-from :vase.tag
-                :content-id
-                :content-type)
-  (:import-from :vase.tag.contents.repos
-                :bulk-load))
+  (:export :content-id
+           :content-type
+           :bulk-load))
 (in-package :vase.tag.contents)
 
-(defmethod content-id ((c vase.folder:folder))
-  (vase.folder:folder-id c))
+(defgeneric content-id (content))
 
-(defmethod content-type ((c vase.folder:folder))
-  :folder)
+(defgeneric content-type (content))
 
-(defmethod bulk-load ((repos vase.folder:repository)
-                      (type (eql :folder)) (content-ids list))
-  (vase.folder.repos:bulk-load-by-ids repos content-ids))
+(defgeneric bulk-load (repos type content-ids))

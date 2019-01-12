@@ -1,20 +1,7 @@
-(defpackage :vase.folder.content.repos
-  (:use :cl)
-  (:import-from :vase.folder.content
-                :content-type
-                :content-entity-id
-                :bulk-load)
-  (:export :folder-id
-           :bulk-delete
-           :bulk-append
-           :make-appending
-           :bulk-load-by-folder))
-(in-package :vase.folder.content.repos)
-
-(defgeneric folder-id (f))
+(in-package :vase.folder.content)
 
 (defun bulk-delete (db folders)
-  (vase.folder.content.repos.db:delete db (mapcar #'folder-id folder-ids)))
+  (vase.folder.content.db:delete db (mapcar #'folder-id folders)))
 
 
 (defun content-id (content)
@@ -37,12 +24,11 @@
 (defun bulk-append (db appendings)
   (dolist (appending appendings)
     (let ((folder-id (folder-id (appending-folder appending)))
-          (content-ids (mapcar #'content-id
-                               (appending-contents appending))))
-      (vase.folder.content.repos.db:insert db folder-id content-ids))))
+          (content-ids (mapcar #'content-id (appending-contents appending))))
+      (vase.folder.content.db:insert db folder-id content-ids))))
 
 
-(defun bulk-load-by-content-ids (content-repos content-ids)
+(defun bulk-load-by-content-ids (entity-repos content-ids)
   (let ((content-id->content (make-hash-table :test #'equal)))
     (let ((type->entity-ids (make-hash-table :test #'equal)))
       (dolist (content-id content-ids)
@@ -51,7 +37,7 @@
           (push entity-id (gethash type type->entity-ids))))
       (maphash
        (lambda (type entity-ids)
-         (let ((contents (bulk-load content-repos type entity-ids)))
+         (let ((contents (bulk-load entity-repos type entity-ids)))
            (dolist (content contents)
              (let ((content-id (content-id content)))
                (setf (gethash content-id content-id->content) content)))))
@@ -65,9 +51,9 @@
                   (end (when (numberp size)
                          (min (length seq) (+ size start)))))
              (subseq seq start end))))
-  (defun bulk-load-by-folder (content-repos db folder &key from size)
-    (let ((all-content-ids (vase.folder.content.repos.db:select-content-ids
+  (defun bulk-load-by-folder (entity-repos db folder &key from size)
+    (let ((all-content-ids (vase.folder.content.db:select-content-ids
                             db
                             (folder-id folder))))
-      (bulk-load-by-content-ids content-repos
+      (bulk-load-by-content-ids entity-repos
                                 (safe-subseq all-content-ids from size)))))

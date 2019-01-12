@@ -76,8 +76,10 @@
       (with-accessors ((db container-db)
                        (image-repos container-image-repository)
                        (folder-repos container-folder-repository)) c
-        (let ((folder (vase.folder:load-by-id folder-repos folder-id)))
-          (vase.folder:folder-contents folder db image-repos
+        (let ((folder (vase.folder:load-by-id folder-repos folder-id))
+              (content-repos (vase.folder:make-content-repository
+                              :db db :entity-repos image-repos)))
+          (vase.folder:folder-contents folder content-repos
                                        :from from
                                        :size size)))))
   (do-route! (("/api/folder/:id/tags" (folder-id :param :id))) app
@@ -109,8 +111,9 @@
   (do-route! (("/api/tag/:id" (tag-id :param :id))
               :method :delete) app
     (with-container (c conf)
-      (with-accessors ((db container-db)) c
-        (vase.tag:bulk-delete db (list tag-id)))))
+      (with-accessors ((db container-db)
+                       (folder-repos container-folder-repository)) c
+        (vase.tag:bulk-delete folder-repos db (list tag-id)))))
   (do-route! (("/api/tag/:id/folders" (tag-id :param :id))) app
     (with-container (c conf)
       (with-accessors ((db container-db)

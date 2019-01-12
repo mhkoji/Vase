@@ -1,10 +1,10 @@
-(defpackage :vase.folder.repos.sqlite3.thumbnail
+(defpackage :vase.folder.db.sqlite3.thumbnail
   (:use :cl
-        :vase.folder.repos.db.thumbnail
+        :vase.folder.db.thumbnail
         :vase.db.sqlite3)
-  (:shadowing-import-from :vase.folder.repos.db.thumbnail :delete)
+  (:shadowing-import-from :vase.folder.db.thumbnail :delete)
   (:import-from :cl-arrows :->>))
-(in-package :vase.folder.repos.sqlite3.thumbnail)
+(in-package :vase.folder.db.sqlite3.thumbnail)
 
 (defmethod insert ((db sqlite3-db) (rows list))
   (->> (mapcar #'list

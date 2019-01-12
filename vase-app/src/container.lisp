@@ -27,11 +27,11 @@
 (defstruct container db id-generator)
 
 (defun container-image-repository (container)
-  (vase.image.repos:make-repository
+  (vase.image:make-repository
    :db (container-db container)))
 
 (defun container-folder-repository (container)
-  (vase.folder.repos:make-repository
+  (vase.folder:make-repository
    :db (container-db container)
    :thumbnail-repos (container-image-repository container)))
 

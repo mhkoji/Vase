@@ -6,20 +6,17 @@
            :bulk-create
 
            :repository
+           :make-repository
            :bulk-save
            :bulk-load-by-ids
-           :bulk-delete)
-  (:import-from :vase.image.repos
-                :image
-                :image-id
-                :image-path
-
-                :repository
-                :make-repository
-                :bulk-save
-                :bulk-load-by-ids
-                :bulk-delete))
+           :bulk-delete))
 (in-package :vase.image)
+
+(defclass image ()
+  ((id :initarg :id
+       :reader image-id)
+   (path :initarg :path
+         :reader image-path)))
 
 (defun bulk-create (id-generator paths)
   (let ((ids (mapcar (lambda (p)

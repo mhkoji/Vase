@@ -1,9 +1,9 @@
-(defpackage :vase.folder.content.repos.sqlite3
+(defpackage :vase.folder.content.db.sqlite3
   (:use :cl
-        :vase.folder.content.repos.db
+        :vase.folder.content.db
         :vase.db.sqlite3)
-  (:shadowing-import-from :vase.folder.content.repos.db :delete))
-(in-package :vase.folder.content.repos.sqlite3)
+  (:shadowing-import-from :vase.folder.content.db :delete))
+(in-package :vase.folder.content.db.sqlite3)
 
 (defmethod insert ((db sqlite3-db)
                    (folder-id string)

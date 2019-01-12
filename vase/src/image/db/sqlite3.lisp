@@ -1,10 +1,10 @@
-(defpackage :vase.image.repos.sqlite3
+(defpackage :vase.image.db.sqlite3
   (:use :cl
-        :vase.image.repos.db
+        :vase.image.db
         :vase.db.sqlite3)
-  (:shadowing-import-from :vase.image.repos.db :delete)
+  (:shadowing-import-from :vase.image.db :delete)
   (:import-from :cl-arrows :->>))
-(in-package :vase.image.repos.sqlite3)
+(in-package :vase.image.db.sqlite3)
 
 (defmethod insert ((db sqlite3-db) (rows list))
   (->> (mapcar #'list
