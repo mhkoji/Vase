@@ -1,7 +1,7 @@
 (in-package :vase.folder.content)
 
 (defun bulk-delete (db folders)
-  (vase.folder.content.db:delete db (mapcar #'folder-id folders)))
+  (vase.db.folder-content:delete db (mapcar #'folder-id folders)))
 
 
 (defun content-id (content)
@@ -25,7 +25,7 @@
   (dolist (appending appendings)
     (let ((folder-id (folder-id (appending-folder appending)))
           (content-ids (mapcar #'content-id (appending-contents appending))))
-      (vase.folder.content.db:insert db folder-id content-ids))))
+      (vase.db.folder-content:insert db folder-id content-ids))))
 
 
 (defun bulk-load-by-content-ids (entity-repos content-ids)
@@ -52,7 +52,7 @@
                          (min (length seq) (+ size start)))))
              (subseq seq start end))))
   (defun bulk-load-by-folder (entity-repos db folder &key from size)
-    (let ((all-content-ids (vase.folder.content.db:select-content-ids
+    (let ((all-content-ids (vase.db.folder-content:select-content-ids
                             db
                             (folder-id folder))))
       (bulk-load-by-content-ids entity-repos

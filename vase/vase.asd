@@ -7,40 +7,39 @@
    (:file "folder/thumbnail/thumbnail")
 
    (:file "folder/content/content")
-   (:file "folder/content/db/db")
+   (:file "db/folder-content")
    (:file "folder/content/repos")
 
    (:file "folder/folder")
-   (:file "folder/db/folder")
-   (:file "folder/db/thumbnail")
+   (:file "db/folder")
+   (:file "db/folder-thumbnail")
    (:file "folder/repos")
 
    (:file "image/image")
-   (:file "image/db/db")
+   (:file "db/image")
    (:file "image/repos")
 
    (:file "folder/thumbnail/image")
 
    (:file "tag/contents/contents")
    (:file "tag/tag")
-   (:file "tag/db/db")
+   (:file "db/tag")
    (:file "tag/repos")
 
    (:file "tag/contents/concrete")
    (:file "folder/content/concrete")
 
-   (:module :db
-    :pathname "db"
+   (:file "db/db")
+   (:module :db/sqlite3
+    :pathname "db/sqlite3"
     :components
-    ((:file "db")
-     (:file "sqlite3/proton")
-     (:file "sqlite3/sqlite3")))
-
-   (:file "folder/db/sqlite3/folder")
-   (:file "folder/db/sqlite3/thumbnail")
-   (:file "folder/content/db/sqlite3")
-   (:file "image/db/sqlite3")
-   (:file "tag/db/sqlite3"))
+    ((:file "proton")
+     (:file "sqlite3")
+     (:file "folder")
+     (:file "folder-thumbnail")
+     (:file "folder-content")
+     (:file "image")
+     (:file "tag"))))
 
   :depends-on (; For proton
                :cl-dbi

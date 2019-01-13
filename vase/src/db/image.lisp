@@ -1,4 +1,4 @@
-(defpackage :vase.image.db
+(defpackage :vase.db.image
   (:use :cl)
   (:shadow :delete)
   (:export :make-row
@@ -7,7 +7,7 @@
            :insert
            :select
            :delete))
-(in-package :vase.image.db)
+(in-package :vase.db.image)
 
 (defstruct row image-id path)
 (defgeneric insert (db images))

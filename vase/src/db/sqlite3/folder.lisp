@@ -1,10 +1,9 @@
-(defpackage :vase.folder.db.sqlite3.folder
-  (:use :cl
-        :vase.folder.db.folder
-        :vase.db.sqlite3)
-  (:shadowing-import-from :vase.folder.db.folder :delete)
+(defpackage :vase.db.sqlite3.folder
+  (:use :cl :vase.db.sqlite3
+        :vase.db.folder)
+  (:shadowing-import-from :vase.db.folder :delete)
   (:import-from :cl-arrows :->>))
-(in-package :vase.folder.db.sqlite3.folder)
+(in-package :vase.db.sqlite3.folder)
 
 ;; insert
 (defmethod insert ((db sqlite3-db) (rows list))
